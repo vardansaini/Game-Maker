@@ -1,0 +1,19 @@
+namespace Assets.Scripts.Core
+{
+    public class FrameManager : Singleton<FrameManager>
+    {
+      int frame;
+      public int GetCurrentFrame(){
+        return frame;
+      }
+      public void SetCurrentFrame(int current){
+        frame = current;
+      }
+      public void Update(){
+        if(Input.GetKeyDown(KeyCode.H))
+          frame ++;
+        else if(Input.GetKeyDown(KeyCode.G))
+          frame --;
+      }
+    }
+}
