@@ -29,18 +29,14 @@ namespace Assets.Scripts.UI
         private static bool left;
         private static bool right;
         private bool loaded = false;
-        public  Button mybutton1;
-        public  Button mybutton2;
-        public  Button mybutton3;
-        public  Button mybutton4;
-        public  Button mybutton5;
-        public  Sprite able;
-        public  Sprite disable;
-        private int counter1 = 0;
-        private int counter2 = 0;
-        private int counter3 = 0;
-        private int counter4 = 0;
-        private int counter5 = 0;
+        public Button mybutton1;
+        public Button mybutton2;
+        public Button mybutton3;
+        public Button mybutton4;
+        public Button mybutton5;
+        public Sprite able;
+        public Sprite disable;
+        
         //bool[] keyDefault = {false, false,false,false,false};
         // Dictionary<string, bool> buttons = new Dictionary<string, bool>();
         float lastStep, timeBetweenSteps = 0.5f;
@@ -80,11 +76,7 @@ namespace Assets.Scripts.UI
                 frame = 0;
             }
             text.text = "" + frame;
-            counter1++;
-            counter2++;
-            counter3++;
-            counter4++;
-            counter5++;
+           
             fileMenu.ForRealLoad();
         }
         public void Update()
@@ -182,7 +174,7 @@ namespace Assets.Scripts.UI
         }*/
         public static string GetKeys()
         {
-            return space + "," + up + "," + down + "," + left + "," + right +"\n";
+            return space + "," + up + "," + down + "," + left + "," + right + "\n";
         }
         public static void SetKeys(string line)
         {
@@ -211,7 +203,7 @@ namespace Assets.Scripts.UI
             UpdateButtonState(left, mybutton4);
             UpdateButtonState(right, mybutton5);
         }
-        private void UpdateButtonState(bool value,Button button)
+        private void UpdateButtonState(bool value, Button button)
         {
             if (value)
             {
@@ -223,16 +215,5 @@ namespace Assets.Scripts.UI
                 button.image.overrideSprite = disable;
             }
         }
-        private static void UpdateButtonState2(bool value, Button button)
-        {
-            if (value)
-            {
-                button.image.overrideSprite = able;
-
-            }
-            else
-            {
-                button.image.overrideSprite = disable;
-            }
-        }
+    }
 }
