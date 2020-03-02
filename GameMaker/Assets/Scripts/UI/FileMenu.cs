@@ -13,7 +13,7 @@ namespace Assets.Scripts.UI
 {
     public class FileMenu : MonoBehaviour
     {
-        public static string levelName = "";
+        public static string levelName = "test";
         public static bool prevLoaded;
         public string LevelName
         {
@@ -92,14 +92,14 @@ namespace Assets.Scripts.UI
             LogHandler.Instance.WriteLine("Load Grid Start:  time = " + Time.time);
             // Check level exists
             string filePath = Constants.directory + "/StreamingAssets/Levels/" + LevelName + " " + FrameManager.GetCurrentFrame() + ".csv";
+            Debug.Log("For Real Load: " + filePath);
             if (File.Exists(filePath))
             {
-                //GridManager.AddPreviousFrameToCurrentFrame();
-
+                Debug.Log("Got to here");
                 GridManager.Instance.ClearPreview();
                 // - Parse file
                 string[] lines = File.ReadAllLines(filePath);
-                FrameManager.SetKeys(lines[0]);
+                FrameManager.Instance.SetKeys(lines[0]);
                 Debug.Log(lines[0]);
                 string[] gridSize = lines[1].Split(',');
                 Debug.Log(lines[1]);
@@ -128,7 +128,7 @@ namespace Assets.Scripts.UI
             {
                 GridManager.Instance.SetPriorGridObjectsToPreviewOnly(0.5f);
 
-                FrameManager.ResetKeys();
+                FrameManager.Instance.ResetKeys();
                 // - Load an empty level instead
                 //GridManager.Instance.ClearGrid();
             }

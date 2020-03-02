@@ -2,7 +2,6 @@ using Assets.Scripts.UI;
 using Assets.Scripts.Util;
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -15,7 +14,6 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI
 {
-    [RequireComponent(typeof(Button))]
     public class FrameManager : MonoBehaviour
     {
         [SerializeField]
@@ -29,13 +27,12 @@ namespace Assets.Scripts.UI
         private static bool left;
         private static bool right;
         private bool loaded = false;
-        public Button mybutton1;
-        public Button mybutton2;
-        public Button mybutton3;
-        public Button mybutton4;
-        public Button mybutton5;
-        public Sprite able;
-        public Sprite disable;
+        public Button spaceButton;
+        public Button upButton;
+        public Button downButton;
+        public Button leftButton;
+        public Button rightButton;
+        public static FrameManager Instance;
         
         //bool[] keyDefault = {false, false,false,false,false};
         // Dictionary<string, bool> buttons = new Dictionary<string, bool>();
@@ -43,11 +40,7 @@ namespace Assets.Scripts.UI
 
         void Start()
         {
-            mybutton1 = GetComponent<Button>();
-            mybutton2 = GetComponent<Button>();
-            mybutton3 = GetComponent<Button>();
-            mybutton4 = GetComponent<Button>();
-            mybutton5 = GetComponent<Button>();
+            Instance = this;
         }
         public static int GetCurrentFrame()
         {
@@ -100,33 +93,17 @@ namespace Assets.Scripts.UI
                 //if (Time.time - lastStep > timeBetweenSteps)
                 //{
                 lastStep = Time.time;
-                this.Back();
+                Back();
                 //}
 
             }
         }
-        /*public void changeButton()
-        {
-            counter++;
-            if(counter % 2 == 0)
-            {
-                mybutton1.image.overrideSprite = able;
-                mybutton2.image.overrideSprite = able;
-                mybutton3.image.overrideSprite = able;
-                mybutton4.image.overrideSprite = able;
-                mybutton5.image.overrideSprite = able;
-
-            }
-            else
-            {
-                mybutton1.image.overrideSprite = disable;
-            }
-        }*/
+        
         public void OnSpace()
         {
             space = !space;
 
-            UpdateButtonState(space, mybutton1);
+            UpdateButtonState(space, spaceButton);
         }
         /*public static bool GetSpaces()
         {
@@ -134,9 +111,11 @@ namespace Assets.Scripts.UI
         }*/
         public void OnUp()
         {
+            Debug.Log("On Up");
+            Debug.Log("Upbutton null? " + (upButton == null));
             up = !up;
 
-            UpdateButtonState(up, mybutton2);
+            UpdateButtonState(up, upButton);
         }
         /*public static int GetUp()
         {
@@ -146,7 +125,7 @@ namespace Assets.Scripts.UI
         {
             down = !down;
 
-            UpdateButtonState(down, mybutton3);
+            UpdateButtonState(down, downButton);
         }
         /*public static int GetDown()
         {
@@ -156,7 +135,7 @@ namespace Assets.Scripts.UI
         {
             left = !left;
 
-            UpdateButtonState(left, mybutton4);
+            UpdateButtonState(left, leftButton);
         }
         /*public static int GetLeft()
         {
@@ -166,7 +145,7 @@ namespace Assets.Scripts.UI
         {
             right = !right;
 
-            UpdateButtonState(right, mybutton5);
+            UpdateButtonState(right, rightButton);
         }
         /*public int GetRight()
         {
@@ -176,7 +155,7 @@ namespace Assets.Scripts.UI
         {
             return space + "," + up + "," + down + "," + left + "," + right + "\n";
         }
-        public static void SetKeys(string line)
+        public void SetKeys(string line)
         {
             string[] keys = line.Split(',');
             space = bool.Parse(keys[0]);
@@ -184,36 +163,40 @@ namespace Assets.Scripts.UI
             down = bool.Parse(keys[2]);
             left = bool.Parse(keys[3]);
             right = bool.Parse(keys[4]);
-            UpdateButtonState(space, mybutton1);
-            UpdateButtonState(up, mybutton2);
-            UpdateButtonState(down, mybutton3);
-            UpdateButtonState(left, mybutton4);
-            UpdateButtonState(right, mybutton5);
+            UpdateButtonState(space, spaceButton);
+            UpdateButtonState(up, upButton);
+            UpdateButtonState(down, downButton);
+            UpdateButtonState(left, leftButton);
+            UpdateButtonState(right, rightButton);
         }
-        public static void ResetKeys()
+        public void ResetKeys()
         {
             space = false;
             up = false;
             down = false;
             left = false;
             right = false;
-            UpdateButtonState(space, mybutton1);
-            UpdateButtonState(up, mybutton2);
-            UpdateButtonState(down, mybutton3);
-            UpdateButtonState(left, mybutton4);
-            UpdateButtonState(right, mybutton5);
+            UpdateButtonState(space, spaceButton);
+            UpdateButtonState(up, upButton);
+            UpdateButtonState(down, downButton);
+            UpdateButtonState(left, leftButton);
+            UpdateButtonState(right, rightButton);
         }
-        private void UpdateButtonState(bool value, Button button)
+        private void UpdateButtonState(bool off, Button button)
         {
-            if (value)
+            ColorBlock colors = button.colors;
+            if (!off)
             {
-                button.image.overrideSprite = able;
-
+                colors.normalColor = Color.white;
+                colors.highlightedColor = Color.white;
             }
             else
             {
-                button.image.overrideSprite = disable;
+                colors.normalColor = Color.gray;
+                colors.highlightedColor = Color.gray;
             }
+            button.colors = colors;
+            
         }
     }
 }
