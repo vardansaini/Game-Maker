@@ -13,7 +13,7 @@ namespace Assets.Scripts.UI
 {
     public class FileMenu : MonoBehaviour
     {
-        public static string levelName = "test";
+        public static string levelName = "";
         public static bool prevLoaded;
         public string LevelName
         {
@@ -59,7 +59,7 @@ namespace Assets.Scripts.UI
             }
             else
             {
-                string fileName = LevelName + "  " + FrameManager.GetCurrentFrame() + ".csv";
+                string fileName = LevelName + " " + FrameManager.GetCurrentFrame() + ".csv";
                 File.WriteAllText(Constants.directory + "/StreamingAssets/Levels/" + fileName, FrameManager.GetKeys());
                 File.AppendAllText(Constants.directory + "/StreamingAssets/Levels/" + fileName, GridManager.Instance.FormatToCSV());
                
@@ -92,7 +92,7 @@ namespace Assets.Scripts.UI
             LogHandler.Instance.WriteLine("Load Grid Start:  time = " + Time.time);
             // Check level exists
             string filePath = Constants.directory + "/StreamingAssets/Levels/" + LevelName + " " + FrameManager.GetCurrentFrame() + ".csv";
-            Debug.Log("For Real Load: " + filePath);
+            Debug.Log("For Real Load: " + filePath + File.Exists(filePath));
             if (File.Exists(filePath))
             {
                 Debug.Log("Got to here");

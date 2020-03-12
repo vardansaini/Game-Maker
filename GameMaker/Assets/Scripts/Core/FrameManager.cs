@@ -34,10 +34,9 @@ namespace Assets.Scripts.UI
         public Button rightButton;
         public static FrameManager Instance;
         
-        //bool[] keyDefault = {false, false,false,false,false};
-        // Dictionary<string, bool> buttons = new Dictionary<string, bool>();
         float lastStep, timeBetweenSteps = 0.5f;
-
+        InputField input;
+        int max = 0;
         void Start()
         {
             Instance = this;
@@ -56,6 +55,8 @@ namespace Assets.Scripts.UI
             lastStep = Time.time;
             fileMenu.check();
             frame++;
+            if (frame > max)
+                max = frame;
             text.text = "" + frame;
             fileMenu.ForRealLoad();
         }
@@ -74,7 +75,7 @@ namespace Assets.Scripts.UI
         }
         public void Update()
         {
-            if (!loaded)
+           /* if (!loaded)
             {
                 loaded = true;
                 fileMenu.ForRealLoad();
@@ -96,19 +97,37 @@ namespace Assets.Scripts.UI
                 Back();
                 //}
 
+            }*/
+
+        }
+
+        public void Update(String value)
+        {                      
+                Debug.Log(value);
+            int temp;
+            bool success = int.TryParse(value,out temp); 
+            if (success)
+            {                
+                if (temp >= 0)
+                {
+                    string filePath = Constants.directory + "/StreamingAssets/Levels/" + Constants.GetLevelName() + " " + temp + ".csv";
+                    if (File.Exists(filePath)) { 
+                    fileMenu.check();
+                    frame = temp;
+                    text.text = "" + frame;
+                    fileMenu.ForRealLoad();
+                    }
+                }
             }
         }
-        
+
         public void OnSpace()
         {
             space = !space;
 
             UpdateButtonState(space, spaceButton);
         }
-        /*public static bool GetSpaces()
-        {
-            return space;
-        }*/
+        
         public void OnUp()
         {
             Debug.Log("On Up");
@@ -117,40 +136,28 @@ namespace Assets.Scripts.UI
 
             UpdateButtonState(up, upButton);
         }
-        /*public static int GetUp()
-        {
-            return up;
-        }*/
+        
         public void OnDown()
         {
             down = !down;
 
             UpdateButtonState(down, downButton);
         }
-        /*public static int GetDown()
-        {
-            return down;
-        }*/
+       
         public void OnLeft()
         {
             left = !left;
 
             UpdateButtonState(left, leftButton);
         }
-        /*public static int GetLeft()
-        {
-            return left;
-        }*/
+        
         public void OnRight()
         {
             right = !right;
 
             UpdateButtonState(right, rightButton);
         }
-        /*public int GetRight()
-        {
-            return buttons[right];
-        }*/
+       
         public static string GetKeys()
         {
             return space + "," + up + "," + down + "," + left + "," + right + "\n";
