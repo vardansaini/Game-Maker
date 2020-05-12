@@ -12,7 +12,7 @@ namespace Assets.Scripts.UI
         private CameraScroll windowScroll;
         private float outlineHalfWidth;
 
-        private void Awake()
+        public void Awake()
         {
             windowScroll = Camera.main.GetComponent<CameraScroll>();
             camera = GetComponent<Camera>();

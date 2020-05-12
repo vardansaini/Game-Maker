@@ -35,7 +35,7 @@ namespace Assets.Scripts.UI
         public static FrameManager Instance;
         
         float lastStep, timeBetweenSteps = 0.5f;
-        InputField input;
+        public InputField eraseField;
         int max = 0;
         void Start()
         {
@@ -57,6 +57,7 @@ namespace Assets.Scripts.UI
             frame++;
             if (frame > max)
                 max = frame;
+            eraseField.text = "";
             text.text = "" + frame;
             fileMenu.ForRealLoad();
         }
@@ -69,54 +70,58 @@ namespace Assets.Scripts.UI
             {
                 frame = 0;
             }
+            eraseField.text = "";
             text.text = "" + frame;
-           
+            //gameObject.GetComponent<InputField>().placeholder.GetComponent<Text>().text = frame.ToString();
             fileMenu.ForRealLoad();
         }
         public void Update()
         {
-           /* if (!loaded)
-            {
-                loaded = true;
-                fileMenu.ForRealLoad();
-            }
+            //Debug.Log("I AM HERE");
+            //input.GetComponent<InputField>().placeholder.GetComponent<Text>().text = frame.ToString();
+             if (!loaded)
+             {
+                 loaded = true;
+                 fileMenu.ForRealLoad();
+             }
 
-            if (Input.GetKey(KeyCode.H))
-            { //|| Input.GetMouseButton(0)){
-              //if (Time.time - lastStep > timeBetweenSteps)
-              //{
-                lastStep = Time.time;
-                Next();
-                //}
-            }
-            else if (Input.GetKey(KeyCode.G))
-            {
-                //if (Time.time - lastStep > timeBetweenSteps)
-                //{
-                lastStep = Time.time;
-                Back();
-                //}
+             if (Input.GetKey(KeyCode.RightArrow))
+             { //|| Input.GetMouseButton(0)){
+               if (Time.time - lastStep >= timeBetweenSteps)
+               {
+                 lastStep = Time.time;
+                 Next();
+                 }
+             }
+             else if (Input.GetKey(KeyCode.LeftArrow))
+             {
+                 if (Time.time - lastStep >= timeBetweenSteps)
+                 {
+                 lastStep = Time.time;
+                 Back();
+                 }
 
-            }*/
+             }
 
         }
 
         public void Update(String value)
         {                      
-                Debug.Log(value);
+            Debug.Log(value);
             int temp;
             bool success = int.TryParse(value,out temp); 
             if (success)
             {                
-                if (temp >= 0)
+                if (temp >= 0)                
                 {
-                    string filePath = Constants.directory + "/StreamingAssets/Levels/" + Constants.GetLevelName() + " " + temp + ".csv";
-                    if (File.Exists(filePath)) { 
-                    fileMenu.check();
                     frame = temp;
+                    /*string filePath = Constants.directory + "/StreamingAssets/Levels/" + Constants.GetLevelName() + " " + temp + ".csv";
+                    //if (File.Exists(filePath)) { 
+                    fileMenu.check();  
+                    */
                     text.text = "" + frame;
                     fileMenu.ForRealLoad();
-                    }
+                    //}
                 }
             }
         }
