@@ -204,8 +204,8 @@ namespace Assets.Scripts.UI
             }
             else
             {
-                colors.normalColor = Color.gray;
-                colors.highlightedColor = Color.gray;
+                colors.normalColor = Color.green ;
+                colors.highlightedColor = Color.green;
             }
             button.colors = colors;
             

@@ -13,7 +13,7 @@ public class DemoGUI_ColorPickerDemo : MonoBehaviour {
 		style.fontSize = 12;
 		//style.font = GUI.skin.button.font;
 		//style.font.material.color = Color.white;
-		GUI.Label(new Rect(Screen.width - 180, 10, 180, 80), "Copyright (C) Sergey Taraban", style);
-		GUI.Label(new Rect(Screen.width - 180, 30, 180, 80), "Website http://staraban.com", style);	
+		//GUI.Label(new Rect(Screen.width - 180, 10, 180, 80), "Copyright (C) Sergey Taraban", style);
+		//GUI.Label(new Rect(Screen.width - 180, 30, 180, 80), "Website http://staraban.com", style);	
 	}
 }

@@ -13,9 +13,9 @@ for rule in engine.rules:
 	
 	data.append({
     'type': '1',
-    'fact': str(rule.preEffect),
     'id': ruleNum
 	})
+    'fact': str(rule.preEffect),
 
 	data.append({
     'type': '2',
