@@ -1,7 +1,6 @@
 ﻿using Assets.Scripts.UI;
 using Assets.Scripts.Util;
 using UnityEngine;
-using Assets.PlayabilityCheck.PathFinding;
 using System.Collections.Generic;
 
 namespace Assets.Scripts.Core
@@ -19,15 +18,8 @@ namespace Assets.Scripts.Core
         private Vector2? previousMousePosition;
         private bool? deletionLayer; // Functional if true, decorative if false
 
-		public enum PlacementMode { Level, Pathfinding }
+		public enum PlacementMode { Level }
 		[SerializeField] private PlacementMode mode;
-
-		//Pathfinding Variables
-		private PathFinding pathFinding;
-		[SerializeField] private int pathEndPoints = 0;
-		private Vector2 pathStart;
-		[SerializeField]
-		private PlayabilityCheck.PathVisualization pathVis;
 
 		protected override void Awake()
         {
@@ -37,8 +29,6 @@ namespace Assets.Scripts.Core
             dialogueMenu.DialogueOpened += () => previewObject.gameObject.SetActive(false);
             dialogueMenu.DialogueClosed += () => RemoveLock(dialogueMenu);
 			mode = PlacementMode.Level;
-			pathFinding = new PathFinding();
-            Map.pathForBots = null;
 		}
 
 		private void Update()
@@ -48,23 +38,6 @@ namespace Assets.Scripts.Core
 			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			if (previousMousePosition == null)
 				previousMousePosition = mousePosition;
-
-			#region Toggle Pathfinding Mode
-			if (Input.GetKey(KeyCode.P))
-			{
-				if (mode != PlacementMode.Pathfinding)
-				{
-					//Debug.Log("Enabling Pathfinding Mode");
-					mode = PlacementMode.Pathfinding;
-				} else
-				{
-					//Debug.Log("Disabling Pathfinding Mode");
-					mode = PlacementMode.Level;
-				}
-				pathEndPoints = 0;
-				pathVis.Clear();
-			}
-			#endregion
 
 			if (!IsLocked)
 			{
@@ -98,50 +71,15 @@ namespace Assets.Scripts.Core
 						}
 						else if (Input.GetMouseButton(0) && CurrentSprite.HoldToPlace && GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY))
 						{
-							pathVis.Clear();
 							// Place new grid object (if hold-to-place)
 							GridManager.Instance.AddGridObject(CurrentSprite, spriteX, spriteY, true);
 						}
 
 					}
 				}
-				//Pathfinding
-				if (mode == PlacementMode.Pathfinding)
-				{
-					//Simple Line
-					if (pathEndPoints == 1)
-						pathVis.SetDrawLine(pathStart, mousePosition);
+				
 
-					//Clicking
-					if (Input.GetMouseButton(0) && pathEndPoints == 0)
-					{
-						pathStart = new Vector2(spriteX, spriteY);
-						pathEndPoints = 1;
-					}
-					else if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonUp(0) && pathEndPoints == 1)
-					{
-						Vector2 pathEnd = new Vector2(spriteX, spriteY); ;
-						if (pathStart != pathEnd)
-						{
-							// Actually calculates path!
-							List<Vector2> path = pathFinding.FindPath(pathStart, pathEnd);
-							if (path != null) {
-								pathEndPoints = 2;
-								pathVis.SetDrawLine (path);
-								Map.pathForBots = path;
-								Map.pathForBots.Reverse ();
-							}
-						}
-					}
-					//Exit Condition
-					if (Input.GetMouseButtonUp(0) && pathEndPoints == 2)
-					{
-						pathEndPoints = 0;
-						mode = PlacementMode.Level;
-					}
-				}
-
-				else if (mode == PlacementMode.Level)
+				if (mode == PlacementMode.Level)
 				{
 					// Place new grid object (if not hold-to-place)
 					if(Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1) && GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY))

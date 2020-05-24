@@ -60,7 +60,7 @@ public class TestScene : MonoBehaviour {
 		// Check level exists
 		//test
 
-		string filePath = Constants.directory + "/StreamingAssets/Levels/" + Map.level_name + ".csv";
+		string filePath = Constants.directory+ Map.level_name + ".csv";
 
 		if(File.Exists(filePath))
 		{
@@ -113,8 +113,6 @@ public class TestScene : MonoBehaviour {
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			//Level name
 			LogHandler.Instance.WriteLine ("End Run:  time = "+Time.time);
-			FileMenu.prevLoaded = true;
-			FileMenu.levelName=Map.level_name;
 			SceneManager.LoadScene ("Main");
 		}
 	}

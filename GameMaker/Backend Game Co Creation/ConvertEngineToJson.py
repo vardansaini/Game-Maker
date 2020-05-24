@@ -5,7 +5,7 @@ import random
 import pickle
 import json
 
-engine = pickle.load(open("engine-refineonly.p", "rb"))
+engine = pickle.load(open("finalLearnedEngine.p", "rb"))
 
 ruleNum = 0
 data = []
@@ -13,9 +13,9 @@ for rule in engine.rules:
 	
 	data.append({
     'type': '1',
+    'fact': str(rule.preEffect),
     'id': ruleNum
 	})
-    'fact': str(rule.preEffect),
 
 	data.append({
     'type': '2',

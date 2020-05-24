@@ -11,7 +11,8 @@ public class Constants : MonoBehaviour {
 	public static readonly string BREAKABLE = "Breakable";
 	public static readonly string POWERUP = "PowerupBlock";
 	public static readonly string GROUND = "Ground";
-	public static string directory=Application.dataPath;
+	public static string directory=Application.dataPath+ "/StreamingAssets/Frames/";
+
 
 	public static bool IsSolid(string tag){
 		List<string> solidSet = new List<string>(new string[]{ SOLID, BREAKABLE, POWERUP, GROUND});
@@ -19,7 +20,7 @@ public class Constants : MonoBehaviour {
 		return solidSet.Contains (tag);
 	}
 
-	public static string GetLevelName(){
+	public static string GetGameName(){
 		return idOne;
 	}
 

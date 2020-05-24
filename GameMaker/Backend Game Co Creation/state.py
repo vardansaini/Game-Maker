@@ -183,8 +183,15 @@ class State:
 		self.SetUpBaseFacts()
 
 		#Create variable facts
-		self.AddFact(VariableFact("bgColor", self.bgColor))
-		self.AddFact(VariableFact("action", self.action))
+		#TODO; readd this
+		#self.AddFact(VariableFact("bgColor", self.bgColor))
+
+		#space up down left right
+		self.AddFact(VariableFact("space", self.action[0]))
+		self.AddFact(VariableFact("up", self.action[1]))
+		self.AddFact(VariableFact("down", self.action[2]))
+		self.AddFact(VariableFact("left", self.action[3]))
+		self.AddFact(VariableFact("right", self.action[4]))
 
 		#Current to next mapping
 		self.components1To2Mappings = {}
@@ -262,9 +269,6 @@ class State:
 					if isinstance(existingFact, VelocityXFact):
 						velocityXFactInThere = True
 						break
-				if velocityXFactInThere:
-					print ("")
-					print ("HERE'S WHERE IT FUCKIN HAPPENED")
 			if printIt:
 				print ("Adding Other Fact: "+str(otherFact))
 			self.factsByComponentID[otherFact.componentID].append(otherFact)

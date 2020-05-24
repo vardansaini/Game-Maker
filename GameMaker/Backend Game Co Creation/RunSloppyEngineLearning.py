@@ -1,18 +1,15 @@
 import numpy as np 
-from state import * #self made
-from engine import * #self made
+from state import *
+from engine import *
 import random
 import pickle
 import operator
-import csv
-import glob
+import csv, sys
+import glob, os
 from imageio import imwrite
 from skimage.transform import resize
 from heapq import * 
-
-#2:30 for refine 11 : 44 rules
-#30 for sloppy 11 : 41 rules
-#sloppy into refine still broken
+import json
 
 def DrawFrame(frame, frameName):
 	imwrite(frameName, frame)
@@ -59,7 +56,6 @@ def PredictedStateDistance(state1, state2, printIt=False):
 	if len(prePerfectMatches)==len(state1.components) and len(postPerfectMatches)==len(state2.components):
 		allPerfectComponentMatches = True
 
-
 	preUnmatched = state1.GetAllFacts()
 	toRemove = []
 	postToMatch = []
@@ -89,10 +85,9 @@ def PredictedStateDistance(state1, state2, printIt=False):
 
 	#Remove actions
 	for fact in preUnmatched:
-		if isinstance(fact, VariableFact) and fact.variableName=="action":
+		if isinstance(fact, VariableFact) and (fact.variableName=="space" or fact.variableName=="up" or fact.variableName=="down" or fact.variableName=="left" or fact.variableName=="right"):
 			if not fact in toRemove:
 				toRemove.append(fact)
-				break
 
 	for r in toRemove:
 		preUnmatched.remove(r)		
@@ -124,11 +119,9 @@ def PredictedStateDistance(state1, state2, printIt=False):
 			toRemove.append(postEffect)
 	#Remove actions
 	for fact in postUnmatched:
-		if isinstance(fact, VariableFact) and fact.variableName=="action":
+		if isinstance(fact, VariableFact) and (fact.variableName=="space" or fact.variableName=="up" or fact.variableName=="down" or fact.variableName=="left" or fact.variableName=="right"):
 			if not fact in toRemove:
 				toRemove.append(fact)
-				break
-
 	for r in toRemove:
 		postUnmatched.remove(r)
 	if printIt:		
@@ -137,7 +130,7 @@ def PredictedStateDistance(state1, state2, printIt=False):
 		#print ("")
 		#for fact in state1.GetAllFacts():
 		#	print (". Real True Pre Fact: "+str(fact))
-		print ("")
+		#print ("")
 		for postEffect in postUnmatched:
 			print (".   PostEffect Unmatched: "+str(postEffect))
 		#print ("")
@@ -217,12 +210,15 @@ currY - the current y position in observation, must be a valid position
 #Add all possible neighbor engines based on modifying existing rules (1)
 def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedState,trueNextState,trueCurrState, openEngineHeapQ, preUnmatched, postUnmatched, neighbors):
 	for r in range(0, len(engine.rules)):
+
 		#Determine if rule fired
-		fired, effectIds = engine.rules[r].ConditionSatisfiedCheck(trueCurrState)
+		fired, effectIds = engine.rules[r].ConditionSatisfiedCheck(nextPredictedState)
+
+		print ("MODIFY CHECKING RULE (fired? "+str(fired)+" for ids: "+str(effectIds)+") "+str(engine.rules[r].preEffect)+"->"+str(engine.rules[r].postEffect))
 
 		#Would it be helpful if this rule had fired in this instance
 		if not fired:
-			print ("MODIFY RULE HIT NOT FIRED")
+			print ("MODIFY RULE HIT NOT FIRED "+str(engine.rules[r].preEffect)+"->"+str(engine.rules[r].postEffect))
 			postEffectMatch = None
 			helpfulIfHadFired = False
 			for fact in postUnmatched: 
@@ -233,31 +229,43 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 
 			if helpfulIfHadFired:
 				print ("MODIFY RULE HIT HELPFUL HAD FIRED")
+
+				print ("")
+				for cond in engine.rules[r].conditions:
+					print ("   Current condition: "+str(cond))
+
+				for fact in nextPredictedState.GetAllFacts():
+					print ("   Fact: "+str(fact))
+				
 				#Find new set of conditions that would have led this rule to fire
 				newConditions = []
 				preEffect = engine.rules[r].preEffect.clone()
 				for cond in engine.rules[r].conditions:
 					matched = False
+					print ("Checking cond: "+str(cond))
 
-					for fact in trueCurrState.GetAllFacts():
+					for fact in nextPredictedState.GetAllFacts():
 						if cond.CheckMatchBesidesID(fact):
 							matched = True
 							newConditions.append(cond)
+							print ("    adding because it matched "+str(fact))
 							break
-					if not matched and not isinstance(cond, AnimationFact):
+					if not matched and not isinstance(cond, AnimationFact) and not isinstance(cond, VariableFact):#TODO; alter this if we add in scores or resources
 						#check if either of the two inequalities of this condition match
 						inequalities = [InequalityFact(cond, cond.GetValue(), ">="), InequalityFact(cond, cond.GetValue(), "<=")]
 						for ineqaulityCond in inequalities:
-							for fact in trueCurrState.GetAllFacts():
+							for fact in nextPredictedState.GetAllFacts():
 								if ineqaulityCond.CheckMatchBesidesID(fact):
 									matched = True
 									newConditions.append(ineqaulityCond)
+									print ("    adding because ineqaulityCond matched")
 									if cond==preEffect:
 										preEffect = ineqaulityCond
 									break
 							if matched:
 								break
 				print ("MODIFY RULE HIT NEW CONDITIONS: "+str(len(newConditions)))
+				
 				if len(newConditions)>0:#TODO; threshold parameter?
 					clonedEngine = engine.clone()
 					clonedEngine.rules[r] = Rule(newConditions, preEffect, clonedEngine.rules[r].postEffect)
@@ -274,7 +282,7 @@ def GenerateNeighborEngineAddedRules(engine, closedEngineList, nextPredictedStat
 		for postFact in postUnmatched:
 			if isinstance(preFact, postFact.__class__):#If classes match
 				clonedEngine = engine.clone()
-				if not isinstance(preFact, PositionXFact) and not isinstance(preFact, PositionYFact):		
+				if not isinstance(preFact, PositionXFact) and not isinstance(preFact, PositionYFact) and (not isinstance(preFact,VariableFact) or (isinstance(preFact,VariableFact) and preFact.variableName!="space" and preFact.variableName!="up" and preFact.variableName!="down" and preFact.variableName!="left" and preFact.variableName!="right")):		
 					clonedEngine.addRule(Rule(allFactsList, preFact, postFact))
 					if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
 						neighbors.append(clonedEngine)
@@ -339,6 +347,10 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 		firstIter = False
 	#Given the perfect matches, find list of remaining unmatched pre and post facts
 	preUnmatched = nextPredictedState.GetAllFacts()
+	for fact in preUnmatched:
+		print ("PRE FACT: "+str(fact))
+
+
 	toRemove = []
 	postToMatch = []
 	for fact2 in trueNextState.GetAllFacts():
@@ -360,11 +372,23 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 		else:
 			toRemove.append(preEffect)
 
+	#Remove actions
+	for fact in preUnmatched:
+		if isinstance(fact, VariableFact) and (fact.variableName=="space" or fact.variableName=="up" or fact.variableName=="down" or fact.variableName=="left" or fact.variableName=="right"):
+			if not fact in toRemove:
+				toRemove.append(fact)
+	
+
 	for r in toRemove:
 		preUnmatched.remove(r)		
 	print ("Preunmatched: "+str(len(preUnmatched)))
+	for pre in preUnmatched:
+		print ("  "+str(pre))
 
 	postUnmatched = trueNextState.GetAllFacts()
+
+	for fact in postUnmatched:
+		print ("POST FACT: "+str(fact))
 	toRemove = []
 	preToMatch = []
 	for fact in nextPredictedState.GetAllFacts():
@@ -386,10 +410,18 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 		else:
 			toRemove.append(postEffect)
 
+	#Remove actions
+	for fact in postUnmatched:
+		if isinstance(fact, VariableFact) and (fact.variableName=="space" or fact.variableName=="up" or fact.variableName=="down" or fact.variableName=="left" or fact.variableName=="right"):
+			if not fact in toRemove:
+				toRemove.append(fact)
+
 	for r in toRemove:
 		postUnmatched.remove(r)
 			
 	print ("Postunmatched: "+str(len(postUnmatched)))
+	for post in postUnmatched:
+		print ("  "+str(post))
 
 	neighbors = []
 	print ("Modifying Engine Rules")
@@ -469,30 +501,79 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 	print ("Neighbors: "+str(len(neighbors)))
 	return neighbors
 
-def LearnEngine():
+def LearnEngine(gameName):
 	#Load training data
 	stateSequence = []
-	gameName = "test"
+	gameName = ""
+
+	#TODO; get gameName
+	thisDirectory = sys.path[0]
+	splits = thisDirectory.split("/")
+	directory = ""
+	for i in range(0, len(splits)-1):
+		directory+=""splits[i]+"/"
+	directory+="Assets/StreamingAssets/Frames/"
+
 	minFrame = 0
-	maxFrame = 10#TODO; MUST GET THESE FROM EDITOR SIGNAL
+	maxFrame = -1	
+
+	for filename in glob.glob(directory+gameName+"*.csv"):#Find max frame and also game name
+		splits = filename.split(" ")
+		if len(gameName)==0:
+			splits2 = splits[-2].split("/")
+			gameName = splits2[-1]
+
+		frameNum = int(splits[-1][:-4])
+
+		if maxFrame<frameNum:
+			maxFrame= frameNum
+
+
 	for frame in range(minFrame,maxFrame+1):
-		source = open("./testing game 1/"+gameName+" "+str(frame)+".csv", "r")
-		reader = csv.reader(source)
-		readRow = False
-		components = []
-		for row in reader:
+		filename = directory+gameName+" "+str(frame)+".csv"
+		if os.path.exists(filename):
+			source = open(filename, "r")
 
-			if readRow:#Skip first row that defines width and height
-				name = row[0]
-				x = float(row[1])
-				y = float(row[2])
-				w = float(row[3])
-				h = float(row[4])
-				components.append([name,x,y,w,h])
+			reader = csv.reader(source)
+			readRow = 0
+			components = []
+			
+			action = [False, False, False, False, False]
+			for row in reader:
 
-			readRow = True
-		stateSequence.append(State(components, (0,0,0), (0,0,0,0)))	
-		source.close()
+				if readRow>1:#Skip first row that defines width and height
+					name = row[0]
+					x = float(row[1])
+					y = float(row[2])
+					w = float(row[3])
+					h = float(row[4])
+					components.append([name,x,y,w,h])
+				elif readRow==0:
+					for actionIndex in range(0, len(row)):
+						if "T" in row[actionIndex]:
+							action[actionIndex] = True
+
+
+				readRow+=1
+			stateSequence.append(State(components, (0,0,0), action))	
+			source.close()
+		else:
+			#TODO; handle this better
+			#if we have a big break in the available frames
+			break
+
+	#Move all actions one down
+	trueStateSequence = []
+	#TODO; this solution only fixes velocity changes, not changing changes
+	for i in range(0, len(stateSequence)-1):
+		if stateSequence[i].action[0]!=False or stateSequence[i].action[1]!=False or stateSequence[i].action[2]!=False or stateSequence[i].action[3]!=False or stateSequence[i].action[4]!=False:
+			trueStateSequence.append(State(stateSequence[i].components, stateSequence[i].bgColor, stateSequence[i].action))
+			trueStateSequence.append(State(stateSequence[i].components, stateSequence[i].bgColor, [False, False, False, False, False]))
+		else:
+			trueStateSequence.append(State(stateSequence[i].components, stateSequence[i].bgColor, stateSequence[i].action))
+	trueStateSequence.append(stateSequence[-1])
+
+	stateSequence = trueStateSequence
 
 	#Set up delta facts
 	'''
@@ -506,6 +587,11 @@ def LearnEngine():
 	currStateIndex = startState
 	currState = stateSequence[currStateIndex]
 	currEngine = Engine([])#pickle.load(open("learnedEngineFrame70Sequence1.p", "rb"))
+	
+	if os.path.exists("./finalLearnedEngine.p"):
+		currEngine = Engine([])	
+
+
 	closedEngineList = []
 
 	for stateIndex in range(0, len(stateSequence)-1):
@@ -515,6 +601,13 @@ def LearnEngine():
 		state.SetupDeltaFacts(nextState)
 	
 	#Initial Sloppy Engine learning
+
+
+	for stateIndex in range(0, len(stateSequence)-1):
+		print ("State "+str(stateIndex))
+
+		for fact in stateSequence[stateIndex].GetAllFacts():
+			print ("Fact: "+str(fact))
 	
 	#Set initial velocity rules from the first frame
 	'''
@@ -540,9 +633,21 @@ def LearnEngine():
 
 	#Add velocity at final state (has to match # of velocity facts)
 	for c in range(0, len(stateSequence[-1].components)):
-		#TODO; just assume consistent velocity if there's a mapping
-		stateSequence[-1].AddFact(VelocityXFact(c, 0))
-		stateSequence[-1].AddFact(VelocityYFact(c, 0))
+		if c in stateSequence[-2].components2To1Mappings.keys():
+			c2 = stateSequence[-2].components2To1Mappings[c]
+			if c2 in stateSequence[-2].components1To2Mappings.keys() and c==stateSequence[-2].components1To2Mappings[c2] and c2 == stateSequence[-2].components2To1Mappings[c]:
+				for fact in stateSequence[-2].factsByComponentID[c2]:
+					if isinstance(fact, VelocityXFact):
+						cloneFact = fact.clone()
+						cloneFact.componentID = c
+						stateSequence[-1].AddFact(cloneFact)
+					elif isinstance(fact, VelocityYFact):
+						cloneFact = fact.clone()
+						cloneFact.componentID = c
+						stateSequence[-1].AddFact(cloneFact)
+		else:
+			stateSequence[-1].AddFact(VelocityXFact(c, 0))
+			stateSequence[-1].AddFact(VelocityYFact(c, 0))
 	'''
 	while remainingDifferencesInMappedComponents:
 		differenceNotFound = 0
@@ -620,9 +725,9 @@ def LearnEngine():
 
 	
 	#Refinement
-	currEngine = pickle.load(open("./engine-sloppyonly.p", "rb"))
 	while currStateIndex<len(stateSequence)-1:
-		currState.SetAction(stateSequence[currStateIndex].action)#Set action
+		#currState.SetAction(stateSequence[currStateIndex].action)#Set action
+		
 		predictedState = currEngine.predict(currState)#Update facts from rules
 		
 		
@@ -632,7 +737,7 @@ def LearnEngine():
 
 		if error<=allowedErrorRate:
 			currStateIndex+=1
-			currState = predictedState#predicted state was close enough to true next state
+			currState = stateSequence[currStateIndex]#predictedState#predicted state was close enough to true next state
 			
 		else:
 			#Engine Learning
@@ -652,8 +757,8 @@ def LearnEngine():
 				print ("-POPPED NEW ENGINE-")
 
 				engine = engineTuple[1]
-				#for rule in engine.rules:           
-				#	print ("	RULE: "+str(rule.preEffect)+" -> "+str(rule.postEffect))
+				for rule in engine.rules:           
+					print ("	RULE: "+str(rule.preEffect)+" -> "+str(rule.postEffect))
 
 				closedEngineList.append(engine)
 				print ("")
@@ -692,7 +797,7 @@ def LearnEngine():
 						unfinished = False
 						break
 					else:
-						heappush(openEngineHeapQ, (neighborError, neighborEngine))
+						heappush(openEngineHeapQ, (neighborError+len(neighborEngine.rules), neighborEngine))
 				iteration+=1
 				if not unfinished:
 					break
@@ -715,9 +820,41 @@ def LearnEngine():
 	
 def main():
 	#Learn engine
-	learnedEngine = LearnEngine()
+	learnedEngine = LearnEngine("test")
 	#Save final engine
-	pickle.dump(learnedEngine, open("finalLearnedEngineLarge.p", "wb"))
+	pickle.dump(learnedEngine, open("finalLearnedEngine.p", "wb"))
+
+	#TODO; make this smarter
+	engine = learnedEngine
+
+	ruleNum = 0
+	data = []
+	for rule in engine.rules:
+		
+		data.append({
+	    'type': '1',
+	    'fact': str(rule.preEffect),
+	    'id': ruleNum
+		})
+
+		data.append({
+	    'type': '2',
+	    'fact': str(rule.postEffect),
+	    'id': ruleNum
+		})
+
+		for cond in rule.conditions:
+			#print ( "    "+str(cond))
+			data.append({
+		    'type': '0',
+		    'fact': str(cond),
+		    'id': ruleNum
+			})
+
+		ruleNum+=1
+
+	with open('data.json', 'w') as outfile:
+	    json.dump(data, outfile)
 
 if __name__ == '__main__':
 	main()

@@ -13,23 +13,21 @@ namespace Assets.Scripts.UI
 {
     public class FileMenu : MonoBehaviour
     {
-        public static string levelName = "";
+        public static string gameName = "";
         public static bool prevLoaded;
-        public string LevelName
+        public string GameName
         {
-            get { return levelName; }
-            set { levelName = FormatLevelName(value); }
+            get { return gameName; }
+            set { gameName = FormatGameName(value); }
         }
         [SerializeField]
         private DialogueMenu dialogueMenu;
-        [SerializeField]
-        private OptionsMenu optionsMenu;
 
         [SerializeField]
         private InputField loadLevelInput;
 
         void Awake() {
-            levelName = Constants.GetLevelName();
+            gameName = Constants.GetGameName();
         }
 
         void Update() {
@@ -44,24 +42,24 @@ namespace Assets.Scripts.UI
         {
 
             ExternalSave();
-            Map.level_name = levelName;
 
             LogHandler.Instance.WriteLine("Starting Run:  time = " + Time.time);
-            SceneManager.LoadScene("LevelTest");
+            //TODO; handle running
+            //SceneManager.LoadScene("LevelTest");
 
         }
 
         public void OnSave()
         {
-            if (LevelName == null)
+            if (GameName == null)
             {
                 dialogueMenu.OpenDialogue(Dialogue.SaveFailed);
             }
             else
             {
-                string fileName = LevelName + " " + FrameManager.GetCurrentFrame() + ".csv";
-                File.WriteAllText(Constants.directory + "/StreamingAssets/Levels/" + fileName, FrameManager.GetKeys());
-                File.AppendAllText(Constants.directory + "/StreamingAssets/Levels/" + fileName, GridManager.Instance.FormatToCSV());
+                string fileName = GameName + " " + FrameManager.GetCurrentFrame() + ".csv";
+                File.WriteAllText(Constants.directory + fileName, FrameManager.GetKeys());
+                File.AppendAllText(Constants.directory + fileName, GridManager.Instance.FormatToCSV());
                
                 
                 
@@ -70,18 +68,17 @@ namespace Assets.Scripts.UI
 
         public bool ExternalSave() {
             OnSave();
-            return LevelName != null;
+            return GameName != null;
         }
 
         public void OnLoad()
         {
             // Validate input
-            string newLevelName = FormatLevelName(loadLevelInput.text);
+            string newLevelName = FormatGameName(loadLevelInput.text);
             if (newLevelName == null)
                 return;
             else
-
-                LevelName = newLevelName;
+                GameName = newLevelName;
 
             ForRealLoad();
 
@@ -91,37 +88,22 @@ namespace Assets.Scripts.UI
         public void ForRealLoad() {
             LogHandler.Instance.WriteLine("Load Grid Start:  time = " + Time.time);
             // Check level exists
-            string filePath = Constants.directory + "/StreamingAssets/Levels/" + LevelName + " " + FrameManager.GetCurrentFrame() + ".csv";
-            Debug.Log("For Real Load: " + filePath + File.Exists(filePath));
+            string filePath = Constants.directory + GameName + " " + FrameManager.GetCurrentFrame() + ".csv";
             if (File.Exists(filePath))
             {
-                Debug.Log("Got to here");
                 GridManager.Instance.ClearPreview();
                 // - Parse file
                 string[] lines = File.ReadAllLines(filePath);
                 FrameManager.Instance.SetKeys(lines[0]);
-                Debug.Log(lines[0]);
+                //Debug.Log(lines[0]); actions
                 string[] gridSize = lines[1].Split(',');
-                Debug.Log(lines[1]);
+                //Debug.Log(lines[1]); grid size
                 GridManager.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
                 for (int i = 2; i < lines.Length; i++)
                 {
-                    /* if (string.Equals(lines[i], "SPACE"))
-                        continue;
-                    if (string.Equals(lines[i], "UP"))
-                        continue;
-                    if (string.Equals(lines[i], "DOWN"))
-                        continue;
-                    if (string.Equals(lines[i], "LEFT"))
-                        continue;
-                    if (string.Equals(lines[i], "RIGHT"))
-                        continue;*/
-                    Debug.Log(lines[i]);
                     string[] line = lines[i].Split(',');
                     GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
                 }
-
-               
 
             }
             else
@@ -150,13 +132,13 @@ namespace Assets.Scripts.UI
             Application.Quit();
         }
 
-        public static string FormatLevelName(string levelName)
+        public static string FormatGameName(string gameName)
         {
-            if (levelName == null)
+            if (gameName == null)
                 return null;
 
-            string formattedLevelName = levelName.ToLower().Replace(' ', '_').Trim('_');
-            return formattedLevelName == string.Empty ? null : formattedLevelName;
+            string formattedGameName = gameName.ToLower().Replace(' ', '_').Trim('_');
+            return formattedGameName == string.Empty ? null : formattedGameName;
         }
         public void check()
             {

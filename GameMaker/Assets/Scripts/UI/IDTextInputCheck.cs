@@ -17,10 +17,10 @@ public class IDTextInputCheck : MonoBehaviour {
 			}
 			else{
 				if (Application.platform == RuntimePlatform.WindowsPlayer){
-					Constants.directory=Application.dataPath;
+					Constants.directory=Application.dataPath+"/StreamingAssets/Frames/";
 				}
 				else{
-					Constants.directory=Application.dataPath + "/Resources/Data";
+					Constants.directory=Application.dataPath + "/Resources/Data" + "/StreamingAssets/Frames/";
 				}
 			}
 
@@ -34,7 +34,7 @@ public class IDTextInputCheck : MonoBehaviour {
 			Constants.round = 2;
 
 			if (Application.isEditor){
-				Constants.directory=Application.dataPath;
+				Constants.directory=Application.dataPath + "/StreamingAssets/Frames/";
 			}
 			else{
 				if (Application.platform == RuntimePlatform.WindowsPlayer){

@@ -53,10 +53,12 @@ class Rule:
 		for cKey in self.conditionsByID.keys():
 			componentIDs = []
 			for ruleFact in self.conditionsByID[cKey]:
+				#print ("ConditionSatisfiedCheck checking "+str(ruleFact))
 				#Collect the potential componentID matches
 				if len(componentIDs)==0:
 					for stateFact in state.GetAllFacts():#Find all matching facts in state
 						if not stateFact.componentID in componentIDs and ruleFact.CheckMatchBesidesID(stateFact):
+							#print ("Found match: :"+str(stateFact))
 							componentIDs.append(stateFact.componentID)
 					if len(componentIDs)==0:
 						#print ("Failed on 1: "+str(ruleFact))
@@ -67,6 +69,7 @@ class Rule:
 						for stateFact in state.factsByComponentID[compId]:
 							#print ("	StateFact: "+str(stateFact))
 							if not stateFact.componentID in newComponentIDs and ruleFact.CheckMatchBesidesID(stateFact):
+								#print ("Found match: :"+str(stateFact))
 								newComponentIDs.append(stateFact.componentID)
 
 					if len(newComponentIDs)==0:
@@ -146,8 +149,11 @@ class Engine:
 		#Attempt to run each rule
 		for rule in self.rules:
 			print ("RULE: "+str(rule.preEffect)+" -> "+str(rule.postEffect))
+
 			matched, conditionIds = rule.ConditionSatisfiedCheck(predictionState)
 			if matched:
+				for cond in rule.conditions:
+					print (" 	Satisfied Conditions: :"+str(cond))
 				print ("	RULE ACTIVATED")
 				if isinstance(rule.preEffect, EmptyFact) and isinstance(rule.postEffect, EmptyFact):
 					if len(rule.preEffect.replacementFacts)>0 and len(rule.postEffect.replacementFacts)==0:

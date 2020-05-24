@@ -73,7 +73,7 @@ namespace Assets.Scripts.UI
             // Save the options
             GridView = placeholderGridView;
             HoverScroll = placeholderHoverScroll;
-            fileMenu.LevelName = levelNameInput.text;
+            fileMenu.GameName = levelNameInput.text;
         }
 
         public void ResetPlaceholderOptions()
@@ -84,7 +84,7 @@ namespace Assets.Scripts.UI
             gridViewIcon.sprite = GridView ? iconCheck : iconCross;
             hoverScrollIcon.sprite = HoverScroll ? iconCheck : iconCross;
 
-            levelNameInput.text = fileMenu.LevelName == null ? "" : fileMenu.LevelName;
+            levelNameInput.text = fileMenu.GameName == null ? "" : fileMenu.GameName;
 
             levelWidthInput.text = GridManager.Instance.GridWidth.ToString();
             levelHeightInput.text = GridManager.Instance.GridHeight.ToString();
