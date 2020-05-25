@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Core
 {
     public class GridManager : Singleton<GridManager>
     {
-        public int GridWidth
-        { get; private set; }
+        public int GridWidth { get; private set; }
         public int GridHeight { get; private set; }
 
         public event Action<int, int> GridSizeChanged;
@@ -22,6 +22,11 @@ namespace Assets.Scripts.Core
         private Transform gridObjectParentFunctional;
         [SerializeField]
         private Transform gridObjectParentDecorative;
+        [SerializeField]
+        private Image gridBackground;
+
+        [SerializeField]
+        private RuleManager ruleManager;
 
         [SerializeField]
         private Vector2 initialGridSize;
@@ -31,15 +36,17 @@ namespace Assets.Scripts.Core
 
         private List<GridObject> gridObjects;
         private List<GridObject> previewObjects;
-        //private List<GridObject> addobjects;
 
+        public static GridManager Instance;
 
-        private void Start()
+        void Awake()
         {
+            Instance = this;
             gridObjects = new List<GridObject>();
             //addobjects = new List<GridObject>();
             previewObjects = new List<GridObject>();
             SetGridSize(Mathf.RoundToInt(initialGridSize.x), Mathf.RoundToInt(initialGridSize.y), false);
+
         }
 
         public void SetGridSize(int x, int y, bool keepObjects)
@@ -58,8 +65,8 @@ namespace Assets.Scripts.Core
             GridHeight = y;
             gridFunctional = new GridObject[x, y];
             gridDecorative = new GridObject[x, y];
-           
-            
+
+
 
             // Add old grid objects back
             if (keepObjects)
@@ -74,7 +81,10 @@ namespace Assets.Scripts.Core
 
         public void ClearGrid()
         {
-            LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
+            if (LogHandler.Instance != null)
+            {
+                LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
+            }
             if (gridObjects == null)
                 return;
             foreach (GridObject gridObject in gridObjects)
@@ -93,7 +103,8 @@ namespace Assets.Scripts.Core
             {
                 for (int j = y; j < y + sprite.Height; j++)
                 {
-                    if ((sprite.Functional ? gridFunctional[i, j] : gridDecorative[i, j]) != null) {
+                    if ((sprite.Functional ? gridFunctional[i, j] : gridDecorative[i, j]) != null)
+                    {
                         return false;
                     }
                 }
@@ -104,14 +115,16 @@ namespace Assets.Scripts.Core
 
         public GridObject AddGridObject(SpriteData sprite, int x, int y, bool writeLog)
         {
-            if (!CanAddGridObject(sprite, x, y)) {
+            if (!CanAddGridObject(sprite, x, y))
+            {
                 return null;
             }
 
             if (ContainsGridObject(sprite.Functional, x, y))
                 return null;
 
-            if (writeLog) {
+            if (writeLog)
+            {
                 LogHandler.Instance.WriteLine("Added " + sprite.Name + " at " + x + ", " + y + ":  time = " + Time.time);
             }
 
@@ -144,7 +157,7 @@ namespace Assets.Scripts.Core
 
             // Remove the grid object
             GridObject gridObject = (functional ? gridFunctional[x, y] : gridDecorative[x, y]);
-            LogHandler.Instance.WriteLine("Removeh " + gridObject.Data.Name + " at " + x + ", " + y + ":  time = " + Time.time);
+            LogHandler.Instance.WriteLine("Remove " + gridObject.Data.Name + " at " + x + ", " + y + ":  time = " + Time.time);
             gridObjects.Remove(gridObject);
             // - Automatically removes all references in grid
             Destroy(gridObject.gameObject);
@@ -160,42 +173,32 @@ namespace Assets.Scripts.Core
             return (functional ? gridFunctional[x, y] : gridDecorative[x, y]) != null;
         }
 
-        public bool ContainsSolid(int x, int y) {
-            if (ContainsGridObject(true, x, y)) {
-                if (gridFunctional[x, y].Data.Name != "Coin") {
+        public bool ContainsSolid(int x, int y)
+        {
+            if (ContainsGridObject(true, x, y))
+            {
+                if (gridFunctional[x, y].Data.Name != "Coin")
+                {
                     return true;
-                } else {
+                }
+                else
+                {
                     return false;
                 }
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
 
         public string FormatToCSV()
         {
-
             StringBuilder builder = new StringBuilder();
             builder.AppendLine(GridWidth + "," + GridHeight);
             foreach (GridObject gridObject in gridObjects)
                 builder.AppendLine(gridObject.Data.Name + "," + gridObject.X + "," + gridObject.Y + "," + gridObject.W + "," + gridObject.H);
-            
-            
-            //for (int i = 0; i < FrameManager.GetSpaces(); i++)
-            //for (int j = 0; j < FrameManager.GetUp(); j++)
-            //builder.AppendLine("SPACE");
-            //builder.AppendLine("UP");
 
-            //for (int i = 0; i < FrameManager.GetSpaces(); i++)
-            //builder.AppendLine("SPACE");
-            //for (int i = 0; i < FrameManager.GetUp(); i++)
-            //builder.AppendLine("UP");
-            //for (int i = 0; i < FrameManager.GetDown(); i++)
-            //builder.AppendLine("DOWN");
-            //for (int i = 0; i < FrameManager.GetLeft(); i++)
-            // builder.AppendLine("LEFT");
-            //for (int i = 0; i < FrameManager.GetRight(); i++)
-            // builder.AppendLine("RIGHT");
             return builder.ToString();
         }
 
@@ -210,11 +213,15 @@ namespace Assets.Scripts.Core
         public void SetPriorGridObjectsToPreviewOnly(float transparency)
         {
             SetAllTransparent(transparency);
-            ClearPreview();
-           
-            foreach (GridObject gridObject in gridObjects)
+            if (gridObjects.Count > 0)
             {
-                previewObjects.Add(gridObject);
+                ClearPreview();
+
+
+                foreach (GridObject gridObject in gridObjects)
+                {
+                    previewObjects.Add(gridObject);
+                }
             }
 
             gridObjects.Clear();
@@ -223,30 +230,53 @@ namespace Assets.Scripts.Core
 
         }
 
+        public void UpdatePreviewGridObjectsFromLearnedRules()
+        {
+            previewObjects = ruleManager.RunRules(previewObjects);
+
+
+            //Update positions based on velocity
+            foreach(GridObject g in previewObjects) {
+                Debug.Log("g.Name: " + g.Name + " velocity: " + g.VX + ", " + g.VY);
+                int x = g.X;
+                int y = g.Y;
+                if (Mathf.Abs(g.VX) > 0)
+                {
+                    x += g.VX;
+                }
+                else
+                {
+                    y+= g.VY;
+                }
+
+                g.SetPosition(x, y);
+            }
+        }
+
         public void ClearPreview()
         {
-           
-            
-                foreach (GridObject gridObject in previewObjects)
-                    Destroy(gridObject.gameObject);
 
-                previewObjects = new List<GridObject>();
-            
+
+            foreach (GridObject gridObject in previewObjects)
+                Destroy(gridObject.gameObject);
+
+            previewObjects = new List<GridObject>();
+
 
         }
         public void AddPreviousFrameToCurrentFrame()
         {
-           
-              foreach (GridObject gridObject in previewObjects)
-              {
+
+            foreach (GridObject gridObject in previewObjects)
+            {
                 gridObject.SetAlpha(1);
                 AddGridObject(gridObject.Data, gridObject.X, gridObject.Y, false);
                 Destroy(gridObject.gameObject);
                 //gridObjects.Add(gridObject);
-              }
+            }
 
             previewObjects.Clear();
-   
+
         }
 
         /**
@@ -266,13 +296,32 @@ namespace Assets.Scripts.Core
                 Debug.Log("hello");
                 AddPreviousFrameToCurrentFrame();
             }
-           
+
         }
         public bool Checklist()
         {
             return gridObjects.Count > 0;
         }
 
+        public int[] GetColor()
+        {
+            int[] color = new int[3];
+            color[0] = (int)(255f * gridBackground.color.r);
+            color[1] = (int)(255f * gridBackground.color.g);
+            color[2] = (int)(255f * gridBackground.color.b);
 
+            return color;
+        }
+
+        public void SetColor(int[] color)
+        {
+            gridBackground.color = new Color(color[0]/255f, color[1] / 255f, color[2] / 255f);
+        }
+
+        public GridObject[] GetObjects() {
+            return gridObjects.ToArray();
+        }
     }
+
+
 }

@@ -10,8 +10,14 @@ namespace Assets.Scripts.Core
         // Top left corner grid coordinates
         public int X { get; private set; }
         public int Y { get; private set; }
-		public int W { get; private set; }
-		public int H { get; private set; }
+        //width and height
+        public int W { get; private set; }
+        public int H { get; private set; }
+        //Velocity x and y
+        public int VX;
+        public int VY;
+
+        public string Name { get { return Data.Name; } } 
 
         [SerializeField]
         private Image image;
@@ -52,5 +58,54 @@ namespace Assets.Scripts.Core
 		public float GetAlpha(){
 			return image.color.a;
 		}
+
+        public Vector2 GetNamedPoint(string name)
+        {
+            if (name == "North")
+            {
+                return GetNorth();
+            }
+            else if (name == "South")
+            {
+                return GetSouth();
+            }
+            else if (name == "West")
+            {
+                return GetWest();
+            }
+            else if (name == "East")
+            {
+                return GetEast();
+            }
+            return GetCenter();
+        }
+
+        public Vector2 GetNorth()
+        {
+            return new Vector2(X + W / 2f, Y);
+        }
+
+        public Vector2 GetSouth()
+        {
+            return new Vector2(X + W / 2f, Y +H);
+        }
+
+        public Vector2 GetWest()
+        {
+            return new Vector2(X, Y + H/2f);
+        }
+
+        public Vector2 GetEast()
+        {
+            return new Vector2(X+W, Y + H / 2f);
+        }
+
+        public Vector2 GetCenter()
+        {
+            return new Vector2(X + W/2f, Y + H / 2f);
+        }
+
+
+
     }
 }

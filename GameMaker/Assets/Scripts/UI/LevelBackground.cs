@@ -6,7 +6,7 @@ namespace Assets.Scripts.UI
 {
     public class LevelBackground : MonoBehaviour
     {
-        private void Awake()
+        void Start()
         {
             GridManager.Instance.GridSizeChanged += OnGridSizeChanged;
         }

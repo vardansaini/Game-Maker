@@ -33,7 +33,13 @@ namespace Assets.Scripts.UI
         public Button leftButton;
         public Button rightButton;
         public static FrameManager Instance;
-        
+
+        public static bool Space { get { return space; } }
+        public static bool Up { get { return up; } }
+        public static bool Down { get { return down; } }
+        public static bool Left { get { return left; } }
+        public static bool Right { get { return right; } }
+
         float lastStep, timeBetweenSteps = 0.5f;
         public InputField eraseField;
         int max = 0;

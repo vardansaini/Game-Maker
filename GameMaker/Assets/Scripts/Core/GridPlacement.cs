@@ -5,30 +5,32 @@ using System.Collections.Generic;
 
 namespace Assets.Scripts.Core
 {
-    public class GridPlacement : Lockable
-    {
-        [HideInInspector]
-        public SpriteData CurrentSprite; // Initialized by the sprite menu
+	public class GridPlacement : Lockable
+	{
+		[HideInInspector]
+		public SpriteData CurrentSprite; // Initialized by the sprite menu
 
-        [SerializeField]
-        private GridObject previewObject;
-        [SerializeField]
-        private DialogueMenu dialogueMenu;
-        
-        private Vector2? previousMousePosition;
-        private bool? deletionLayer; // Functional if true, decorative if false
+		[SerializeField]
+		private GridObject previewObject;
+		[SerializeField]
+		private DialogueMenu dialogueMenu;
 
-		public enum PlacementMode { Level }
+		private Vector2? previousMousePosition;
+		private bool? deletionLayer; // Functional if true, decorative if false
+
+		public enum PlacementMode { Level, Pathfinding }
 		[SerializeField] private PlacementMode mode;
 
-		protected override void Awake()
-        {
-            base.Awake();
 
-            dialogueMenu.DialogueOpened += () => AddLock(dialogueMenu);
-            dialogueMenu.DialogueOpened += () => previewObject.gameObject.SetActive(false);
-            dialogueMenu.DialogueClosed += () => RemoveLock(dialogueMenu);
+		protected override void Awake()
+		{
+			base.Awake();
+
+			dialogueMenu.DialogueOpened += () => AddLock(dialogueMenu);
+			dialogueMenu.DialogueOpened += () => previewObject.gameObject.SetActive(false);
+			dialogueMenu.DialogueClosed += () => RemoveLock(dialogueMenu);
 			mode = PlacementMode.Level;
+			Map.pathForBots = null;
 		}
 
 		private void Update()
@@ -38,6 +40,22 @@ namespace Assets.Scripts.Core
 			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			if (previousMousePosition == null)
 				previousMousePosition = mousePosition;
+
+			#region Toggle Pathfinding Mode
+			if (Input.GetKey(KeyCode.P))
+			{
+				if (mode != PlacementMode.Pathfinding)
+				{
+					//Debug.Log("Enabling Pathfinding Mode");
+					mode = PlacementMode.Pathfinding;
+				}
+				else
+				{
+					//Debug.Log("Disabling Pathfinding Mode");
+					mode = PlacementMode.Level;
+				}
+			}
+			#endregion
 
 			if (!IsLocked)
 			{
@@ -78,11 +96,10 @@ namespace Assets.Scripts.Core
 					}
 				}
 				
-
 				if (mode == PlacementMode.Level)
 				{
 					// Place new grid object (if not hold-to-place)
-					if(Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1) && GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY))
+					if (Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1) && GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY))
 						GridManager.Instance.AddGridObject(CurrentSprite, spriteX, spriteY, true);
 
 					// Remove deletion layer
@@ -101,9 +118,9 @@ namespace Assets.Scripts.Core
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
-        {
-            previewObject.gameObject.SetActive(false);
-            previousMousePosition = null;
-        }
-    }
+		{
+			previewObject.gameObject.SetActive(false);
+			previousMousePosition = null;
+		}
+	}
 }

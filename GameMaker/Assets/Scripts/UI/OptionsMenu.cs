@@ -86,8 +86,8 @@ namespace Assets.Scripts.UI
 
             levelNameInput.text = fileMenu.GameName == null ? "" : fileMenu.GameName;
 
-            levelWidthInput.text = GridManager.Instance.GridWidth.ToString();
-            levelHeightInput.text = GridManager.Instance.GridHeight.ToString();
+            //levelWidthInput.text = GridManager.Instance.GridWidth.ToString();
+            //levelHeightInput.text = GridManager.Instance.GridHeight.ToString();
         }
     }
 }
