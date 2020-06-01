@@ -29,7 +29,6 @@ public class Rule
 
     public List<GridObject> RunRuleOnObjects(List<GridObject> gridObjects)
     {
-        Debug.Log("Hit here for rule "+preEffect+"->"+postEffect);
         List<int> effectIDs = new List<int>();
         foreach (KeyValuePair < int, List < Fact >> kvp in conditionsByID)
         {
@@ -47,11 +46,9 @@ public class Rule
                         }
                     }
 
-                    Debug.Log("ComponentIDS: " + componentIDs.Count);
                 }
                 else
                 {
-                    Debug.Log("Rule Fact: " + ruleFact);
                     List<int> newComponentIDs = new List<int>();
                     foreach(int id in componentIDs)
                     {
@@ -60,17 +57,14 @@ public class Rule
                         {
                             newComponentIDs.Add(id);
                         }
-                        else
-                        {
-                            Debug.Log("Broke at: " + ruleFact);
-                        }
+                        
                         
                     }
 
                     if (newComponentIDs.Count == 0)
                     {
                         //This rule can't fire, return
-                        Debug.Log("Rule can't fire due to " + kvp.Key);
+                        //Debug.Log("Rule can't fire due to " + kvp.Key);
                         return gridObjects;
                     }
                     else

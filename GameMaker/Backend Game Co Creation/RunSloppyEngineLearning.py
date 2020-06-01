@@ -511,7 +511,7 @@ def LearnEngine(gameName):
 	splits = thisDirectory.split("/")
 	directory = ""
 	for i in range(0, len(splits)-1):
-		directory+=""splits[i]+"/"
+		directory+=""+splits[i]+"/"
 	directory+="Assets/StreamingAssets/Frames/"
 
 	minFrame = 0

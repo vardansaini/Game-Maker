@@ -39,6 +39,8 @@ namespace Assets.Scripts.Core
 
         public static GridManager Instance;
 
+        public bool gridSizeSet = false;
+
         void Awake()
         {
             Instance = this;
@@ -49,8 +51,14 @@ namespace Assets.Scripts.Core
 
         }
 
+        public void ResetGridSize()
+        {
+            SetGridSize(Mathf.RoundToInt(initialGridSize.x), Mathf.RoundToInt(initialGridSize.y), false);
+        }
+
         public void SetGridSize(int x, int y, bool keepObjects)
         {
+            gridSizeSet = true;
             // Store old grid objects
             List<GridObject> oldGridObjects = new List<GridObject>();
             if (keepObjects)
@@ -237,7 +245,6 @@ namespace Assets.Scripts.Core
 
             //Update positions based on velocity
             foreach(GridObject g in previewObjects) {
-                Debug.Log("g.Name: " + g.Name + " velocity: " + g.VX + ", " + g.VY);
                 int x = g.X;
                 int y = g.Y;
                 if (Mathf.Abs(g.VX) > 0)

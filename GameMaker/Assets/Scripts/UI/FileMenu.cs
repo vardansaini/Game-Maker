@@ -13,8 +13,7 @@ namespace Assets.Scripts.UI
 {
     public class FileMenu : MonoBehaviour
     {
-        public static string gameName = "";
-        public static bool prevLoaded;
+        public static string gameName = "test";
         public string GameName
         {
             get { return gameName; }
@@ -28,13 +27,6 @@ namespace Assets.Scripts.UI
 
         void Awake() {
             gameName = Constants.GetGameName();
-        }
-
-        void Update() {
-            if (prevLoaded) {
-                ForRealLoad();
-                prevLoaded = false;
-            }
         }
 
 
@@ -108,7 +100,9 @@ namespace Assets.Scripts.UI
             }
             else
             {
+
                 GridManager.Instance.SetPriorGridObjectsToPreviewOnly(0.5f);
+                GridManager.Instance.UpdatePreviewGridObjectsFromLearnedRules();
 
                 FrameManager.Instance.ResetKeys();
                 // - Load an empty level instead

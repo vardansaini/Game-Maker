@@ -88,6 +88,7 @@ namespace Assets.Scripts.UI
              if (!loaded)
              {
                  loaded = true;
+                GridManager.Instance.ResetGridSize();
                  fileMenu.ForRealLoad();
              }
 

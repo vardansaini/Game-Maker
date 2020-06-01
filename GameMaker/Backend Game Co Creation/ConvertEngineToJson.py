@@ -3,7 +3,7 @@ from state import *
 from engine import *
 import random
 import pickle
-import json
+import json, sys
 
 engine = pickle.load(open("finalLearnedEngine.p", "rb"))
 
@@ -33,5 +33,12 @@ for rule in engine.rules:
 
 	ruleNum+=1
 
-with open('data.json', 'w') as outfile:
+thisDirectory = sys.path[0]
+splits = thisDirectory.split("/")
+directory = ""
+for i in range(0, len(splits)-1):
+	directory+=""+splits[i]+"/"
+directory+="Assets/StreamingAssets/Frames/"
+
+with open(directory+'data.json', 'w') as outfile:
     json.dump(data, outfile)

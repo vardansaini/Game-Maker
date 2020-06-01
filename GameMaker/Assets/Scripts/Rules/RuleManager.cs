@@ -10,13 +10,14 @@ public class RuleManager : MonoBehaviour
     public void Start()
     {
         //If we have rules
-        rules = LoadJSON.LoadJson("/Users/guzdial/Downloads/Game-Maker-master/GameMaker/Backend Game Co Creation/data.json");
+        rules = LoadJSON.LoadJson(Constants.directory + "data.json");
     }
 
     public List<GridObject> RunRules(List<GridObject> gridObjects)
     {
+
         //Before running, recheck that we have up to date rules:
-        rules = LoadJSON.LoadJson("/Users/guzdial/Downloads/Game-Maker-master/GameMaker/Backend Game Co Creation/data.json");
+        rules = LoadJSON.LoadJson(Constants.directory+"data.json");
 
         for (int i = 0; i<rules.Count; i++)
         {
