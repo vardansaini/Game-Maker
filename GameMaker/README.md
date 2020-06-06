@@ -1,2 +1,2 @@
-# Morai-Maker-Engine
-Cooperative game level editor.
+# Game Maker
+Rule learning game engine.
