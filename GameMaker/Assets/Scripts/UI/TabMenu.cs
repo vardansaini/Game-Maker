@@ -1,87 +1,99 @@
 ﻿using Assets.Scripts.Core;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace Assets.Scripts.UI
 {
     public class TabMenu : MonoBehaviour
     {
-        private static bool tab;
-        [SerializeField]
-        private Button tabPrefab;
         [SerializeField]
         private SpriteMenu spriteMenu;
-
+        [SerializeField]
+        private Button tabPrefab;
         private string currentTab;
         private string pendingTab;
         int r = 0;
+        // put tab as value to all keys
+        public Dictionary<string, Button> tabs;
+        //public static bool Tab { get { return tab; } }
+
         private void Start()
         {
+            tabs = new Dictionary<string, Button>();
             // Get initial tab
             currentTab = SpriteManager.Instance.GetTagList()[0];
 
             // Generate tabs
-            foreach(string tag in SpriteManager.Instance.GetTagList())
+            foreach (string tag in SpriteManager.Instance.GetTagList())
             {
                 Button temp = Instantiate(tabPrefab, transform);
                 temp.GetComponentInChildren<Text>().text = tag;
                 temp.onClick.AddListener(() => OnButtonClick(tag));
+                tabs.Add(tag, temp);
+                //temp.onClick.AddListener(OnTab); works but need to restart the whole program to see the result (Failed)
             }
+            UpdateButtonState(currentTab);
+
+            //Debug.Log("Did I click it?");
+            //tabPrefab.onClick.AddListener(OnTab); Does not work (Failed)
         }
 
         private void Update()
         {
-            if(pendingTab != null && !spriteMenu.IsLocked)
+            if (pendingTab != null && !spriteMenu.IsLocked)
             {
                 spriteMenu.DisplaySprites(SpriteManager.Instance.GetSpriteList(pendingTab));
                 currentTab = pendingTab;
                 pendingTab = null;
             }
         }
-        public void OnTab()
-        {
-            Debug.Log("I am on tab");
-            tab = !tab;
 
-            UpdateButtonState(tab, tabPrefab);
-        }
-       
-
-            private void OnButtonClick(string tag)
+        private void OnButtonClick(string tag)
         {
-            
-            Debug.Log("I was here"+ r);
+            Debug.Log("I was here" + r);
             r += 1;
-            OnTab();
+            // OnTab(); works but need to restart the whole program to see the result (Failed)
+            // create dictionary map from string name of buttons and 
+
             if (currentTab == null || !currentTab.Equals(tag))
             {
-                pendingTab = tag;                     
-
+                pendingTab = tag;
+                UpdateButtonState(tag);
             }
-        }        
-            public void ResetKeys()
-        {
-            tab = false;
-            UpdateButtonState(tab, tabPrefab);
         }
-        private void UpdateButtonState(bool off, Button button)
+
+        
+
+        private void UpdateButtonState(string tag)
         {
             Debug.Log("I came here to change color");
-            ColorBlock colors = button.colors;
-            if (!off)
+            foreach (KeyValuePair<string, Button> entry in tabs)
             {
-                Debug.Log("Button is not selected");
-                colors.normalColor = Color.white;
-                colors.highlightedColor = Color.white;
+                if (entry.Key == tag)
+                    selectColor(tabs[entry.Key]);
+                else
+                    deselectColor(tabs[entry.Key]);
             }
-            else
-            {
-                Debug.Log("Button is selected");
-                colors.normalColor = Color.green;
-                colors.highlightedColor = Color.green;
-            }
-            button.colors = colors;
+        }
 
+        private void deselectColor(Button button)
+        {
+            ColorBlock colors = button.colors;
+            Debug.Log("Button is not selected");
+            colors.normalColor = Color.white;
+            colors.highlightedColor = Color.white;
+            button.colors = colors;
+        }
+
+        private void selectColor(Button button)
+        {
+            ColorBlock colors = button.colors;
+            Debug.Log("Button is selected");
+            colors.normalColor = Color.green;
+            colors.highlightedColor = Color.green;
+            button.colors = colors;
         }
     }
 }
