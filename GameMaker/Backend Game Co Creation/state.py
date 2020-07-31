@@ -207,6 +207,24 @@ class State:
 				minID=compID
 		return minID
 
+	def AnythingAtPosition(self, posXFact, posYFact):#returns true if there's anything at this position and false otherwise
+		realID = posXFact.componentID
+		for compID in self.factsByComponentID.keys():
+			posXFact.componentsByID = compID
+			posYFact.componentsByID = compID
+			matched= 0
+			for fact in self.factsByComponentID[compID]:
+				if isinstance(fact, PositionXFact) or isinstance(fact, PositionYFact):
+					if isinstance(fact, PositionXFact) and posXFact.posX==fact.posX:
+						matched+=1
+					if isinstance(fact, PositionYFact) and posYFact.posY==fact.posY:
+						matched+=1
+			if matched==2:
+				posXFact.componentsByID = realID
+				posYFact.componentsByID = realID
+				return True
+		return False
+
 	def CreateRelationshipFacts(self):
 		#Create relationship x and y facts
 		for c in range(0, len(self.components)):
@@ -235,6 +253,22 @@ class State:
 
 		return [minX, minY]
 
+	def GetMinRelationshipFactsToComponentsInNextFrame(self, componentID, components, excluding = -1):
+		minX = None
+		minY = None
+		minDist = float("inf")
+		
+		for c in range(0, len(components)):
+			if not c==excluding:
+				f1 = GetEdgeX(components[c], self.components[componentID], c, componentID)
+				f2 = GetEdgeY(components[c], self.components[componentID], c, componentID)
+				if f1.distance+f2.distance<minDist:
+					minDist = f1.distance+f2.distance
+					minX = f1
+					minY = f2
+
+		return [minX, minY]
+
 
 	def GetRelationshipFacts(self):
 		if len(self.relationshipFacts)==0:
@@ -253,11 +287,19 @@ class State:
 			self.AddFact(f)
 
 	def SetAction(self, action):
+		self.action = action
 		for fact in self.factsByComponentID[-1]:
 			if isinstance(fact,VariableFact):
-				if fact.variableName =="action":
-					fact.variableValue = action
-		self.action = action
+				if fact.variableName =="space":
+					fact.variableValue = self.action[0]
+				elif fact.variableName =="up":
+					fact.variableValue = self.action[1]
+				elif fact.variableName =="down":
+					fact.variableValue = self.action[2]
+				elif fact.variableName =="left":
+					fact.variableValue = self.action[3]
+				elif fact.variableName =="right":
+					fact.variableValue = self.action[4]
 
 	def AddFact(self, otherFact, printIt = False):
 
@@ -393,8 +435,27 @@ class State:
 		self.SetupMappings(nextState)
 		
 		#Create velocity facts based on mapping
-		for i in range(0, len(self.components)):
+		for i in range(0, len(nextState.components)):
 
+			#Remove Velocity Facts if they're already in there
+			toRemove = []
+			for fact in nextState.factsByComponentID[i]:
+				if isinstance(fact, VelocityXFact) or isinstance(fact, VelocityYFact):
+					toRemove.append(fact)
+			for fact in toRemove:
+				nextState.factsByComponentID[i].remove(fact)
+
+			if i in self.components2To1Mappings.keys() and self.components2To1Mappings[i] in self.components1To2Mappings.keys() and i==self.components1To2Mappings[self.components2To1Mappings[i]]:#if it matches
+				nextStateComponent = nextState.components[i]
+				thisStateComponent = self.components[self.components2To1Mappings[i]]
+				print ("Next state component and this state component: "+str(nextStateComponent)+" and "+str(thisStateComponent))
+				nextState.AddFact(VelocityXFact(i, nextStateComponent[1]-thisStateComponent[1]))
+				nextState.AddFact(VelocityYFact(i, nextStateComponent[2]-thisStateComponent[2]))
+			else:
+				nextState.AddFact(VelocityXFact(i, 0))
+				nextState.AddFact(VelocityYFact(i, 0))
+
+			'''
 			#Remove Velocity Facts if they're already in there
 			toRemove = []
 			for fact in self.factsByComponentID[i]:
@@ -403,6 +464,7 @@ class State:
 			for fact in toRemove:
 				self.factsByComponentID[i].remove(fact)
 
+			
 			if i in self.components1To2Mappings.keys() and self.components1To2Mappings[i] in self.components2To1Mappings.keys() and i==self.components2To1Mappings[self.components1To2Mappings[i]]:#if it matches
 				#print ("Adding Velocity Facts: "+str([nextState.components[self.components1To2Mappings[i]][1]-self.components[i][1], nextState.components[self.components1To2Mappings[i]][2]-self.components[i][2]]) +" due to component: "+str(self.components[i])+" mapped to "+str(nextState.components[self.components1To2Mappings[i]]))
 				self.AddFact(VelocityXFact(i, nextState.components[self.components1To2Mappings[i]][1]-self.components[i][1]))
@@ -410,6 +472,7 @@ class State:
 			else:
 				self.AddFact(VelocityXFact(i, 0))
 				self.AddFact(VelocityYFact(i, 0))
+			'''
 	'''
 	def SetupEmptyFacts(self, nextState):
 		#Create appearing/disappearing based on mapping

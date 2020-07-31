@@ -23,7 +23,6 @@ public class RuleManager : MonoBehaviour
         for (int i = 0; i<rules.Count; i++)
         {
             Rule rule = rules[i];
-            //Debug.Log("Rule " + i + " " + rule.preEffect + " -> " + rule.postEffect);
             rule.RunRuleOnObjects(gridObjects);
         }
 

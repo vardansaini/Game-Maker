@@ -13,9 +13,10 @@ public class EmptyFact : Fact
     {
         if (!string.IsNullOrEmpty(fact))
         {
+            List<Fact> _facts = new List<Fact>();
             string[] separatingStrings = { ":", "|"};
             string[] vals = fact.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries);
-            List<Fact> _facts = new List<Fact>();
+            
             for (int i = 0; i < vals.Length; i++)
             {
                 if (vals[i].Contains("VelocityX"))
@@ -57,7 +58,20 @@ public class EmptyFact : Fact
                 facts = _facts.ToArray();
                 this.componentID = (facts[0].componentID);
             }
+            else
+            {
+                facts = new Fact[] { };
+            }
         }
+        else
+        {
+            facts = new Fact[] { };
+        }
+    }
+
+    public override string ToString()
+    {
+        return "EmptyFact "+facts.Length;
     }
 
 }

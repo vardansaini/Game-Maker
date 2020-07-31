@@ -172,6 +172,18 @@ namespace Assets.Scripts.Core
             
         }
 
+        public void RemoveGridObject(GridObject g)
+        {
+            if (gridFunctional[g.X, g.Y]!=null && gridFunctional[g.X, g.Y].Equals(g))
+            {
+                RemoveGridObject(true, g.X, g.Y);
+            }
+            else
+            {
+                RemoveGridObject(false, g.X, g.Y);
+            }
+        }
+
         public void RemoveGridObject(bool functional, int x, int y)
         {
             if (!ContainsGridObject(functional, x, y))

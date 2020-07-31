@@ -52,7 +52,6 @@ namespace Assets.Scripts.UI
 
         private void OnButtonClick(string tag)
         {
-            Debug.Log("I was here" + r);
             r += 1;
             // OnTab(); works but need to restart the whole program to see the result (Failed)
             // create dictionary map from string name of buttons and 
@@ -68,7 +67,6 @@ namespace Assets.Scripts.UI
 
         private void UpdateButtonState(string tag)
         {
-            Debug.Log("I came here to change color");
             foreach (KeyValuePair<string, Button> entry in tabs)
             {
                 if (entry.Key == tag)
@@ -81,7 +79,6 @@ namespace Assets.Scripts.UI
         private void deselectColor(Button button)
         {
             ColorBlock colors = button.colors;
-            Debug.Log("Button is not selected");
             colors.normalColor = Color.white;
             colors.highlightedColor = Color.white;
             button.colors = colors;
@@ -90,7 +87,6 @@ namespace Assets.Scripts.UI
         private void selectColor(Button button)
         {
             ColorBlock colors = button.colors;
-            Debug.Log("Button is selected");
             colors.normalColor = Color.green;
             colors.highlightedColor = Color.green;
             button.colors = colors;

@@ -19,11 +19,13 @@ public class PlaytestManager : MonoBehaviour
 
     public float FPS = 12;
 
+    public static PlaytestManager Instance;
 
 
     // Start is called before the first frame update
     void Awake()
     {
+        Instance = this;
         timerMax = 1 / FPS;
         VariableFact.testing = true;
         gridObjects = new List<GridObject>();
@@ -45,6 +47,28 @@ public class PlaytestManager : MonoBehaviour
                 gridObjects.Add(clone);
             }
 
+        }
+    }
+
+    public void AddObject(string name, Vector2 position)
+    {
+        GridObject clone = Instantiate(gridObjectPrefab);
+        clone.SetSprite(SpriteManager.Instance.GetSprite(name));
+        clone.SetPosition((int)position.x, (int)position.y);
+        clone.transform.position = new Vector3(position.x, position.y);
+        clone.transform.parent = transform;
+        gridObjects.Add(clone);
+    }
+
+    public void RemoveObject(int id)
+    {
+        if (id < gridObjects.Count && id >= 0)
+        {
+            GridObject g = gridObjects[id];
+            if (g != null)
+            {
+                gridObjects.Remove(g);
+            }
         }
     }
 

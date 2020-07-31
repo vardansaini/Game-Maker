@@ -68,7 +68,6 @@ def PredictedStateDistance(state1, state2, printIt=False):
 		#print ("Attempting to match pre fact "+str(preEffect))
 		if preEffect.componentID in prePerfectMatches:
 			#print ("Pre Rejected due to match of ID: "+str(preEffect.componentID))
-
 			toRemove.append(preEffect)
 		elif not isinstance(preEffect, RelationshipFactX) and not isinstance(preEffect, RelationshipFactY):
 			postFactToRemove = None
@@ -81,7 +80,7 @@ def PredictedStateDistance(state1, state2, printIt=False):
 				postToMatch.remove(postFactToRemove)
 				toRemove.append(preEffect)
 		else:
-			#print ("Pre Rejected due to else")
+			print ("Pre Rejected due to else")
 			toRemove.append(preEffect)
 
 	#Remove actions
@@ -215,42 +214,169 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 		#Determine if rule fired
 		fired, effectIds = engine.rules[r].ConditionSatisfiedCheck(nextPredictedState)
 
-		#print ("MODIFY CHECKING RULE (fired? "+str(fired)+" for ids: "+str(effectIds)+") "+str(engine.rules[r].preEffect)+"->"+str(engine.rules[r].postEffect))
+		print ("MODIFY CHECKING RULE (fired? "+str(fired)+" for ids: "+str(effectIds)+") "+str(engine.rules[r].preEffect)+"->"+str(engine.rules[r].postEffect))
 
 		#Would it be helpful if this rule had fired in this instance
 		if not fired:
-			#print ("MODIFY RULE HIT NOT FIRED "+str(engine.rules[r].preEffect)+"->"+str(engine.rules[r].postEffect))
+			print ("MODIFY RULE HIT NOT FIRED "+str(engine.rules[r].preEffect)+"->"+str(engine.rules[r].postEffect))
 			postEffectMatch = None
 			helpfulIfHadFired = False
-			for fact in postUnmatched: 
-				if engine.rules[r].postEffect.CheckMatchBesidesID(fact):
-					helpfulIfHadFired = True
-					postEffectMatch = fact
-					break
+
+			#Always assume an empty fact should be modified. TODO; fix this to rely on engine predictions.
+			if(isinstance(engine.rules[r].preEffect, EmptyFact)):
+				helpfulIfHadFired = True
+			else:
+				for fact in postUnmatched: 
+					if engine.rules[r].postEffect.CheckMatchBesidesID(fact):
+						helpfulIfHadFired = True
+						postEffectMatch = fact
+						break
+
 
 			if helpfulIfHadFired:
-				#print ("MODIFY RULE HIT HELPFUL HAD FIRED")
+				'''
+				print ("MODIFY RULE HIT HELPFUL HAD FIRED")
 
-				#print ("")
-				#for cond in engine.rules[r].conditions:
-				#	print ("   Current condition: "+str(cond))
+				print ("")
+				for cond in engine.rules[r].conditions:
+					print ("   Current condition: "+str(cond))
 
-				#for fact in nextPredictedState.GetAllFacts():
-				#	print ("   Fact: "+str(fact))
+				for fact in nextPredictedState.GetAllFacts():
+					print ("   Fact: "+str(fact))
+				'''
 				
-				#Find new set of conditions that would have led this rule to fire
+				#Find all sets of possible mappings
+				ruleIDsToStateIDsMappings = {}
+
+				maxMatchByRuleID = {}
+				maxMatchValueByRuleID = {}
+
+				anyMatch = False
+				for ruleID in engine.rules[r].conditionsByID.keys():
+					maxMatchByRuleID[ruleID] = []
+					maxMatchValueByRuleID[ruleID] = 0
+					ruleIDsToStateIDsMappings[ruleID] = {}
+
+					for componentID in nextPredictedState.factsByComponentID.keys():
+						matches = []
+						for cond in engine.rules[r].conditionsByID[ruleID]:
+							matched = False
+							for fact in nextPredictedState.factsByComponentID[componentID]:
+								if cond.CheckMatchBesidesID(fact):
+									matched = True
+									matches.append(cond)
+									anyMatch = True
+									break
+						if len(matches)>0:
+							if len(matches)>maxMatchValueByRuleID[ruleID]:
+								maxMatchByRuleID[ruleID] = [componentID]
+								maxMatchValueByRuleID[ruleID] = len(matches)
+							elif len(matches)==maxMatchValueByRuleID[ruleID]:
+								maxMatchByRuleID[ruleID].append(componentID)
+							ruleIDsToStateIDsMappings[ruleID][componentID] = matches
+
+				#At least one match, so we can produce a modification based on this
+				if anyMatch:
+
+					#First match according to maxMatches
+					ruleIdsMaxMatchingList = maxMatchByRuleID.keys()
+					ruleIDsMaxValues = maxMatchValueByRuleID.values()
+					sortedRuleIDs = [x for y, x in sorted(zip(ruleIDsMaxValues, ruleIdsMaxMatchingList))]
+					sortedRuleIDs.reverse()
+
+					illegalRuleIDs = []
+					illegalComponentIDs = []
+					matching = []
+					for i in range(0, len(sortedRuleIDs)):
+						if maxMatchValueByRuleID[sortedRuleIDs[i]]>0:
+							for cID in illegalComponentIDs:
+								if cID in maxMatchByRuleID[sortedRuleIDs[i]]:
+									maxMatchByRuleID[sortedRuleIDs[i]].remove(cID)
+
+
+							if len(maxMatchByRuleID[sortedRuleIDs[i]])==1:#if only one option
+								matching+=ruleIDsToStateIDsMappings[sortedRuleIDs[i]][maxMatchByRuleID[sortedRuleIDs[i]][0]]
+								illegalRuleIDs.append(sortedRuleIDs[i])
+								illegalComponentIDs.append(maxMatchByRuleID[sortedRuleIDs[i]][0])
+
+					print ("MODIFY RULE ANY MATCH")
+					possibleFinalSets = []#Sets of conditions
+					usedComponentIDs = []#componentIDs used in the same indexed set
+					usedRuleIDs = []#ruleIDs
+					for ruleID in engine.rules[r].conditionsByID.keys():
+						if not ruleID in illegalRuleIDs:
+							print ("	Modify Rule Checking rule ID: "+str(ruleID))
+							for componentID in ruleIDsToStateIDsMappings[ruleID].keys():
+								if not componentID in illegalComponentIDs:
+									print ("		Modify Rule Checking component ID: "+str(componentID))
+									print ("Possible Final sets: "+str(len(possibleFinalSets)))
+									newPossibleFinalSets = []
+									newUsedComponentIDs = []
+									newUsedRuleIDs = []
+
+									for i in range (0, len(possibleFinalSets)):
+										if not ruleID in usedRuleIDs[i] and not componentID in usedComponentIDs[i]:
+											potentialSet = list(possibleFinalSets[i])
+											potentialSet+= ruleIDsToStateIDsMappings[ruleID][componentID]
+
+											if not potentialSet in newPossibleFinalSets:
+												newPossibleFinalSets.append(potentialSet)
+												theseRuleIDs = list(usedRuleIDs[i])
+												theseRuleIDs.append(ruleID)
+												newUsedRuleIDs.append(theseRuleIDs)
+												theseComponentIDs = list(usedComponentIDs[i])
+												theseComponentIDs.append(componentID)
+												newUsedComponentIDs.append(theseComponentIDs)
+									possibleFinalSets.append(ruleIDsToStateIDsMappings[ruleID][componentID])
+									usedComponentIDs.append([componentID])
+									usedRuleIDs.append([ruleID])
+
+									for i in range(0, len(newPossibleFinalSets)):
+										if not newPossibleFinalSets[i] in possibleFinalSets:
+											possibleFinalSets.append(newPossibleFinalSets[i])
+											usedComponentIDs.append(newUsedComponentIDs[i])
+											usedRuleIDs.append(newUsedRuleIDs[i])
+					#Find maximum
+					print ("MODIFY RULE FIND MAXIMUM")
+					maxSets = []
+					maxVal = 0
+					for i in range(0, len(possibleFinalSets)):
+						if len(possibleFinalSets[i])>maxVal:
+							maxSets = [possibleFinalSets[i]]
+							maxVal = len(possibleFinalSets[i])
+						elif len(possibleFinalSets[i])==maxVal:
+							maxSets.append(possibleFinalSets[i])
+
+					for maxSet in maxSets:
+						clonedEngine = engine.clone()
+						clonedEngine.rules[r] = Rule(maxSet+matching, clonedEngine.rules[r].preEffect, clonedEngine.rules[r].postEffect)
+						if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
+							neighbors.append(clonedEngine)
+							#for cond in clonedEngine.rules[r].conditions: 
+							#	print ("	MODIFY RULE cond: "+str(cond))
+					if len(maxSets)==0 and len(matching)>0:#Just use this matching:
+						clonedEngine = engine.clone()
+						clonedEngine.rules[r] = Rule(matching, clonedEngine.rules[r].preEffect, clonedEngine.rules[r].postEffect)
+						if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
+							neighbors.append(clonedEngine)
+
+
+
+
+				'''
 				newConditions = []
 				preEffect = engine.rules[r].preEffect.clone()
 				for cond in engine.rules[r].conditions:
 					matched = False
-					#print ("Checking cond: "+str(cond))
+					print ("Checking cond: "+str(cond))
 
 					for fact in nextPredictedState.GetAllFacts():
 						if cond.CheckMatchBesidesID(fact):
 							matched = True
 							newConditions.append(cond)
-							#print ("    adding because it matched "+str(fact))
+							print ("    adding because it matched "+str(fact))
 							break
+					
 					if not matched and not isinstance(cond, AnimationFact) and not isinstance(cond, VariableFact):#TODO; alter this if we add in scores or resources
 						#check if either of the two inequalities of this condition match
 						inequalities = [InequalityFact(cond, cond.GetValue(), ">="), InequalityFact(cond, cond.GetValue(), "<=")]
@@ -265,13 +391,17 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 									break
 							if matched:
 								break
-				#print ("MODIFY RULE HIT NEW CONDITIONS: "+str(len(newConditions)))
+				print ("MODIFY RULE HIT NEW CONDITIONS: "+str(len(newConditions)))
 				
 				if len(newConditions)>0:#TODO; threshold parameter?
 					clonedEngine = engine.clone()
 					clonedEngine.rules[r] = Rule(newConditions, preEffect, clonedEngine.rules[r].postEffect)
 					if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
 						neighbors.append(clonedEngine)
+						print("MODIFY RULE HIT ADDED NEW MODIFIED RULE: "+str(preEffect)+"->"+str(clonedEngine.rules[r].postEffect))
+						for cond in clonedEngine.rules[r].conditions: 
+							print ("	MODIFY RULE cond: "+str(cond))
+				'''
 		#else: TODO; if it did fire and that made things worse, add hidden variable
 	return neighbors
 
@@ -360,16 +490,20 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 
 	for preEffect in preUnmatched:
 		if preEffect.componentID in prePerfectMatches:
+			#print ("Removing due to component ID perfect match: "+ str(preEffect))
 			toRemove.append(preEffect)
 		elif not isinstance(preEffect, RelationshipFactX) and not isinstance(preEffect, RelationshipFactY):
-			postFactToRemove = None
-			for fact2 in postToMatch:
-				if preEffect.CheckMatchBesidesID(fact2):
-					postFactToRemove = fact2
-					break
-			if not postFactToRemove==None:
-				postToMatch.remove(postFactToRemove)
-				toRemove.append(preEffect)
+			if isinstance(preEffect, AnimationFact):
+				postFactToRemove = None
+				for fact2 in postToMatch:
+					if preEffect.CheckMatchBesidesID(fact2):
+						postFactToRemove = fact2
+						break
+				if not postFactToRemove==None:
+					postToMatch.remove(postFactToRemove)
+					#print ("Removing due to post perfect match: "+ str(preEffect)+" with "+str(postFactToRemove))
+					toRemove.append(preEffect)
+			
 		else:
 			toRemove.append(preEffect)
 
@@ -400,16 +534,18 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 		if postEffect.componentID in postPerfectMatches:
 			toRemove.append(postEffect)
 		elif not isinstance(postEffect, RelationshipFactX) and not isinstance(postEffect, RelationshipFactY):
-			preFactToRemove = None
-			for fact in preToMatch:
-				if postEffect.CheckMatchBesidesID(fact):
-					preFactToRemove = fact
-					break
-			if not preFactToRemove==None:
-				preToMatch.remove(preFactToRemove)
-				toRemove.append(postEffect)
+			if isinstance(postEffect, AnimationFact):
+				preFactToRemove = None
+				for fact in preToMatch:
+					if postEffect.CheckMatchBesidesID(fact):
+						preFactToRemove = fact
+						break
+				if not preFactToRemove==None:
+					preToMatch.remove(preFactToRemove)
+					toRemove.append(postEffect)
 		else:
 			toRemove.append(postEffect)
+		
 
 	#Remove actions
 	for fact in postUnmatched:
@@ -440,19 +576,19 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 				listAllFacts.append(fact)
 			#remove all of them
 			condition = nextPredictedState.GetAllFacts()
-			#for c in condition:
-			#	print ("ADDING CONDITION: "+str(c))
 
 			clonedEngine = engine.clone()
-			clonedEngine.addRule(Rule(condition, EmptyFact(listAllFacts), EmptyFact([])))
+			disappearRule = Rule(condition, EmptyFact(listAllFacts), EmptyFact([]))
+			if not disappearRule in clonedEngine.rules:
+				clonedEngine.addRule(disappearRule)
 
-			if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
-				neighbors.append(clonedEngine)
+				if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
+					neighbors.append(clonedEngine)
 
 	#Appear
 	for cid in range(0, len(trueNextState.components)):
 		if not cid in postPerfectMatches and ((not trueNextState.components[cid][0] in preComponentNamesDict.keys()) or (not preComponentNamesDict[trueNextState.components[cid][0]]==postComponentNamesDict[trueNextState.components[cid][0]])):
-			minRelationshipFacts = trueNextState.GetMinRelationshipFactsToComponents(cid, nextPredictedState.components)
+			minRelationshipFacts = trueNextState.GetMinRelationshipFactsToComponentsInNextFrame(cid, nextPredictedState.components)
 
 			condition = nextPredictedState.GetAllFacts()
 
@@ -476,7 +612,7 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 					c1Name = nextPredictedState.components[cid][0]
 					c2Name = trueNextState.components[cid2][0]
 					if (not c1Name in postComponentNamesDict.keys() or not preComponentNamesDict[c1Name]==postComponentNamesDict[c1Name]) and (not c2Name in preComponentNamesDict.keys() or not preComponentNamesDict[c2Name]==postComponentNamesDict[c2Name]):
-						minRelationshipFacts = trueNextState.GetMinRelationshipFactsToComponents(cid2, nextPredictedState.components)
+						minRelationshipFacts = trueNextState.GetMinRelationshipFactsToComponentsInNextFrame(cid2, nextPredictedState.components)
 
 						condition = nextPredictedState.GetAllFacts()
 						#add all of them after the relationship facts
@@ -490,10 +626,12 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 							listAllFacts.append(fact)
 
 						clonedEngine = engine.clone()
-						clonedEngine.addRule(Rule(condition, EmptyFact(listAllFacts), EmptyFact(minRelationshipFacts)))
+						transformRule = Rule(condition, EmptyFact(listAllFacts), EmptyFact(minRelationshipFacts))
+						if not transformRule in clonedEngine.rules:
+							clonedEngine.addRule(transformRule)
 
-						if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
-							neighbors.append(clonedEngine)			
+							if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
+								neighbors.append(clonedEngine)			
 
 
 	print ("Neighbors: "+str(len(neighbors)))
@@ -565,14 +703,15 @@ def LearnEngine(gameName):
 
 	#Move all actions one down
 	trueStateSequence = []
+	#trueStateSequence.append(State(stateSequence[0].components, stateSequence[0].bgColor, [False, False, False, False, False]))
 	#TODO; this solution only fixes velocity changes, not changing changes
 	for i in range(0, len(stateSequence)-1):
 		if stateSequence[i].action[0]!=False or stateSequence[i].action[1]!=False or stateSequence[i].action[2]!=False or stateSequence[i].action[3]!=False or stateSequence[i].action[4]!=False:
 			trueStateSequence.append(State(stateSequence[i].components, stateSequence[i].bgColor, stateSequence[i].action))
-			trueStateSequence.append(State(stateSequence[i].components, stateSequence[i].bgColor, [False, False, False, False, False]))
+			#trueStateSequence.append(State(stateSequence[i].components, stateSequence[i].bgColor, [False, False, False, False, False]))
 		else:
 			trueStateSequence.append(State(stateSequence[i].components, stateSequence[i].bgColor, stateSequence[i].action))
-	trueStateSequence.append(stateSequence[-1])
+	#trueStateSequence.append(stateSequence[-1])
 
 	stateSequence = trueStateSequence
 
@@ -596,43 +735,22 @@ def LearnEngine(gameName):
 	closedEngineList = []
 
 	for stateIndex in range(0, len(stateSequence)-1):
-		print ("Setting up state: "+str(stateIndex))
 		state = stateSequence[stateIndex]
 		nextState = stateSequence[stateIndex+1]
 		state.SetupDeltaFacts(nextState)
+
+	#6/16/20 set up velocity in frame 0
+	for i in range(0, len(stateSequence[0].components)):
+		stateSequence[0].AddFact(VelocityXFact(i, 0))
+		stateSequence[0].AddFact(VelocityYFact(i, 0))
 	
-	#Initial Sloppy Engine learning
-
-
-	for stateIndex in range(0, len(stateSequence)-1):
-		print ("State "+str(stateIndex))
-
-		for fact in stateSequence[stateIndex].GetAllFacts():
-			print ("Fact: "+str(fact))
 	
-	#Set initial velocity rules from the first frame
-	'''
-	firstStateFacts = stateSequence[0].GetAllFacts()
-	firstStateFactsMinusVelocityFacts = []
-	newVelocityRulePostEffects = []
-	for fact in firstStateFacts:	
-		if isinstance(fact, VelocityYFact) or isinstance(fact, VelocityXFact):
-			if not fact.velocityValue==0:
-				newVelocityRulePostEffects.append(fact)
-		else:
-			firstStateFactsMinusVelocityFacts.append(fact)
 
-	for postEffect in newVelocityRulePostEffects:
-		approximatedPreEffect = postEffect.clone()
-		approximatedPreEffect.velocityValue = 0
-
-		condition = list(firstStateFactsMinusVelocityFacts)
-		condition.append(approximatedPreEffect)
-		currEngine.addRule(Rule(condition, approximatedPreEffect, postEffect))
-	'''
 	remainingDifferencesInMappedComponents = True
 
 	#Add velocity at final state (has to match # of velocity facts)
+	
+	'''#Removed on 6/16/20
 	for c in range(0, len(stateSequence[-1].components)):
 		if c in stateSequence[-2].components2To1Mappings.keys():
 			c2 = stateSequence[-2].components2To1Mappings[c]
@@ -650,6 +768,9 @@ def LearnEngine(gameName):
 			stateSequence[-1].AddFact(VelocityXFact(c, 0))
 			stateSequence[-1].AddFact(VelocityYFact(c, 0))
 	'''
+
+	'''
+	#Initial Sloppy Engine learning
 	while remainingDifferencesInMappedComponents:
 		differenceNotFound = 0
 		for stateIndex in range(0, len(stateSequence)-1):
@@ -727,10 +848,13 @@ def LearnEngine(gameName):
 	
 	#Refinement
 	while currStateIndex<len(stateSequence)-1:
-		#currState.SetAction(stateSequence[currStateIndex].action)#Set action
+		currState.SetAction(stateSequence[currStateIndex].action)#Set action
 		
+		#print ("State: "+str(currStateIndex))
+		#for fact in currState.GetAllFacts():
+		#	print("		STATE FACT: "+str(fact))
+
 		predictedState = currEngine.predict(currState)#Update facts from rules
-		
 		
 		#Get error between predicted next frame and true next frame
 		error = PredictedStateDistance(predictedState, stateSequence[currStateIndex+1], True)
@@ -738,7 +862,7 @@ def LearnEngine(gameName):
 
 		if error<=allowedErrorRate:
 			currStateIndex+=1
-			currState = stateSequence[currStateIndex]#predictedState#predicted state was close enough to true next state
+			currState = predictedState#predicted state was close enough to true next state
 			
 		else:
 			#Engine Learning
@@ -752,10 +876,10 @@ def LearnEngine(gameName):
 			iteration = 0
 
 
-			while len(openEngineHeapQ)>0 and unfinished and iteration<10:
+			while len(openEngineHeapQ)>0 and unfinished and iteration<50:
 				engineTuple = heappop(openEngineHeapQ)
 				print ("")
-				print ("-POPPED NEW ENGINE-")
+				print ("-POPPED NEW ENGINE- Iteration: "+str(iteration))
 
 				engine = engineTuple[1]
 				#for rule in engine.rules:           
@@ -764,7 +888,7 @@ def LearnEngine(gameName):
 				closedEngineList.append(engine)
 				print ("")
 				print ("prediction")
-				predictedState = engine.predict(currState)
+				predictedState = engine.predictNoVelocityUpdate(currState)
 
 				#DrawFrame(currState.GetImageFromFacts(), 'currEngineCurrState'+str(iteration)+'.png')
 				#DrawFrame(predictedState.GetImageFromFacts(), 'currEnginepredictedState'+str(iteration)+'.png')
@@ -775,8 +899,10 @@ def LearnEngine(gameName):
 				numNeighbors = 0#test only
 				for neighborEngine in neighbors:
 					print ("  Checking Neighbor Engine "+str(numNeighbors)+" "+str(len(neighborEngine.rules)))
-					#for rule in neighborEngine.rules:
-					#	print ("	Rule: "+str(rule.preEffect)+"->"+str(rule.postEffect))
+					for rule in neighborEngine.rules:
+						print ("	Rule: "+str(rule.preEffect)+"->"+str(rule.postEffect))
+						for cond in rule.conditions:
+							print("			Rule Condition: "+str(cond))
 					
 					neighborPredictedState = neighborEngine.predict(currState)
 
@@ -866,11 +992,12 @@ def LearnAndCovertEngine(gameName):
 	    json.dump(data, outfile)
 
 def main():
-	gameName = "test"
+	gameName = "test"#todo; get this from port message
 	maxSleep = 0.5
 	#todo; make this a separate python file
 	start = time.time()
 	prevNumberOfFrames = 0 
+	prevString = ""
 	while True:
 		elapsed = 0
 		while elapsed < maxSleep:
@@ -885,13 +1012,21 @@ def main():
 			for i in range(0, len(splits)-1):
 				directory+=""+splits[i]+"/"
 			directory+="Assets/StreamingAssets/Frames/"
-
+			currString = ""
 			currentNumberOfFrames = 0
 			for filename in glob.glob(directory+gameName+"*.csv"):#Count frames
 				currentNumberOfFrames+=1
+				source = open(filename, "r")
+				reader = csv.reader(source)
+				for row in reader: 
+					currString+=str(row)
+				source.close()
 			if currentNumberOfFrames>1 and currentNumberOfFrames!=prevNumberOfFrames:
 				prevNumberOfFrames = currentNumberOfFrames
 				LearnAndCovertEngine(gameName)
+			elif len(prevString)>0 and currString!=prevString:
+				LearnAndCovertEngine(gameName)
+			prevString = currString
 
 if __name__ == '__main__':
 	main()

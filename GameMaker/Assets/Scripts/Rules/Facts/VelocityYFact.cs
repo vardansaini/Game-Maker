@@ -18,4 +18,9 @@ public class VelocityYFact : Fact
     {
         return g.VY == velocityVal;
     }
+
+    public override string ToString()
+    {
+        return "VelocityYFact " + velocityVal;
+    }
 }

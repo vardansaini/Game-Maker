@@ -70,6 +70,7 @@ public class VariableFact : Fact
         {
             return true;
         }
+
         return false;
     }
 

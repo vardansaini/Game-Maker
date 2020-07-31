@@ -44,15 +44,19 @@ namespace Assets.Scripts.Core
             foreach(TagData tagData in tagList)
             {
                 tagDictionary[tagData.Tag] = tagData.Sprites;
-                foreach(SpriteData sprite in tagData.Sprites)
+                foreach (SpriteData sprite in tagData.Sprites)
+                {
                     spriteDictionary[sprite.Name] = sprite;
+                }
             }
         }
 
         public SpriteData GetSprite(string name)
         {
-			if (!spriteDictionary.ContainsKey (name)) {
-				return spriteDictionary ["Goomba"];
+            // Debug.Log("Name: " + name);
+
+            if (!spriteDictionary.ContainsKey (name)) {
+				return spriteDictionary ["Ground"];
 			}
             return spriteDictionary[name];
         }

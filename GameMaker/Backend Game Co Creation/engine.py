@@ -182,12 +182,16 @@ class Engine:
 
 							#add the rest
 							posx, posy = GetTopLeftCorner(predictionState.GetSingleComponentFromFactsByID(cid), rule.postEffect.replacementFacts[0], rule.postEffect.replacementFacts[1], animationFact.width, animationFact.height)
-							predictionState.AddFact(PositionXFact(newComponentID, posx))
-							predictionState.AddFact(PositionYFact(newComponentID, posy))
-							for i in range(2, len(rule.postEffect.replacementFacts)):
-								cloneFact = rule.postEffect.replacementFacts[i].clone()
-								cloneFact.componentID = newComponentID
-								predictionState.AddFact(cloneFact)
+							posXFact = PositionXFact(newComponentID, posx)
+							posYFact = PositionYFact(newComponentID, posy)
+							if not predictionState.AnythingAtPosition(posXFact, posYFact):
+								print("Nothing was at this position: "+str(posx)+", "+str(posy))
+								predictionState.AddFact(posXFact)
+								predictionState.AddFact(posYFact)
+								for i in range(2, len(rule.postEffect.replacementFacts)):
+									cloneFact = rule.postEffect.replacementFacts[i].clone()
+									cloneFact.componentID = newComponentID
+									predictionState.AddFact(cloneFact)
 					else:
 						for cid in conditionIds:
 							#Appear
@@ -235,7 +239,13 @@ class Engine:
 	#Alters state with the set of current rules then updates that state
 	def predict(self, state):
 		predictionState=state.clone()
+		predictionState = self.ruleActivation(predictionState)
 		predictionState = self.velocityUpdate(predictionState)
+		predictionState.Update()
+		return predictionState
+
+	def predictNoVelocityUpdate(self, state):
+		predictionState=state.clone()
 		predictionState = self.ruleActivation(predictionState)
 		predictionState.Update()
 		return predictionState
