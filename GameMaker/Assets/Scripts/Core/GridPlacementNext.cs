@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace Assets.Scripts.Core
 {
-	public class GridPlacement : Lockable
+	public class GridPlacementNext : Lockable
 	{
 		[HideInInspector]
 		public SpriteData CurrentSprite; // Initialized by the sprite menu
 
 		[SerializeField]
-		private GridObject previewObject;
+		private GridObjectNext previewObject;
 		[SerializeField]
 		private DialogueMenu dialogueMenu;
 
@@ -48,10 +48,8 @@ namespace Assets.Scripts.Core
 				int spriteX = 0, spriteY = 0;
 				for (float i = 0.25f; i <= 1; i += 0.25f)
 				{
-
 					//spriteX = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.x, 22+mousePosition.x, i) - (float)CurrentSprite.Width / 2);
-
-					spriteX = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.x, mousePosition.x, i) - (float)CurrentSprite.Width / 2);
+					spriteX = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.x, mousePosition.x-22-2, i) - (float)CurrentSprite.Width / 2);
 					spriteY = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.y, mousePosition.y, i) - (float)CurrentSprite.Height / 2);
 
 					if (mode == PlacementMode.Level)
@@ -65,21 +63,21 @@ namespace Assets.Scripts.Core
 							// Set deletion layer if not set, prioritizing the functional layer
 							if (deletionLayer == null)
 							{
-								if (GridManager.Instance.ContainsGridObject(true, mouseX, mouseY))
+								if (GridNext.Instance.ContainsGridObject(true, mouseX, mouseY))
 									deletionLayer = true;
-								else if (GridManager.Instance.ContainsGridObject(false, mouseX, mouseY))
+								else if (GridNext.Instance.ContainsGridObject(false, mouseX, mouseY))
 									deletionLayer = false;
 							}
 
 							// Remove existing grid object based on deletion layer
 							if (deletionLayer != null)
-								if (GridManager.Instance.ContainsGridObject(deletionLayer.Value, mouseX, mouseY))
-									GridManager.Instance.RemoveGridObject(deletionLayer.Value, mouseX, mouseY);
+								if (GridNext.Instance.ContainsGridObject(deletionLayer.Value, mouseX, mouseY))
+									GridNext.Instance.RemoveGridObject(deletionLayer.Value, mouseX, mouseY);
 						}
-						else if (Input.GetMouseButton(0) && CurrentSprite.HoldToPlace && GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY))
+						else if (Input.GetMouseButton(0) && CurrentSprite.HoldToPlace && GridNext.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY))
 						{
 							// Place new grid object (if hold-to-place)
-							GridManager.Instance.AddGridObject(CurrentSprite, spriteX, spriteY, true);
+							GridNext.Instance.AddGridObject(CurrentSprite, spriteX, spriteY, true);
 						}
 
 					}
@@ -88,8 +86,8 @@ namespace Assets.Scripts.Core
 				if (mode == PlacementMode.Level)
 				{
 					// Place new grid object (if not hold-to-place)
-					if (Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1) && GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY))
-						GridManager.Instance.AddGridObject(CurrentSprite, spriteX, spriteY, true);
+					if (Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1) && GridNext.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY))
+						GridNext.Instance.AddGridObject(CurrentSprite, spriteX, spriteY, true);
 
 					// Remove deletion layer
 					if (Input.GetMouseButtonUp(1))
@@ -99,7 +97,7 @@ namespace Assets.Scripts.Core
 				if (CurrentSprite.Sprite != previewObject.Data.Sprite)
 					previewObject.SetSprite(CurrentSprite);
 				previewObject.SetPosition(spriteX, spriteY);
-				previewObject.gameObject.SetActive(GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY));
+				previewObject.gameObject.SetActive(GridNext.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY));
 			}
 
 			// Store mouse position
