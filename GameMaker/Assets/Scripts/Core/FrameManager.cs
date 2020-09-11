@@ -47,6 +47,14 @@ namespace Assets.Scripts.UI
         {
             Instance = this;
         }
+        public static int GetPrevFrame()
+        {
+            return frame - 1;
+        }
+        public static int GetNextFrame()
+        {
+            return frame + 1;
+        }
         public static int GetCurrentFrame()
         {
             return frame;

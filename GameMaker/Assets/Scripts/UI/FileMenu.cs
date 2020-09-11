@@ -76,25 +76,77 @@ namespace Assets.Scripts.UI
 
             dialogueMenu.CloseDialogue();
         }
+        public string getFile(int inputFile)
+        {
+            int fileToGet = inputFile;
+            string filePath = Constants.directory + GameName + " " + fileToGet + ".csv";
+            return filePath;
+        }
 
         public void ForRealLoad() {
             LogHandler.Instance.WriteLine("Load Grid Start:  time = " + Time.time);
             // Check level exists
-            string filePath = Constants.directory + GameName + " " + FrameManager.GetCurrentFrame() + ".csv";
-            if (File.Exists(filePath))
+            //string filePath = Constants.directory + GameName + " " + FrameManager.GetCurrentFrame() + ".csv";
+            if (File.Exists(getFile(FrameManager.GetNextFrame())))
             {
                 GridManager.Instance.ClearPreview();
                 // - Parse file
-                string[] lines = File.ReadAllLines(filePath);
+                string[] lines = File.ReadAllLines(getFile(FrameManager.GetNextFrame()));
+                FrameManager.Instance.SetKeys(lines[0]);
+                //Debug.Log(lines[0]); actions
+                string[] gridSize = lines[1].Split(',');
+                //Debug.Log(lines[1]); grid size
+                //GridManager.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
+                //GridPrev.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
+                GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
+                for (int i = 2; i < lines.Length; i++)
+                {
+                    string[] line = lines[i].Split(',');
+                    //GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    //GridPrev.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    GridNext.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                }
+
+            }
+            if (File.Exists(getFile(FrameManager.GetPrevFrame())))
+            {
+                GridManager.Instance.ClearPreview();
+                // - Parse file
+                string[] lines = File.ReadAllLines(getFile(FrameManager.GetPrevFrame()));
+                FrameManager.Instance.SetKeys(lines[0]);
+                //Debug.Log(lines[0]); actions
+                string[] gridSize = lines[1].Split(',');
+                //Debug.Log(lines[1]); grid size
+                //GridManager.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
+                GridPrev.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
+                //GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
+                for (int i = 2; i < lines.Length; i++)
+                {
+                    string[] line = lines[i].Split(',');
+                    //GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    GridPrev.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    //GridNext.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                }
+
+            }
+            if (File.Exists(getFile(FrameManager.GetCurrentFrame())))
+            {
+                GridManager.Instance.ClearPreview();
+                // - Parse file
+                string[] lines = File.ReadAllLines(getFile(FrameManager.GetCurrentFrame()));
                 FrameManager.Instance.SetKeys(lines[0]);
                 //Debug.Log(lines[0]); actions
                 string[] gridSize = lines[1].Split(',');
                 //Debug.Log(lines[1]); grid size
                 GridManager.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
+                //GridPrev.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
+                //GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
                 for (int i = 2; i < lines.Length; i++)
                 {
                     string[] line = lines[i].Split(',');
                     GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    //GridPrev.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    //GridNext.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
                 }
 
             }
