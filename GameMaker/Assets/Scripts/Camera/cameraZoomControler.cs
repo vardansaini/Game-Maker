@@ -11,15 +11,12 @@ namespace Assets.Scripts.UI
         private Camera cam;
         private float targetZoom;
         private float zoomFactor = 3f;
-        [SerializeField] private float zoomLerpSpeed = 10;
-        private int turnIdentifier = 0;
         // Start is called before the first frame update
         void Start()
         {
 
             cam = Camera.main;
             targetZoom = cam.orthographicSize;
-            turnIdentifier = 0;
 
         }
 
@@ -27,26 +24,19 @@ namespace Assets.Scripts.UI
         void Update()
         {
             
-                float scrollData;
-                scrollData = Input.GetAxis("Mouse ScrollWheel");
-            Debug.Log(scrollData);
-            if (scrollData == 0)
+            float scrollData;
+            scrollData = Input.GetAxis("Mouse ScrollWheel");
+            targetZoom -= scrollData * zoomFactor;
+            if (targetZoom < 5f)
             {
-                Debug.Log("I am in 1st section");
-                //targetZoom = Mathf.Clamp(targetZoom, 5f, 18f);
-                //cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime);
-                cam.orthographicSize = Mathf.Clamp(targetZoom, 5f, 18f);
+                targetZoom = 5f;
             }
-            else
+            if (targetZoom > 18f)
             {
-                Debug.Log("I am in 2nd section");
-                targetZoom -= scrollData * zoomFactor;
-                Debug.Log(targetZoom);
-                cam.orthographicSize = Mathf.Clamp(targetZoom, 5f, 18f);
-                //cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime);
-                
-
+                targetZoom = 18f;
             }
+            //Debug.Log(targetZoom);
+            cam.orthographicSize = Mathf.Clamp(targetZoom, 5f, 18f);
         }
     }
 }
