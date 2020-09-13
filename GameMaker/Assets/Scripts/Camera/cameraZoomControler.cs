@@ -30,6 +30,7 @@ namespace Assets.Scripts.UI
             //Debug.Log(scrollData);
 
             targetZoom -= scrollData * zoomFactor;
+            Debug.Log(targetZoom);
             targetZoom = Mathf.Clamp(targetZoom, 5f, 18f);
             cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, targetZoom, Time.deltaTime);           
         }

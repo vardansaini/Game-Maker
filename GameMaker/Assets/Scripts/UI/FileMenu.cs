@@ -89,7 +89,7 @@ namespace Assets.Scripts.UI
             //string filePath = Constants.directory + GameName + " " + FrameManager.GetCurrentFrame() + ".csv";
             if (File.Exists(getFile(FrameManager.GetNextFrame())))
             {
-                GridManager.Instance.ClearPreview();
+                GridNext.Instance.ClearPreview();
                 // - Parse file
                 string[] lines = File.ReadAllLines(getFile(FrameManager.GetNextFrame()));
                 FrameManager.Instance.SetKeys(lines[0]);
@@ -106,7 +106,12 @@ namespace Assets.Scripts.UI
                     //GridPrev.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
                     GridNext.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
                 }
+            
 
+            }
+            else
+            {
+                GridNext.Instance.ClearGrid();
             }
             if (File.Exists(getFile(FrameManager.GetPrevFrame())))
             {
@@ -131,7 +136,7 @@ namespace Assets.Scripts.UI
             }
             if (File.Exists(getFile(FrameManager.GetCurrentFrame())))
             {
-                GridManager.Instance.ClearPreview();
+                GridNext.Instance.ClearPreview();
                 // - Parse file
                 string[] lines = File.ReadAllLines(getFile(FrameManager.GetCurrentFrame()));
                 FrameManager.Instance.SetKeys(lines[0]);
@@ -166,6 +171,10 @@ namespace Assets.Scripts.UI
 
         public void OnClear()
         {
+           if (File.Exists(getFile(FrameManager.GetCurrentFrame()))){
+                File.Delete(getFile(FrameManager.GetCurrentFrame()));
+            }
+
             GridManager.Instance.ClearGrid();
         }
 
