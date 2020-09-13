@@ -136,7 +136,7 @@ namespace Assets.Scripts.UI
             }
             if (File.Exists(getFile(FrameManager.GetCurrentFrame())))
             {
-                GridNext.Instance.ClearPreview();
+                GridManager.Instance.ClearPreview();
                 // - Parse file
                 string[] lines = File.ReadAllLines(getFile(FrameManager.GetCurrentFrame()));
                 FrameManager.Instance.SetKeys(lines[0]);
