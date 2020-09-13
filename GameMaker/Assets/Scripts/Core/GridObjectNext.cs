@@ -44,7 +44,9 @@ namespace Assets.Scripts.Core
             Y = y;
 			W = Data.Width;
 			H = Data.Height;
-
+            //Debug.Log(X);
+            Debug.Log(Data.Width);
+            //transform.position = new Vector2((x + (float)Data.Width / 2) + x + (float)Data.Width + 2, y + (float)Data.Height / 2);
             transform.position = new Vector2((x + (float)Data.Width / 2)+22+2 , y + (float)Data.Height / 2);
             //transform.position = new Vector2(((x + (float)Data.Width / 2)-22)-2, y + (float)Data.Height / 2);
         }

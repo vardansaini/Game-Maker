@@ -48,9 +48,9 @@ namespace Assets.Scripts.Core
 				int spriteX = 0, spriteY = 0;
 				for (float i = 0.25f; i <= 1; i += 0.25f)
 				{
-					spriteX = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.x, 22+mousePosition.x+2, i) - (float)CurrentSprite.Width / 2);
+					//spriteX = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.x, 22+mousePosition.x+2, i) - (float)CurrentSprite.Width / 2);
 					//spriteX = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.x, mousePosition.x, i) - (float)CurrentSprite.Width / 2);
-					spriteY = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.y, mousePosition.y, i) - (float)CurrentSprite.Height / 2);
+					//spriteY = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.y, mousePosition.y, i) - (float)CurrentSprite.Height / 2);
 
 					if (mode == PlacementMode.Level)
 					{
