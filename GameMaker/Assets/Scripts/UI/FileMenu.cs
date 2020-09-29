@@ -103,6 +103,9 @@ namespace Assets.Scripts.UI
             else
             {
                 GridNext.Instance.ClearGrid();
+                //GridNext.Instance.DestroyThisGrid();
+
+
             }
             if (File.Exists(getFile(FrameManager.GetPrevFrame())))
             {
@@ -163,7 +166,8 @@ namespace Assets.Scripts.UI
 
         public void OnClear()
         {
-           if (File.Exists(getFile(FrameManager.GetCurrentFrame()))){
+           if (File.Exists(getFile(FrameManager.GetCurrentFrame())))
+            {
                 File.Delete(getFile(FrameManager.GetCurrentFrame()));
             }
 

@@ -360,6 +360,9 @@ namespace Assets.Scripts.Core
         {
             return gridObjects.ToArray();
         }
+        public void DestroyThisGrid() {
+            Destroy(gameObject);
+        }
     }
 
 
