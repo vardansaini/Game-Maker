@@ -16,7 +16,6 @@ class Rule:
 		self.conditions = _conditions
 		self.preEffect = _preEffect
 		self.postEffect = _postEffect
-		self.framesWhereRuleCouldHaveFired = []
 
 		self.conditionsByID = {}
 		for cond in self.conditions:
@@ -48,6 +47,11 @@ class Rule:
 		return Rule(cloneConditions, clonePreEffect, clonePostEffect)
 
 	def ConditionSatisfiedCheck(self, state):
+		#print ("ConditionSatisfiedCheck top")
+
+		#for fact in state.GetAllFacts():
+		#	print ("	State Facts: "+str(fact))
+
 		#Check if all of the shared facts for each componentID in this rule are matched in this state, if any don't return false
 		effectIds = []
 		for cKey in self.conditionsByID.keys():
@@ -71,9 +75,19 @@ class Rule:
 							if not stateFact.componentID in newComponentIDs and ruleFact.CheckMatchBesidesID(stateFact):
 								#print ("Found match: :"+str(stateFact))
 								newComponentIDs.append(stateFact.componentID)
+						for stateFact in state.relationshipFacts:
+							if compId == stateFact.componentID:
+								if not stateFact.componentID in newComponentIDs and ruleFact.CheckMatchBesidesID(stateFact):
+									newComponentIDs.append(stateFact.componentID)
 
 					if len(newComponentIDs)==0:
 						#print ("Failed on 2: "+str(ruleFact)+" conditions: "+str(componentIDs))
+						'''
+						if isinstance(ruleFact, RelationshipFactX):
+							for compId in componentIDs:
+								for stateFact in state.factsByComponentID[compId]:
+									print ("	Failed on 2 StateFact: "+str(stateFact))
+						'''
 						return False, []
 					else:
 						componentIDs = newComponentIDs
@@ -158,6 +172,7 @@ class Engine:
 				if isinstance(rule.preEffect, EmptyFact) and isinstance(rule.postEffect, EmptyFact):
 					if len(rule.preEffect.replacementFacts)>0 and len(rule.postEffect.replacementFacts)==0:
 						#Disappear
+						#print ("   CHECKING DISAPPEAR")
 						for cid in conditionIds:
 							#Remove each fact in here
 							for fact in rule.preEffect.replacementFacts:
@@ -185,7 +200,7 @@ class Engine:
 							posXFact = PositionXFact(newComponentID, posx)
 							posYFact = PositionYFact(newComponentID, posy)
 							if not predictionState.AnythingAtPosition(posXFact, posYFact):
-								print("Nothing was at this position: "+str(posx)+", "+str(posy))
+								#print("Nothing was at this position: "+str(posx)+", "+str(posy))
 								predictionState.AddFact(posXFact)
 								predictionState.AddFact(posYFact)
 								for i in range(2, len(rule.postEffect.replacementFacts)):
@@ -239,15 +254,19 @@ class Engine:
 	#Alters state with the set of current rules then updates that state
 	def predict(self, state):
 		predictionState=state.clone()
+		predictionState.CreateRelationshipFacts()
 		predictionState = self.ruleActivation(predictionState)
 		predictionState = self.velocityUpdate(predictionState)
 		predictionState.Update()
+		predictionState.CreateRelationshipFacts()
 		return predictionState
 
 	def predictNoVelocityUpdate(self, state):
 		predictionState=state.clone()
+		predictionState.CreateRelationshipFacts()
 		predictionState = self.ruleActivation(predictionState)
 		predictionState.Update()
+		predictionState.CreateRelationshipFacts()
 		return predictionState
 	
 	#TODO; make more efficient

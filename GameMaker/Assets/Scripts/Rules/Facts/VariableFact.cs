@@ -70,6 +70,26 @@ public class VariableFact : Fact
         {
             return true;
         }
+        else if ((!testing && variableName.Equals("spacePrev") && variableValue[0] == 1 == FrameManager.SpacePrev) || (testing && variableName.Equals("spacePrev") && variableValue[0] == 1 == PlaytestManager.SpacePrev))
+        {
+            return true;
+        }
+        else if ((!testing && variableName.Equals("upPrev") && variableValue[0] == 1 == FrameManager.UpPrev) || (testing && variableName.Equals("upPrev") && variableValue[0] == 1 == PlaytestManager.UpPrev))
+        {
+            return true;
+        }
+        else if ((!testing && variableName.Equals("downPrev") && variableValue[0] == 1 == FrameManager.DownPrev) || (testing && variableName.Equals("downPrev") && variableValue[0] == 1 == PlaytestManager.DownPrev))
+        {
+            return true;
+        }
+        else if ((!testing && variableName.Equals("leftPrev") && variableValue[0] == 1 == FrameManager.LeftPrev) || (testing && variableName.Equals("leftPrev") && variableValue[0] == 1 == PlaytestManager.LeftPrev))
+        {
+            return true;
+        }
+        else if ((!testing && variableName.Equals("rightPrev") && variableValue[0] == 1 == FrameManager.RightPrev) || (testing && variableName.Equals("rightPrev") && variableValue[0] == 1 == PlaytestManager.RightPrev))
+        {
+            return true;
+        }
 
         return false;
     }

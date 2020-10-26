@@ -21,11 +21,7 @@ namespace Assets.Scripts.UI
         [SerializeField]
         private Text text;
         private static int frame = 0;
-        private static bool space;
-        private static bool up;
-        private static bool down;
-        private static bool left;
-        private static bool right;
+        
         private bool loaded = false;
         public Button spaceButton;
         public Button upButton;
@@ -34,11 +30,30 @@ namespace Assets.Scripts.UI
         public Button rightButton;
         public static FrameManager Instance;
 
+
+        private static bool space;
+        private static bool up;
+        private static bool down;
+        private static bool left;
+        private static bool right;
+
+        private static bool spacePrev;
+        private static bool upPrev;
+        private static bool downPrev;
+        private static bool leftPrev;
+        private static bool rightPrev;
+
         public static bool Space { get { return space; } }
         public static bool Up { get { return up; } }
         public static bool Down { get { return down; } }
         public static bool Left { get { return left; } }
         public static bool Right { get { return right; } }
+
+        public static bool SpacePrev { get { return spacePrev; } }
+        public static bool UpPrev { get { return upPrev; } }
+        public static bool DownPrev { get { return downPrev; } }
+        public static bool LeftPrev { get { return leftPrev; } }
+        public static bool RightPrev { get { return rightPrev; } }
 
         float lastStep, timeBetweenSteps = 0.5f;
         public InputField eraseField;
@@ -86,13 +101,10 @@ namespace Assets.Scripts.UI
             }
             eraseField.text = "";
             text.text = "" + frame;
-            //gameObject.GetComponent<InputField>().placeholder.GetComponent<Text>().text = frame.ToString();
             fileMenu.ForRealLoad();
         }
         public void Update()
         {
-            //Debug.Log("I AM HERE");
-            //input.GetComponent<InputField>().placeholder.GetComponent<Text>().text = frame.ToString();
              if (!loaded)
              {
                  loaded = true;
@@ -101,7 +113,7 @@ namespace Assets.Scripts.UI
              }
 
              if (Input.GetKey(KeyCode.RightArrow))
-             { //|| Input.GetMouseButton(0)){
+             { 
                if (Time.time - lastStep >= timeBetweenSteps)
                {
                  lastStep = Time.time;
@@ -130,13 +142,8 @@ namespace Assets.Scripts.UI
                 if (temp >= 0)                
                 {
                     frame = temp;
-                    /*string filePath = Constants.directory + "/StreamingAssets/Levels/" + Constants.GetLevelName() + " " + temp + ".csv";
-                    //if (File.Exists(filePath)) { 
-                    fileMenu.check();  
-                    */
                     text.text = "" + frame;
                     fileMenu.ForRealLoad();
-                    //}
                 }
             }
         }
@@ -150,8 +157,6 @@ namespace Assets.Scripts.UI
         
         public void OnUp()
         {
-            Debug.Log("On Up");
-            Debug.Log("Upbutton null? " + (upButton == null));
             up = !up;
 
             UpdateButtonState(up, upButton);
@@ -183,6 +188,12 @@ namespace Assets.Scripts.UI
         {
             return space + "," + up + "," + down + "," + left + "," + right + "\n";
         }
+
+        public static string GetPrevKeys()
+        {
+            return spacePrev + "," + upPrev + "," + downPrev + "," + leftPrev + "," + rightPrev + "\n";
+        }
+
         public void SetKeys(string line)
         {
             string[] keys = line.Split(',');
@@ -197,8 +208,29 @@ namespace Assets.Scripts.UI
             UpdateButtonState(left, leftButton);
             UpdateButtonState(right, rightButton);
         }
+
+        public void SetPrevKeys(string line)
+        {
+            string[] keys = line.Split(',');
+            spacePrev = bool.Parse(keys[0]);
+            upPrev = bool.Parse(keys[1]);
+            downPrev = bool.Parse(keys[2]);
+            leftPrev = bool.Parse(keys[3]);
+            rightPrev = bool.Parse(keys[4]);
+        }
+
+        public void ResetPrevKeys()
+        {
+            spacePrev = false;
+            upPrev = false;
+            downPrev = false;
+            leftPrev = false;
+            rightPrev = false;
+        }
+
         public void ResetKeys()
         {
+
             space = false;
             up = false;
             down = false;
