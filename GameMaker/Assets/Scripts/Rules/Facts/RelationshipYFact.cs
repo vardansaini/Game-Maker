@@ -19,6 +19,32 @@ public class RelationshipYFact : Fact
         this.distance = float.Parse(vals[7]);
     }
 
+    public override bool Matches(GridObject g)
+    {
+        if (VariableFact.testing)
+        {
+            foreach (GridObject go in PlaytestManager.Instance.GridObjects)
+            {
+                if (Matches(g, go))
+                {
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            foreach (GridObject go in GridManager.Instance.PreviewObjects)
+            {
+                if (Matches(g, go))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
 
     //Check to see if this GridObject matches this fact (just in one direction)
     public bool Matches(GridObject g, GridObject g2)
@@ -29,5 +55,10 @@ public class RelationshipYFact : Fact
         float dist = Mathf.Abs(pt1[0] - pt2[0]) + Mathf.Abs(pt1[1] - pt2[1]);
         return System.Math.Abs(distance - dist) < 0.001f;
 
+    }
+
+    public override string ToString()
+    {
+        return "RelationshipYFact " + componentID + " to " + componentID2 + " at points " + connectPoint1 + " and " + connectPoint2 + " dist " + distance;
     }
 }

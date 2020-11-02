@@ -89,7 +89,6 @@ def GetEdgeX(component1, component2, cid1, cid2):
 				point2 = edgeName[j]
 				minDist = abs(dist)
 				actualConnection = dist
-	print (component2)
 	topLeft = GetTopLeftCorner(component1, RelationshipFactX(cid1, cid2, point1, point2, actualConnection), RelationshipFactX(cid1, cid2, point1, point2, actualConnection) ,component2[3], component2[4])
 	return RelationshipFactX(cid1, cid2, point1, point2, actualConnection)
 
@@ -173,15 +172,17 @@ Input: List of components and their locations on screen, the background color, t
 
 '''
 class State:
-	def __init__(self, _components, _bgColor, _action):
+	def __init__(self, _components, _bgColor, _action, _prevAction):
 		self.components = _components#x,y,component
 		self.bgColor = _bgColor
 		self.action = _action
+		self.actionPrev = _prevAction
 
 		#Initially empty, but will become the fact representation
 		self.factsByComponentID = {}
 
 		self.SetUpBaseFacts()
+		self.relationshipFacts= []
 
 		#Create variable facts
 		#TODO; readd this
@@ -193,6 +194,12 @@ class State:
 		self.AddFact(VariableFact("down", self.action[2]))
 		self.AddFact(VariableFact("left", self.action[3]))
 		self.AddFact(VariableFact("right", self.action[4]))
+
+		self.AddFact(VariableFact("spacePrev", self.actionPrev[0]))
+		self.AddFact(VariableFact("upPrev", self.actionPrev[1]))
+		self.AddFact(VariableFact("downPrev", self.actionPrev[2]))
+		self.AddFact(VariableFact("leftPrev", self.actionPrev[3]))
+		self.AddFact(VariableFact("rightPrev", self.actionPrev[4]))
 
 		#Current to next mapping
 		self.components1To2Mappings = {}
@@ -227,15 +234,16 @@ class State:
 
 	def CreateRelationshipFacts(self):
 		#Create relationship x and y facts
+		self.relationshipFacts = []
 		for c in range(0, len(self.components)):
 			for c2 in range(0, len(self.components)):
 				if not c==c2:
 					#Determine relationship x 
 					f1 = GetEdgeX(self.components[c],self.components[c2],c,c2)
-					self.relationshipFacts.add(f1)
+					self.relationshipFacts.append(f1)
 					#Determine relationship y
 					f2 = GetEdgeY(self.components[c],self.components[c2],c,c2)
-					self.relationshipFacts.add(f2)
+					self.relationshipFacts.append(f2)
 
 	def GetMinRelationshipFactsToComponents(self, componentID, components, excluding = -1):
 		minX = None
@@ -301,17 +309,26 @@ class State:
 				elif fact.variableName =="right":
 					fact.variableValue = self.action[4]
 
+	def SetPrevAction(self, prevAction):
+		self.actionPrev = prevAction
+		for fact in self.factsByComponentID[-1]:
+			if isinstance(fact,VariableFact):
+				if fact.variableName =="spacePrev":
+					fact.variableValue = self.actionPrev[0]
+				elif fact.variableName =="upPrev":
+					fact.variableValue = self.actionPrev[1]
+				elif fact.variableName =="downPrev":
+					fact.variableValue = self.actionPrev[2]
+				elif fact.variableName =="leftPrev":
+					fact.variableValue = self.actionPrev[3]
+				elif fact.variableName =="rightPrev":
+					fact.variableValue = self.actionPrev[4]
+
 	def AddFact(self, otherFact, printIt = False):
 
 		if not otherFact.componentID in self.factsByComponentID.keys():
 			self.factsByComponentID[otherFact.componentID] = []
 		if not otherFact in self.factsByComponentID[otherFact.componentID]: 
-			if (isinstance(otherFact.__class__, VelocityXFact)):
-				velocityXFactInThere = False
-				for existingFact in self.factsByComponentID[otherFact.componentID]:
-					if isinstance(existingFact, VelocityXFact):
-						velocityXFactInThere = True
-						break
 			if printIt:
 				print ("Adding Other Fact: "+str(otherFact))
 			self.factsByComponentID[otherFact.componentID].append(otherFact)
@@ -358,14 +375,6 @@ class State:
 						newFact.componentID = idUpdates[newFact.componentID]
 					if not newFact.componentID in newFactsByComponentID.keys():
 						newFactsByComponentID[newFact.componentID] = []
-					if isinstance(fact,VelocityXFact):
-						velocityXFactInThere = False
-						for presentFact in newFactsByComponentID[newFact.componentID]:
-							if isinstance(presentFact, VelocityXFact):
-								velocityXFactInThere = True
-								break
-						if velocityXFactInThere:
-							print ("FUCKIN DOUBLE VELOCITY: "+str(newFact))
 
 					newFactsByComponentID[newFact.componentID].append(newFact)
 
@@ -405,15 +414,19 @@ class State:
 		return component
 
 	def clone(self):
-		newState = State(list(self.components), self.bgColor, self.action)
+		newState = State(list(self.components), self.bgColor, self.action, self.actionPrev)
 		for cid in self.factsByComponentID.keys():
 			for fact in self.factsByComponentID[cid]:
 				newState.AddFact(fact.clone())
+
+		newState.relationshipFacts = list(self.relationshipFacts)
 
 		#Current to next mapping
 		newState.components1To2Mappings = dict(self.components1To2Mappings)
 		#Next to current mapping
 		newState.components2To1Mappings = dict(self.components2To1Mappings)
+
+
 
 		return newState
 
@@ -421,6 +434,7 @@ class State:
 		facts = []
 		for cid in self.factsByComponentID.keys():
 			facts +=self.factsByComponentID[cid]
+		facts +=self.relationshipFacts#August 16 addition
 		return facts
 
 	def SetupMappings(self, nextState):
@@ -448,7 +462,6 @@ class State:
 			if i in self.components2To1Mappings.keys() and self.components2To1Mappings[i] in self.components1To2Mappings.keys() and i==self.components1To2Mappings[self.components2To1Mappings[i]]:#if it matches
 				nextStateComponent = nextState.components[i]
 				thisStateComponent = self.components[self.components2To1Mappings[i]]
-				print ("Next state component and this state component: "+str(nextStateComponent)+" and "+str(thisStateComponent))
 				nextState.AddFact(VelocityXFact(i, nextStateComponent[1]-thisStateComponent[1]))
 				nextState.AddFact(VelocityYFact(i, nextStateComponent[2]-thisStateComponent[2]))
 			else:

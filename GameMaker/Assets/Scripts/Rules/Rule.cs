@@ -87,9 +87,11 @@ public class Rule
 
     public List<GridObject> RunRuleOnObjects(List<GridObject> gridObjects)
     {
-        if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+        
+
+        if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
         {
-        //    Debug.Log("Checking Rule: " + preEffect.ToString() + "->" + postEffect.ToString());
+            //Debug.Log("Checking Rule: " + preEffect.ToString() + "->" + postEffect.ToString());
         }
         List<int> effectIDs = new List<int>();
         foreach (KeyValuePair < int, List < Fact >> kvp in conditionsByID)
@@ -97,9 +99,9 @@ public class Rule
             List<int> componentIDs = new List<int>();//All the potential matches for this condition
             foreach (Fact ruleFact in kvp.Value)
             {
-                if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+                if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
                 {
-                //    Debug.Log("     Checking Condition: " + ruleFact.ToString());
+                    //Debug.Log("     Checking Condition: " + ruleFact.ToString());
                 }
 
 
@@ -107,9 +109,9 @@ public class Rule
                 {
                     if (!ruleFact.Matches(null)){
                         //This rule can't fire, return
-                        if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+                        if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
                         {
-                        //   Debug.Log("Rule can't fire due to " + ruleFact);
+                            //Debug.Log("Rule can't fire due to " + ruleFact.ToString());
                         }
                         return gridObjects;
                     }
@@ -144,9 +146,9 @@ public class Rule
                         if (newComponentIDs.Count == 0)
                         {
                             //This rule can't fire, return
-                            if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+                            if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
                             {
-                            //    Debug.Log("Rule can't fire due to " + ruleFact);
+                                //Debug.Log("Rule can't fire due to " + ruleFact.ToString());
                             }
                             return gridObjects;
                         }
@@ -324,6 +326,7 @@ public class Rule
             }
             else if (typeof(VelocityYFact).IsInstanceOfType(postEffect))
             {
+                //Debug.Log("Activating Rule!");
                 gridObjects[effectID].VY = ((VelocityYFact)postEffect).velocityVal;
             }
 }
