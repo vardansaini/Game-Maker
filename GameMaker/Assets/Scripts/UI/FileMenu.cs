@@ -13,6 +13,7 @@ namespace Assets.Scripts.UI
 {
     public class FileMenu : MonoBehaviour
     {
+        public int LastFrame = 0;
         public static string gameName = "test";
         public string GameName
         {
@@ -24,6 +25,25 @@ namespace Assets.Scripts.UI
 
         [SerializeField]
         private InputField loadLevelInput;
+
+        public int GetLastFrame()
+        {
+            bool Last = false;
+            int i = FrameManager.GetmaxFrame();
+            while (!Last)
+            {
+                if (File.Exists(GetFile(i)))
+                {
+                    LastFrame = i;
+                    Last = true;
+                }
+                else
+                {
+                    i--;
+                }
+            }
+                return LastFrame;
+            }
 
         void Awake() {
             gameName = Constants.GetGameName();
@@ -52,7 +72,9 @@ namespace Assets.Scripts.UI
                 string fileName = GameName + " " + FrameManager.GetCurrentFrame() + ".csv";
                 File.WriteAllText(Constants.directory + fileName, FrameManager.GetKeys());
                 File.AppendAllText(Constants.directory + fileName, GridManager.Instance.FormatToCSV());
-               
+                //string LastFrameFile = GetLastFrame().ToString()+ ".csv";
+                //File.Create(Constants.directory + LastFrameFile);
+                
                 
                 
             }
@@ -76,22 +98,24 @@ namespace Assets.Scripts.UI
 
             dialogueMenu.CloseDialogue();
         }
-        public string getFile(int inputFile)
+        public string GetFile(int inputFile)
         {
             int fileToGet = inputFile;
             string filePath = Constants.directory + GameName + " " + fileToGet + ".csv";
             return filePath;
         }
-
         public void ForRealLoad() {
             LogHandler.Instance.WriteLine("Load Grid Start:  time = " + Time.time);
             // Check level exists
             //string filePath = Constants.directory + GameName + " " + FrameManager.GetCurrentFrame() + ".csv";
-            if (File.Exists(getFile(FrameManager.GetNextFrame())))
+            if (File.Exists(GetFile(FrameManager.GetNextFrame())))
             {
+                Debug.Log(FrameManager.GetNextFrame());
+                //if (FrameManager.GetNextFrame()> LastFrame)
+                    //LastFrame = FrameManager.GetNextFrame();
                 GridNext.Instance.ClearPreview();
                 // - Parse file
-                string[] lines = File.ReadAllLines(getFile(FrameManager.GetNextFrame()));
+                string[] lines = File.ReadAllLines(GetFile(FrameManager.GetNextFrame()));
                 string[] gridSize = lines[1].Split(',');
                 GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
                 for (int i = 2; i < lines.Length; i++)
@@ -107,11 +131,11 @@ namespace Assets.Scripts.UI
 
 
             }
-            if (File.Exists(getFile(FrameManager.GetPrevFrame())))
+            if (File.Exists(GetFile(FrameManager.GetPrevFrame())))
             {
                 GridPrev.Instance.ClearPreview();
                 // - Parse file
-                string[] lines = File.ReadAllLines(getFile(FrameManager.GetPrevFrame()));
+                string[] lines = File.ReadAllLines(GetFile(FrameManager.GetPrevFrame()));
                 
                 string[] gridSize = lines[1].Split(',');
                 
@@ -131,11 +155,11 @@ namespace Assets.Scripts.UI
                 GridPrev.Instance.ClearGrid();
                 
             }
-            if (File.Exists(getFile(FrameManager.GetCurrentFrame())))
+            if (File.Exists(GetFile(FrameManager.GetCurrentFrame())))
             {
                 GridManager.Instance.ClearPreview();
                 // - Parse file
-                string[] lines = File.ReadAllLines(getFile(FrameManager.GetCurrentFrame()));
+                string[] lines = File.ReadAllLines(GetFile(FrameManager.GetCurrentFrame()));
                 FrameManager.Instance.SetKeys(lines[0]);
                 //Debug.Log(lines[0]); actions
                 string[] gridSize = lines[1].Split(',');
@@ -166,9 +190,9 @@ namespace Assets.Scripts.UI
 
         public void OnClear()
         {
-           if (File.Exists(getFile(FrameManager.GetCurrentFrame())))
+           if (File.Exists(GetFile(FrameManager.GetCurrentFrame())))
             {
-                File.Delete(getFile(FrameManager.GetCurrentFrame()));
+                File.Delete(GetFile(FrameManager.GetCurrentFrame()));
             }
 
             GridManager.Instance.ClearGrid();
@@ -197,7 +221,7 @@ namespace Assets.Scripts.UI
             string formattedGameName = gameName.ToLower().Replace(' ', '_').Trim('_');
             return formattedGameName == string.Empty ? null : formattedGameName;
         }
-        public void check()
+        public void Check()
             {
             if (GridManager.Instance.Checklist())
             {

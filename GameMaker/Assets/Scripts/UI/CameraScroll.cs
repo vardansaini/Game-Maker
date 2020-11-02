@@ -78,13 +78,18 @@ namespace Assets.Scripts.UI
         {
             if(x > maxX)
             {
+                
                 x = maxX;
+                //Debug.Log(x);
                 speed = 0;
             }
 
             if(x < minX)
             {
+                //Debug.Log(minX);
                 x = minX;
+                //Debug.Log(x);
+
                 speed = 0;
             }
 

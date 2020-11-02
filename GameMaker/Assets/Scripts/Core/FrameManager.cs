@@ -21,6 +21,7 @@ namespace Assets.Scripts.UI
         [SerializeField]
         private Text text;
         private static int frame = 0;
+        private static int max = 0;
         private static bool space;
         private static bool up;
         private static bool down;
@@ -40,9 +41,8 @@ namespace Assets.Scripts.UI
         public static bool Left { get { return left; } }
         public static bool Right { get { return right; } }
 
-        float lastStep, timeBetweenSteps = 0.5f;
+        float lastStep, time, timeBetweenSteps = 0.5f, timespan=0.3f;
         public InputField eraseField;
-        int max = 0;
         void Start()
         {
             Instance = this;
@@ -59,25 +59,42 @@ namespace Assets.Scripts.UI
         {
             return frame;
         }
+        public static int GetmaxFrame()
+        {
+            return max;
+        }
         public static void SetCurrentFrame(int current)
         {
             frame = current;
+        }
+        
+
+        public void Last()
+        {
+            lastStep = Time.time;
+            fileMenu.Check();
+            eraseField.text = "";
+            frame = fileMenu.GetLastFrame();
+            text.text = "" + frame;
+            fileMenu.ForRealLoad();
         }
 
         public void Next()
         {
             lastStep = Time.time;
-            fileMenu.check();
+            fileMenu.Check();
             frame++;
             if (frame > max)
+            {
                 max = frame;
+            }
             eraseField.text = "";
             text.text = "" + frame;
             fileMenu.ForRealLoad();
         }
         public void Back()
         {
-            fileMenu.check();
+            fileMenu.Check();
             frame--;
 
             if (frame < 0)
@@ -100,15 +117,18 @@ namespace Assets.Scripts.UI
                  fileMenu.ForRealLoad();
              }
 
-             if (Input.GetKey(KeyCode.RightArrow))
-             { //|| Input.GetMouseButton(0)){
-               if (Time.time - lastStep >= timeBetweenSteps)
-               {
-                 lastStep = Time.time;
-                 Next();
-                 }
-             }
-             else if (Input.GetKey(KeyCode.LeftArrow))
+
+
+            if (Input.GetKey(KeyCode.RightArrow))
+            { //|| Input.GetMouseButton(0)){
+                
+                if (Time.time - lastStep >= timeBetweenSteps)
+                {
+                    lastStep = Time.time;
+                    Next();
+                }
+            }
+            if (Input.GetKey(KeyCode.LeftArrow))
              {
                  if (Time.time - lastStep >= timeBetweenSteps)
                  {
@@ -122,7 +142,7 @@ namespace Assets.Scripts.UI
 
         public void Update(String value)
         {                      
-            Debug.Log(value);
+            //Debug.Log(value);
             int temp;
             bool success = int.TryParse(value,out temp); 
             if (success)
@@ -150,13 +170,12 @@ namespace Assets.Scripts.UI
         
         public void OnUp()
         {
-            Debug.Log("On Up");
-            Debug.Log("Upbutton null? " + (upButton == null));
+            //Debug.Log("On Up");
+            //Debug.Log("Upbutton null? " + (upButton == null));
             up = !up;
 
             UpdateButtonState(up, upButton);
         }
-        
         public void OnDown()
         {
             down = !down;
