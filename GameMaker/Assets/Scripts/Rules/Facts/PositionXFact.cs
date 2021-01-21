@@ -19,7 +19,7 @@ public class PositionXFact : Fact
     {
         //TODO; fix this so that it doesn't depend on size of gridobject
 
-        return Mathf.Abs( (g.X-1)- positionVal)<Constants.threshold || Mathf.Abs((g.X) - positionVal) < Constants.threshold;
+        return g.X-1 == positionVal || g.X==positionVal;
     }
 
     public override string ToString()

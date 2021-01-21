@@ -17,11 +17,6 @@ public class AnimationFact : Fact
         this.height = (int)float.Parse(vals[5]);
     }
 
-    public override string ToString()
-    {
-        return "Animation Fact: "+this.name+": "+this.width+", "+this.height;
-    }
-
     //Check to see if this GridObject matches this fact
     public override bool Matches(GridObject g)
     {

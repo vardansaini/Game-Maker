@@ -21,16 +21,6 @@ public class PlaytestManager : MonoBehaviour
 
     public static PlaytestManager Instance;
 
-    public List<GridObject> GridObjects { get { return gridObjects; } }
-
-    private static bool spacePrev, upPrev, downPrev, leftPrev, rightPrev;
-
-    public static bool SpacePrev { get { return spacePrev; } }
-    public static bool UpPrev { get { return upPrev; } }
-    public static bool DownPrev { get { return downPrev; } }
-    public static bool LeftPrev { get { return leftPrev; } }
-    public static bool RightPrev { get { return rightPrev; } }
-
 
     // Start is called before the first frame update
     void Awake()
@@ -45,9 +35,9 @@ public class PlaytestManager : MonoBehaviour
             // - Parse file
             string[] lines = File.ReadAllLines(filePath);
             //Debug.Log(lines[0]); actions
-            string[] gridSize = lines[2].Split(',');
+            string[] gridSize = lines[1].Split(',');
             //Debug.Log(lines[1]); grid size
-            for (int i = 3; i < lines.Length; i++)
+            for (int i = 2; i < lines.Length; i++)
             {
                 string[] line = lines[i].Split(',');
                 GridObject clone = Instantiate(gridObjectPrefab);
@@ -84,8 +74,6 @@ public class PlaytestManager : MonoBehaviour
 
     void Update()
     {
-        
-
         if (Input.GetKey(KeyCode.Escape))
         {
             SceneManager.LoadScene("Main");
@@ -117,17 +105,6 @@ public class PlaytestManager : MonoBehaviour
 
                 g.SetPosition(x, y);
             }
-
-            spacePrev = Input.GetKey(KeyCode.Space);
-            upPrev = Input.GetKey(KeyCode.UpArrow);
-            downPrev = Input.GetKey(KeyCode.DownArrow);
-            leftPrev = Input.GetKey(KeyCode.LeftArrow);
-            rightPrev = Input.GetKey(KeyCode.RightArrow);
-
         }
-
-        
-
-
     }
 }

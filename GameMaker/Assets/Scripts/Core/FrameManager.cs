@@ -21,7 +21,6 @@ namespace Assets.Scripts.UI
         [SerializeField]
         private Text text;
         private static int frame = 0;
-
         private static int max = 0;
         private static bool space;
         private static bool up;
@@ -35,12 +34,6 @@ namespace Assets.Scripts.UI
         public Button leftButton;
         public Button rightButton;
         public static FrameManager Instance;
-
-        private static bool spacePrev;
-        private static bool upPrev;
-        private static bool downPrev;
-        private static bool leftPrev;
-        private static bool rightPrev;
 
         public static bool Space { get { return space; } }
         public static bool Up { get { return up; } }
@@ -137,6 +130,7 @@ namespace Assets.Scripts.UI
              }
 
 
+
             if (Input.GetKey(KeyCode.RightArrow))
             { //|| Input.GetMouseButton(0)){
                 
@@ -146,7 +140,7 @@ namespace Assets.Scripts.UI
                     Next();
                 }
             }
-            else if (Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetKey(KeyCode.LeftArrow))
              {
                  if (Time.time - lastStep >= timeBetweenSteps)
                  {
@@ -217,12 +211,6 @@ namespace Assets.Scripts.UI
         {
             return space + "," + up + "," + down + "," + left + "," + right + "\n";
         }
-
-        public static string GetPrevKeys()
-        {
-            return spacePrev + "," + upPrev + "," + downPrev + "," + leftPrev + "," + rightPrev + "\n";
-        }
-
         public void SetKeys(string line)
         {
             string[] keys = line.Split(',');
@@ -237,29 +225,8 @@ namespace Assets.Scripts.UI
             UpdateButtonState(left, leftButton);
             UpdateButtonState(right, rightButton);
         }
-
-        public void SetPrevKeys(string line)
-        {
-            string[] keys = line.Split(',');
-            spacePrev = bool.Parse(keys[0]);
-            upPrev = bool.Parse(keys[1]);
-            downPrev = bool.Parse(keys[2]);
-            leftPrev = bool.Parse(keys[3]);
-            rightPrev = bool.Parse(keys[4]);
-        }
-
-        public void ResetPrevKeys()
-        {
-            spacePrev = false;
-            upPrev = false;
-            downPrev = false;
-            leftPrev = false;
-            rightPrev = false;
-        }
-
         public void ResetKeys()
         {
-
             space = false;
             up = false;
             down = false;

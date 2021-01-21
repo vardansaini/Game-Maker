@@ -17,7 +17,6 @@ public class Constants : MonoBehaviour
     public static readonly string GROUND = "Ground";
     public static string directory = Application.dataPath + "/StreamingAssets/Frames/";
 
-	public static string directory=Application.dataPath+ "/StreamingAssets/Frames/";
 
 
     public static bool IsSolid(string tag)

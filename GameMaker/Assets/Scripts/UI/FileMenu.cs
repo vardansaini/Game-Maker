@@ -236,11 +236,10 @@ namespace Assets.Scripts.UI
 
                 GridNext.Instance.ClearPreview();
                 // - Parse file
-
                 string[] lines = File.ReadAllLines(GetFile(FrameManager.GetNextFrame()));
                 string[] gridSize = lines[1].Split(',');
                 GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
-                for (int i = 3; i < lines.Length; i++)
+                for (int i = 2; i < lines.Length; i++)
                 {
                     string[] line = lines[i].Split(',');
                     GridNext.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
@@ -261,7 +260,7 @@ namespace Assets.Scripts.UI
 
                 GridPrev.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
                 //GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
-                for (int i = 3; i < lines.Length; i++)
+                for (int i = 2; i < lines.Length; i++)
                 {
                     string[] line = lines[i].Split(',');
                     //GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
@@ -282,7 +281,7 @@ namespace Assets.Scripts.UI
                 string[] lines = File.ReadAllLines(GetFile(FrameManager.GetCurrentFrame()));
                 FrameManager.Instance.SetKeys(lines[0]);
                 //Debug.Log(lines[0]); actions
-                string[] gridSize = lines[2].Split(',');
+                string[] gridSize = lines[1].Split(',');
                 //Debug.Log(lines[1]); grid size
                 GridManager.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
 
@@ -301,24 +300,10 @@ namespace Assets.Scripts.UI
                 GridManager.Instance.UpdatePreviewGridObjectsFromLearnedRules();
 
                 FrameManager.Instance.ResetKeys();
+                // - Load an empty level instead
+                //GridManager.Instance.ClearGrid();
             }
-
-
-            //
-            if (File.Exists(GetFile(FrameManager.GetPrevFrame())))
-            {
-                GridPrev.Instance.ClearPreview();
-                // - Parse file
-                string[] lines = File.ReadAllLines(GetFile(FrameManager.GetPrevFrame()));
-
-                FrameManager.Instance.SetPrevKeys(lines[0]);
-            }
-            else
-            {
-                FrameManager.Instance.ResetPrevKeys();
-            }
-
-                LogHandler.Instance.WriteLine("Load Grid End:  time = " + Time.time);
+            LogHandler.Instance.WriteLine("Load Grid End:  time = " + Time.time);
         }
 
 
