@@ -48,8 +48,14 @@ namespace Assets.Scripts.UI
         public static bool Left { get { return left; } }
         public static bool Right { get { return right; } }
 
+<<<<<<< HEAD
 
         float lastStep, time, timeBetweenSteps = 0.5f, timespan=0.3f;
+=======
+        float lastStep, timeBetweenSteps = 0.5f;
+
+        [SerializeField]
+>>>>>>> GitFix
         public InputField eraseField;
         void Start()
         {
@@ -57,7 +63,9 @@ namespace Assets.Scripts.UI
         }
         public static int GetPrevFrame()
         {
-            return frame - 1;
+            
+          return frame - 1;
+            
         }
         public static int GetNextFrame()
         {
@@ -75,7 +83,16 @@ namespace Assets.Scripts.UI
         {
             frame = current;
         }
-        
+
+        public void First()
+        {
+            lastStep = Time.time;
+            fileMenu.Check();
+            eraseField.text = "";
+            frame = fileMenu.GetFirstFrame();
+            text.text = "" + frame;
+            fileMenu.ForRealLoad();
+        }
 
         public void Last()
         {
@@ -111,10 +128,18 @@ namespace Assets.Scripts.UI
             }
             eraseField.text = "";
             text.text = "" + frame;
+<<<<<<< HEAD
+=======
+            
+>>>>>>> GitFix
             fileMenu.ForRealLoad();
         }
         public void Update()
         {
+<<<<<<< HEAD
+=======
+            
+>>>>>>> GitFix
              if (!loaded)
              {
                  loaded = true;
@@ -144,18 +169,26 @@ namespace Assets.Scripts.UI
 
         }
 
-        public void Update(String value)
-        {                      
-            //Debug.Log(value);
+        public void FrameTextManager(String value)
+        {
+            Debug.Log(value);
             int temp;
-            bool success = int.TryParse(value,out temp); 
+            bool success = int.TryParse(value,out temp);
+            Debug.Log(success);
             if (success)
             {                
                 if (temp >= 0)                
                 {
                     frame = temp;
+<<<<<<< HEAD
                     text.text = "" + frame;
                     fileMenu.ForRealLoad();
+=======
+                    Debug.Log(frame);
+                    text.text = "" + frame;
+                    fileMenu.ForRealLoad();
+                    
+>>>>>>> GitFix
                 }
             }
         }
@@ -169,6 +202,10 @@ namespace Assets.Scripts.UI
         
         public void OnUp()
         {
+<<<<<<< HEAD
+=======
+            
+>>>>>>> GitFix
             up = !up;
 
             UpdateButtonState(up, upButton);

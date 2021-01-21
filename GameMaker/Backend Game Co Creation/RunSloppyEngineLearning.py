@@ -405,6 +405,7 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 							print ("	MODIFY RULE cond: "+str(cond))
 				'''
 		#else: TODO; if it did fire and that made things worse, add hidden variable
+        
 	return neighbors
 
 #Add all possible neighbor engines based on adding rules (2)

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI
 {
-    public enum Dialogue { RunLevel, SaveFailed, LoadLevel, ClearLevel, OptionsMenu, LevelName, LevelSize, Exit, AIThinking}
+    public enum Dialogue { RunLevel, SaveFailed, LoadLevel, ClearLevel, OptionsMenu, LevelName, LevelSize, Exit, AIThinking }
 
     public class DialogueMenu : MonoBehaviour
     {
@@ -29,7 +29,7 @@ namespace Assets.Scripts.UI
 
         public void OpenDialogue(int dialogueNumber)
         {
-            if(activeDialogue.HasValue)
+            if (activeDialogue.HasValue)
                 CloseDialogue();
 
             background.SetActive(true);
@@ -40,7 +40,7 @@ namespace Assets.Scripts.UI
 
         public void CloseDialogue()
         {
-            if(!activeDialogue.HasValue)
+            if (!activeDialogue.HasValue)
                 return;
 
             background.SetActive(false);

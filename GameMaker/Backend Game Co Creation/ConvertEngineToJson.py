@@ -5,7 +5,7 @@ import random
 import pickle
 import json, sys
 
-engine = pickle.load(open("finalLearnedEngine.p", "rb"))
+'''engine = pickle.load(open("finalLearnedEngine.p", "rb"))
 
 ruleNum = 0
 data = []
@@ -30,14 +30,19 @@ for rule in engine.rules:
 	    'id': ruleNum
 		})
 
-	ruleNum+=1
+	ruleNum+=1'''
 
 thisDirectory = sys.path[0]
+print("*"*50)
+print(thisDirectory)
+print("*"*50)
 splits = thisDirectory.split("/")
 directory = ""
 for i in range(0, len(splits)-1):
+	print("I was here")
 	directory+=""+splits[i]+"/"
+	print(directory)
 directory+="Assets/StreamingAssets/Frames/"
 
-with open(directory+'data.json', 'w') as outfile:
-    json.dump(data, outfile)
+'''with open(directory+'data.json', 'w') as outfile:
+    json.dump(data, outfile)'''

@@ -65,7 +65,7 @@ namespace Assets.Scripts.Core
             // Run model
 			if (saved){
 
-                string[] lines = File.ReadAllLines(Constants.directory+fileMenu.GameName+ ".csv");
+                string[] lines = File.ReadAllLines(Constants.directory+fileMenu.GameName + ".csv");
                 string toSend = "";
                 bool readRow = false;
                 int finalX = int.Parse(lines[lines.Length-1].Split(new char[] {','})[1]);
