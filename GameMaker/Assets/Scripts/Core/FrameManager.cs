@@ -41,7 +41,9 @@ namespace Assets.Scripts.UI
         public static bool Left { get { return left; } }
         public static bool Right { get { return right; } }
 
-        float lastStep, time, timeBetweenSteps = 0.5f, timespan=0.3f;
+        float lastStep, timeBetweenSteps = 0.5f;
+
+        [SerializeField]
         public InputField eraseField;
         void Start()
         {
@@ -49,7 +51,9 @@ namespace Assets.Scripts.UI
         }
         public static int GetPrevFrame()
         {
-            return frame - 1;
+            
+          return frame - 1;
+            
         }
         public static int GetNextFrame()
         {
@@ -67,7 +71,16 @@ namespace Assets.Scripts.UI
         {
             frame = current;
         }
-        
+
+        public void First()
+        {
+            lastStep = Time.time;
+            fileMenu.Check();
+            eraseField.text = "";
+            frame = fileMenu.GetFirstFrame();
+            text.text = "" + frame;
+            fileMenu.ForRealLoad();
+        }
 
         public void Last()
         {
@@ -103,13 +116,12 @@ namespace Assets.Scripts.UI
             }
             eraseField.text = "";
             text.text = "" + frame;
-            //gameObject.GetComponent<InputField>().placeholder.GetComponent<Text>().text = frame.ToString();
+            
             fileMenu.ForRealLoad();
         }
         public void Update()
         {
-            //Debug.Log("I AM HERE");
-            //input.GetComponent<InputField>().placeholder.GetComponent<Text>().text = frame.ToString();
+            
              if (!loaded)
              {
                  loaded = true;
@@ -140,23 +152,21 @@ namespace Assets.Scripts.UI
 
         }
 
-        public void Update(String value)
-        {                      
-            //Debug.Log(value);
+        public void FrameTextManager(String value)
+        {
+            Debug.Log(value);
             int temp;
-            bool success = int.TryParse(value,out temp); 
+            bool success = int.TryParse(value,out temp);
+            Debug.Log(success);
             if (success)
             {                
                 if (temp >= 0)                
                 {
                     frame = temp;
-                    /*string filePath = Constants.directory + "/StreamingAssets/Levels/" + Constants.GetLevelName() + " " + temp + ".csv";
-                    //if (File.Exists(filePath)) { 
-                    fileMenu.check();  
-                    */
+                    Debug.Log(frame);
                     text.text = "" + frame;
                     fileMenu.ForRealLoad();
-                    //}
+                    
                 }
             }
         }
@@ -170,8 +180,7 @@ namespace Assets.Scripts.UI
         
         public void OnUp()
         {
-            //Debug.Log("On Up");
-            //Debug.Log("Upbutton null? " + (upButton == null));
+            
             up = !up;
 
             UpdateButtonState(up, upButton);
