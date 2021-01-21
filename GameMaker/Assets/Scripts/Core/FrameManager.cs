@@ -48,14 +48,9 @@ namespace Assets.Scripts.UI
         public static bool Left { get { return left; } }
         public static bool Right { get { return right; } }
 
-<<<<<<< HEAD
-
-        float lastStep, time, timeBetweenSteps = 0.5f, timespan=0.3f;
-=======
         float lastStep, timeBetweenSteps = 0.5f;
 
         [SerializeField]
->>>>>>> GitFix
         public InputField eraseField;
         void Start()
         {
@@ -128,18 +123,12 @@ namespace Assets.Scripts.UI
             }
             eraseField.text = "";
             text.text = "" + frame;
-<<<<<<< HEAD
-=======
             
->>>>>>> GitFix
             fileMenu.ForRealLoad();
         }
         public void Update()
         {
-<<<<<<< HEAD
-=======
             
->>>>>>> GitFix
              if (!loaded)
              {
                  loaded = true;
@@ -180,15 +169,10 @@ namespace Assets.Scripts.UI
                 if (temp >= 0)                
                 {
                     frame = temp;
-<<<<<<< HEAD
-                    text.text = "" + frame;
-                    fileMenu.ForRealLoad();
-=======
                     Debug.Log(frame);
                     text.text = "" + frame;
                     fileMenu.ForRealLoad();
                     
->>>>>>> GitFix
                 }
             }
         }
@@ -202,10 +186,7 @@ namespace Assets.Scripts.UI
         
         public void OnUp()
         {
-<<<<<<< HEAD
-=======
             
->>>>>>> GitFix
             up = !up;
 
             UpdateButtonState(up, upButton);

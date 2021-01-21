@@ -197,14 +197,8 @@ namespace Assets.Scripts.UI
                 //Debug.Log(Constants.directory);
                 //Debug.Log(Constants.directory + fileName);
                 File.AppendAllText(Constants.directory + fileName, GridManager.Instance.FormatToCSV());
-<<<<<<< HEAD
-                //string LastFrameFile = GetLastFrame().ToString()+ ".csv";
-                //File.Create(Constants.directory + LastFrameFile);
-            }
-=======
 
             //}
->>>>>>> GitFix
         }
 
         public bool ExternalSave()
@@ -262,15 +256,9 @@ namespace Assets.Scripts.UI
                 GridPrev.Instance.ClearPreview();
                 // - Parse file
                 string[] lines = File.ReadAllLines(GetFile(FrameManager.GetPrevFrame()));
-<<<<<<< HEAD
-                
-                string[] gridSize = lines[2].Split(',');
-                
-=======
 
                 string[] gridSize = lines[1].Split(',');
 
->>>>>>> GitFix
                 GridPrev.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
                 //GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
                 for (int i = 3; i < lines.Length; i++)
@@ -297,13 +285,8 @@ namespace Assets.Scripts.UI
                 string[] gridSize = lines[2].Split(',');
                 //Debug.Log(lines[1]); grid size
                 GridManager.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
-<<<<<<< HEAD
-                
-                for (int i = 3; i < lines.Length; i++)
-=======
 
                 for (int i = 2; i < lines.Length; i++)
->>>>>>> GitFix
                 {
                     string[] line = lines[i].Split(',');
                     GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
