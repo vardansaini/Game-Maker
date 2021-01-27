@@ -33,11 +33,11 @@ namespace Assets.Scripts.UI
 
         public Text gameFiles;
         public Text error;
+
         public void Load()
         {
             Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
             SceneManager.LoadScene("Menu");
-            //GamesList();
         }
 
         public static string Clipboard
@@ -48,18 +48,20 @@ namespace Assets.Scripts.UI
 
         public void StartClick()
         {
-            
-            
-                if (gameNamefield.text != "")
+            string fileName = "LoadedGame.txt";
+
+            if (gameNamefield.text != "")
             {
                 Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
                 if (Directory.Exists(Constants.directory + gameNamefield.text))
-                {
-                    Constants.directory = Application.dataPath + "/StreamingAssets/Frames/" + gameNamefield.text + "/";
+                {                    
+                    File.WriteAllText(Constants.directory + fileName, gameNamefield.text);
+                    Constants.directory = Application.dataPath + "/StreamingAssets/Frames/" + gameNamefield.text + "/";            
                 }
                 else
                 {
                     Directory.CreateDirectory(Constants.directory + gameNamefield.text);
+                    File.WriteAllText(Constants.directory + fileName, gameNamefield.text);
                     Constants.directory = Application.dataPath + "/StreamingAssets/Frames/" + gameNamefield.text + "/";
                 }
                 SceneManager.LoadScene("Main");

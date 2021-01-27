@@ -654,15 +654,25 @@ def LearnEngine(gameName):
 	#TODO; get gameName
 	thisDirectory = sys.path[0]
 	splits = thisDirectory.split("/")
+	temp = ""
 	directory = ""
-	for i in range(0, len(splits)-1):
-		directory+=""+splits[i]+"/"
-	directory+="Assets/StreamingAssets/Frames/"
+
+	# String processing to get the path of current game
+	for i in range(0, len(splits)-1):	
+		temp+=""+splits[i]+"/"
+	temp+="Assets/StreamingAssets/Frames/"
+	with open(temp+'LoadedGame.txt','r') as f:
+		gameDirectory = f.read()
+
+	# Game folder path
+	directory = temp + gameDirectory + "/"
+	#print(directory)
 
 	minFrame = 0
 	maxFrame = -1	
 
 	for filename in glob.glob(directory+gameName+"*.csv"):#Find max frame and also game name
+		#print("inside for loop and filenameis: " + filename)
 		splits = filename.split(" ")
 		if len(gameName)==0:
 			splits2 = splits[-2].split("/")
@@ -936,13 +946,23 @@ def main():
 			start = time.time()
 			thisDirectory = sys.path[0]
 			splits = thisDirectory.split("/")
+			temp = ""
 			directory = ""
-			for i in range(0, len(splits)-1):
-				directory+=""+splits[i]+"/"
-			directory+="Assets/StreamingAssets/Frames/"
+
+			# String processing to get the path of current game
+			for i in range(0, len(splits)-1):	
+				temp+=""+splits[i]+"/"
+			temp+="Assets/StreamingAssets/Frames/"
+			with open(temp+'LoadedGame.txt','r') as f:
+				gameDirectory = f.read()
+
+			# Game folder path
+			directory = temp + gameDirectory + "/"
+			#print(directory)
 			currString = ""
 			currentNumberOfFrames = 0
 			for filename in glob.glob(directory+gameName+"*.csv"):#Count frames
+				print(filename)
 				currentNumberOfFrames+=1
 				source = open(filename, "r")
 				reader = csv.reader(source)

@@ -4,8 +4,9 @@ from engine import *
 import random
 import pickle
 import json, sys
+import os, fnmatch
 
-'''engine = pickle.load(open("finalLearnedEngine.p", "rb"))
+engine = pickle.load(open("finalLearnedEngine.p", "rb"))
 
 ruleNum = 0
 data = []
@@ -30,19 +31,22 @@ for rule in engine.rules:
 	    'id': ruleNum
 		})
 
-	ruleNum+=1'''
+	ruleNum+=1
 
 thisDirectory = sys.path[0]
-print("*"*50)
-print(thisDirectory)
-print("*"*50)
 splits = thisDirectory.split("/")
+temp = ""
 directory = ""
-for i in range(0, len(splits)-1):
-	print("I was here")
-	directory+=""+splits[i]+"/"
-	print(directory)
-directory+="Assets/StreamingAssets/Frames/"
 
-'''with open(directory+'data.json', 'w') as outfile:
-    json.dump(data, outfile)'''
+# String processing to get the path of current game
+for i in range(0, len(splits)-1):	
+	temp+=""+splits[i]+"/"
+temp+="Assets/StreamingAssets/Frames/"
+with open(temp+'LoadedGame.txt','r') as f:
+	gameDirectory = f.read()
+
+# Game folder path
+directory = temp + gameDirectory + "/"
+
+with open(directory+'data.json', 'w') as outfile:
+    json.dump(data, outfile)
