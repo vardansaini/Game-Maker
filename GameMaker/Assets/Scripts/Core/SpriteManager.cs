@@ -53,11 +53,15 @@ namespace Assets.Scripts.Core
 
         public SpriteData GetSprite(string name)
         {
-            // Debug.Log("Name: " + name);
+             Debug.Log("Name: " + name);
 
             if (!spriteDictionary.ContainsKey (name)) {
+                Debug.Log("I was here to ");
+                Debug.Log(spriteDictionary["Ground"]);
 				return spriteDictionary ["Ground"];
 			}
+            Debug.Log("I was after if");
+            Debug.Log("sprite Dictionary:- " + spriteDictionary[name]);
             return spriteDictionary[name];
         }
 

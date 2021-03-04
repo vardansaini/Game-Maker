@@ -4,7 +4,6 @@ from engine import *
 import random
 import pickle
 import json, sys
-import os, fnmatch
 
 engine = pickle.load(open("finalLearnedEngine.p", "rb"))
 
@@ -36,8 +35,6 @@ for rule in engine.rules:
 thisDirectory = sys.path[0]
 splits = thisDirectory.split("/")
 temp = ""
-directory = ""
-
 # String processing to get the path of current game
 for i in range(0, len(splits)-1):	
 	temp+=""+splits[i]+"/"
@@ -47,6 +44,7 @@ with open(temp+'LoadedGame.txt','r') as f:
 
 # Game folder path
 directory = temp + gameDirectory + "/"
+print(directory)
 
 with open(directory+'data.json', 'w') as outfile:
     json.dump(data, outfile)

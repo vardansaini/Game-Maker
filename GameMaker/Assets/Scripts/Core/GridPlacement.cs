@@ -30,7 +30,7 @@ namespace Assets.Scripts.Core
 			dialogueMenu.DialogueOpened += () => previewObject.gameObject.SetActive(false);
 			dialogueMenu.DialogueClosed += () => RemoveLock(dialogueMenu);
 			mode = PlacementMode.Level;
-			Map.pathForBots = null;
+			//Map.pathForBots = null;
 		}
 
 		private void Update()

@@ -21,12 +21,7 @@ namespace Assets.Scripts.UI
         [SerializeField]
         private Text text;
         private static int frame = 0;
-        private static int max = 0;
-        private static bool space;
-        private static bool up;
-        private static bool down;
-        private static bool left;
-        private static bool right;
+
         private bool loaded = false;
         public Button spaceButton;
         public Button upButton;
@@ -35,16 +30,36 @@ namespace Assets.Scripts.UI
         public Button rightButton;
         public static FrameManager Instance;
 
+
+        private static bool space;
+        private static bool up;
+        private static bool down;
+        private static bool left;
+        private static bool right;
+
+        private static bool spacePrev;
+        private static bool upPrev;
+        private static bool downPrev;
+        private static bool leftPrev;
+        private static bool rightPrev;
+
         public static bool Space { get { return space; } }
         public static bool Up { get { return up; } }
         public static bool Down { get { return down; } }
         public static bool Left { get { return left; } }
         public static bool Right { get { return right; } }
 
-        float lastStep, timeBetweenSteps = 0.5f;
+        public static bool SpacePrev { get { return spacePrev; } }
+        public static bool UpPrev { get { return upPrev; } }
+        public static bool DownPrev { get { return downPrev; } }
+        public static bool LeftPrev { get { return leftPrev; } }
+        public static bool RightPrev { get { return rightPrev; } }
 
+        float lastStep, timeBetweenSteps = 0.5f;
+       
         [SerializeField]
         public InputField eraseField;
+        static int max = 0;
         void Start()
         {
             Instance = this;
@@ -72,24 +87,24 @@ namespace Assets.Scripts.UI
             frame = current;
         }
 
-        public void First()
+        public void NumberManager(int frameNumber)
         {
             lastStep = Time.time;
             fileMenu.Check();
             eraseField.text = "";
-            frame = fileMenu.GetFirstFrame();
+            frame = frameNumber;
             text.text = "" + frame;
             fileMenu.ForRealLoad();
         }
 
+        public void First()
+        {
+            NumberManager(fileMenu.GetFirstFrame());
+        }
+
         public void Last()
         {
-            lastStep = Time.time;
-            fileMenu.Check();
-            eraseField.text = "";
-            frame = fileMenu.GetLastFrame();
-            text.text = "" + frame;
-            fileMenu.ForRealLoad();
+            NumberManager(fileMenu.GetLastFrame());
         }
 
         public void Next()
@@ -116,7 +131,6 @@ namespace Assets.Scripts.UI
             }
             eraseField.text = "";
             text.text = "" + frame;
-            
             fileMenu.ForRealLoad();
         }
         public void Update()
@@ -154,16 +168,16 @@ namespace Assets.Scripts.UI
 
         public void FrameTextManager(String value)
         {
-            Debug.Log(value);
+            //Debug.Log(value);
             int temp;
             bool success = int.TryParse(value,out temp);
-            Debug.Log(success);
+            //Debug.Log(success);
             if (success)
             {                
                 if (temp >= 0)                
                 {
                     frame = temp;
-                    Debug.Log(frame);
+                    //Debug.Log(frame);
                     text.text = "" + frame;
                     fileMenu.ForRealLoad();
                     
@@ -211,6 +225,12 @@ namespace Assets.Scripts.UI
         {
             return space + "," + up + "," + down + "," + left + "," + right + "\n";
         }
+
+        public static string GetPrevKeys()
+        {
+            return spacePrev + "," + upPrev + "," + downPrev + "," + leftPrev + "," + rightPrev + "\n";
+        }
+
         public void SetKeys(string line)
         {
             string[] keys = line.Split(',');
@@ -225,6 +245,26 @@ namespace Assets.Scripts.UI
             UpdateButtonState(left, leftButton);
             UpdateButtonState(right, rightButton);
         }
+
+        public void SetPrevKeys(string line)
+        {
+            string[] keys = line.Split(',');
+            spacePrev = bool.Parse(keys[0]);
+            upPrev = bool.Parse(keys[1]);
+            downPrev = bool.Parse(keys[2]);
+            leftPrev = bool.Parse(keys[3]);
+            rightPrev = bool.Parse(keys[4]);
+        }
+
+        public void ResetPrevKeys()
+        {
+            spacePrev = false;
+            upPrev = false;
+            downPrev = false;
+            leftPrev = false;
+            rightPrev = false;
+        }
+
         public void ResetKeys()
         {
             space = false;
@@ -238,6 +278,7 @@ namespace Assets.Scripts.UI
             UpdateButtonState(left, leftButton);
             UpdateButtonState(right, rightButton);        
         }
+
         private void UpdateButtonState(bool off, Button button)
         {
             ColorBlock colors = button.colors;

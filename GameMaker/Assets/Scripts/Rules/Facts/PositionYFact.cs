@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Core;
+using UnityEngine;
 
 //Position X Fact
 public class PositionYFact : Fact
@@ -16,7 +17,7 @@ public class PositionYFact : Fact
     //Check to see if this GridObject matches this fact
     public override bool Matches(GridObject g)
     {
-        return g.Y == positionVal;
+        return Mathf.Abs(g.Y-positionVal)<Constants.threshold;
     }
 
     public override string ToString()

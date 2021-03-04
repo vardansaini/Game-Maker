@@ -127,6 +127,11 @@ public class LoadJSON
                         conditions.Add(f);
                     }
                 }
+                if (!conditions.Contains(preEffect))
+                {
+                    conditions.Add(preEffect);
+                }
+
                 rules.Add(new Rule(conditions, preEffect, postEffect));
             }
         }

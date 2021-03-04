@@ -405,7 +405,6 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 							print ("	MODIFY RULE cond: "+str(cond))
 				'''
 		#else: TODO; if it did fire and that made things worse, add hidden variable
-        
 	return neighbors
 
 #Add all possible neighbor engines based on adding rules (2)
@@ -647,6 +646,7 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 	return neighbors
 
 def LearnEngine(gameName):
+	print("I am inside LearnEngine ", gameName)
 	#Load training data
 	stateSequence = []
 	gameName = ""
@@ -655,8 +655,6 @@ def LearnEngine(gameName):
 	thisDirectory = sys.path[0]
 	splits = thisDirectory.split("/")
 	temp = ""
-	directory = ""
-
 	# String processing to get the path of current game
 	for i in range(0, len(splits)-1):	
 		temp+=""+splits[i]+"/"
@@ -671,9 +669,9 @@ def LearnEngine(gameName):
 	minFrame = 0
 	maxFrame = -1	
 
-	for filename in glob.glob(directory+gameName+"*.csv"):#Find max frame and also game name
-		#print("inside for loop and filenameis: " + filename)
-		splits = filename.split(" ")
+	for filename in glob.glob(directory+"*.csv"):#Find max frame and also game name
+		#print(filename)
+		splits = filename.split("/")
 		if len(gameName)==0:
 			splits2 = splits[-2].split("/")
 			gameName = splits2[-1]
@@ -685,7 +683,8 @@ def LearnEngine(gameName):
 
 
 	for frame in range(minFrame,maxFrame+1):
-		filename = directory+gameName+" "+str(frame)+".csv"
+		filename = directory+str(frame)+".csv"
+		#print(filename)
 		if os.path.exists(filename):
 			source = open(filename, "r")
 
@@ -798,8 +797,8 @@ def LearnEngine(gameName):
 			currErrorToBeat = error
 			currBest = currEngine
 			iteration = 0
-
-
+			print("Right Before new engine is popped")
+			print(len(openEngineHeapQ), unfinished, iteration)
 			while len(openEngineHeapQ)>0 and unfinished and iteration<5:
 				engineTuple = heappop(openEngineHeapQ)
 				print ("")
@@ -883,6 +882,7 @@ def LearnEngine(gameName):
 
 	
 def LearnAndConvertEngine(gameName):
+	print("I am inside LearnAndConvertEngine", gameName)
 	#Learn engine
 	learnedEngine = LearnEngine(gameName)
 	
@@ -921,16 +921,23 @@ def LearnAndConvertEngine(gameName):
 	#Save to frame directory
 	thisDirectory = sys.path[0]
 	splits = thisDirectory.split("/")
-	directory = ""
-	for i in range(0, len(splits)-1):
-		directory+=""+splits[i]+"/"
-	directory+="Assets/StreamingAssets/Frames/"
+	temp = ""
+	# String processing to get the path of current game
+	for i in range(0, len(splits)-1):	
+		temp+=""+splits[i]+"/"
+	temp+="Assets/StreamingAssets/Frames/"
+	with open(temp+'LoadedGame.txt','r') as f:
+		gameDirectory = f.read()
+
+	# Game folder path
+	directory = temp + gameDirectory + "/"
+	#print(directory)
 
 	with open(directory+'data.json', 'w') as outfile:
 	    json.dump(data, outfile)
 
 def main():
-	gameName = "test"#todo; get this from port message
+	gameName = ""#todo; get this from port message
 	maxSleep = 0.5
 	#todo; make this a separate python file
 	start = time.time()
@@ -947,22 +954,19 @@ def main():
 			thisDirectory = sys.path[0]
 			splits = thisDirectory.split("/")
 			temp = ""
-			directory = ""
-
 			# String processing to get the path of current game
 			for i in range(0, len(splits)-1):	
 				temp+=""+splits[i]+"/"
 			temp+="Assets/StreamingAssets/Frames/"
 			with open(temp+'LoadedGame.txt','r') as f:
 				gameDirectory = f.read()
-
 			# Game folder path
 			directory = temp + gameDirectory + "/"
 			#print(directory)
 			currString = ""
 			currentNumberOfFrames = 0
-			for filename in glob.glob(directory+gameName+"*.csv"):#Count frames
-				print(filename)
+			for filename in glob.glob(directory+"*.csv"):#Count frames
+				#print(filename)
 				currentNumberOfFrames+=1
 				source = open(filename, "r")
 				reader = csv.reader(source)
@@ -971,8 +975,12 @@ def main():
 				source.close()
 			if currentNumberOfFrames>1 and currentNumberOfFrames!=prevNumberOfFrames:
 				prevNumberOfFrames = currentNumberOfFrames
+				#print(gameName)
+				print("In main and going to enter in LearnAndConvertEngine")
 				LearnAndConvertEngine(gameName)
 			elif len(prevString)>0 and currString!=prevString:
+				#print(gameName)
+				print("In main and going to enter in LearnAndConvertEngine")
 				LearnAndConvertEngine(gameName)
 			prevString = currString
 

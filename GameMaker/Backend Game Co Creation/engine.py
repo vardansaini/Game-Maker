@@ -138,7 +138,7 @@ class Engine:
 			return True
 
 	def __hash__(self):
-		return hash(tuple(self.rules))
+		return hash(tuple(rules))
 
 	def GetComplexity(self):
 		complexity = 0

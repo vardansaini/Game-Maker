@@ -91,9 +91,9 @@ namespace Assets.Scripts.UI
 
                 if (a.EndsWith(".csv"))
                 {
-                    Debug.Log(a);
+                    //Debug.Log(a);
                     b = Path.GetFileName(a).Replace(".csv", "");
-                    Debug.Log(b);
+                    //Debug.Log(b);
 
 
                     val = int.Parse(b);
@@ -127,9 +127,9 @@ namespace Assets.Scripts.UI
  
                 if (a.EndsWith(".csv"))
                 {
-                    Debug.Log(a);
+                   // Debug.Log(a);
                     b = Path.GetFileName(a).Replace(".csv","");
-                    Debug.Log(b);
+                    //Debug.Log(b);
 
                
                         val = int.Parse(b);
@@ -154,7 +154,7 @@ namespace Assets.Scripts.UI
 
             foreach (String f in info)
             {
-                Debug.Log(f);
+                //Debug.Log(f);
                 string a = Path.GetFileName(f);
                 gameFiles.text = gameFiles.text + "\n" + a;
             }
@@ -162,7 +162,7 @@ namespace Assets.Scripts.UI
 
         void Awake()
         {
-            GameName = Constants.GetGameName();
+            GameName = "";
         }
         void Update()
         {
@@ -194,10 +194,9 @@ namespace Assets.Scripts.UI
             //}
             
             //{
-                string fileName = GameName + " " + FrameManager.GetCurrentFrame() + ".csv";
+                string fileName = FrameManager.GetCurrentFrame() + ".csv";
                 File.WriteAllText(Constants.directory + fileName, FrameManager.GetKeys());
-                //Debug.Log(Constants.directory);
-                //Debug.Log(Constants.directory + fileName);
+                File.AppendAllText(Constants.directory + fileName, FrameManager.GetPrevKeys());
                 File.AppendAllText(Constants.directory + fileName, GridManager.Instance.FormatToCSV());
 
             //}
@@ -212,11 +211,11 @@ namespace Assets.Scripts.UI
         public void OnLoad()
         {
             // Validate input
-            //string newLevelName = FormatGameName(loadLevelInput.text);
-            //if (newLevelName == null)
-                //return;
-            //else
-                //GameName = newLevelName;
+            string newLevelName = FormatGameName(loadLevelInput.text);
+            if (newLevelName == null)
+                return;
+            else
+                GameName = newLevelName;
 
             ForRealLoad();
 
@@ -225,7 +224,7 @@ namespace Assets.Scripts.UI
         public string GetFile(int inputFile)
         {
             int fileToGet = inputFile;
-            string filePath = Constants.directory + GameName + " " + fileToGet + ".csv";
+            string filePath = Constants.directory + fileToGet + ".csv";
             return filePath;
         }
         public void ForRealLoad()
@@ -239,9 +238,9 @@ namespace Assets.Scripts.UI
                 GridNext.Instance.ClearPreview();
                 // - Parse file
                 string[] lines = File.ReadAllLines(GetFile(FrameManager.GetNextFrame()));
-                string[] gridSize = lines[1].Split(',');
+                string[] gridSize = lines[2].Split(',');
                 GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
-                for (int i = 2; i < lines.Length; i++)
+                for (int i = 3; i < lines.Length; i++)
                 {
                     string[] line = lines[i].Split(',');
                     GridNext.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
@@ -258,11 +257,11 @@ namespace Assets.Scripts.UI
                 // - Parse file
                 string[] lines = File.ReadAllLines(GetFile(FrameManager.GetPrevFrame()));
 
-                string[] gridSize = lines[1].Split(',');
+                string[] gridSize = lines[2].Split(',');
 
                 GridPrev.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
                 //GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
-                for (int i = 2; i < lines.Length; i++)
+                for (int i = 3; i < lines.Length; i++)
                 {
                     string[] line = lines[i].Split(',');
                     //GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
@@ -283,11 +282,11 @@ namespace Assets.Scripts.UI
                 string[] lines = File.ReadAllLines(GetFile(FrameManager.GetCurrentFrame()));
                 FrameManager.Instance.SetKeys(lines[0]);
                 //Debug.Log(lines[0]); actions
-                string[] gridSize = lines[1].Split(',');
+                string[] gridSize = lines[2].Split(',');
                 //Debug.Log(lines[1]); grid size
                 GridManager.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
 
-                for (int i = 2; i < lines.Length; i++)
+                for (int i = 3; i < lines.Length; i++)
                 {
                     string[] line = lines[i].Split(',');
                     GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);

@@ -37,6 +37,8 @@ namespace Assets.Scripts.Core
         private List<GridObject> gridObjects;
         private List<GridObject> previewObjects;
 
+        public List<GridObject> PreviewObjects { get { return previewObjects; } }
+
         public static GridManager Instance;
 
         public bool gridSizeSet = false;
@@ -142,10 +144,31 @@ namespace Assets.Scripts.Core
             }
 
             // Instantiate object
+
+            //Check and see if preview object of same type in same location
+            GridObject previewObjectToAdd = null;
+
+            foreach (GridObject go in previewObjects)
+            {
+                if (go.name == sprite.Name && x == go.X && go.Y == y)
+                {
+                    previewObjectToAdd = go;
+                }
+            }
+
+            // Instantiate object
             GridObject clone = Instantiate(gridObjectPrefab, sprite.Functional ? gridObjectParentFunctional : gridObjectParentDecorative);
+
 
             clone.SetSprite(sprite);
             clone.SetPosition(x, y);
+
+            if (previewObjectToAdd != null)
+            {
+                clone.VX = previewObjectToAdd.VX;
+                clone.VY = previewObjectToAdd.VY;
+            }
+
             gridObjects.Add(clone);
 
             // Add references to object in grid
@@ -166,10 +189,13 @@ namespace Assets.Scripts.Core
         public GridObject AddGridObject(GridObject g)
         {
             GridObject clone = AddGridObject(g.Data, g.X, g.Y, false);
-            clone.VX = g.VX;
-            clone.VY = g.VY;
+            if (clone != null)
+            {
+                clone.VX = g.VX;
+                clone.VY = g.VY;
+            }
             return clone;
-            
+
         }
 
         public void RemoveGridObject(GridObject g)
