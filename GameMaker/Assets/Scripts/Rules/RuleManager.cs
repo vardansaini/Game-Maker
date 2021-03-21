@@ -11,7 +11,6 @@ public class RuleManager : MonoBehaviour
     public void Start()
     {
         //If we have rules
-        Debug.Log(Constants.directory);
         rules = LoadJSON.LoadJson(Constants.directory + "data.json");
     }
 
@@ -23,8 +22,13 @@ public class RuleManager : MonoBehaviour
 
         for (int i = 0; i<rules.Count; i++)
         {
-            Debug.Log("Trying Rule: " + rules[i]);
+            
             Rule rule = rules[i];
+            if (typeof(EmptyFact).IsInstanceOfType(rule))
+            {
+                //Debug.Log("Trying rule: " + rule);
+            }
+
             rule.RunRuleOnObjects(gridObjects);
         }
 

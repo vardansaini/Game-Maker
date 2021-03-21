@@ -52,8 +52,9 @@ public class RelationshipXFact : Fact
 		Vector2 pt1 = g.GetNamedPoint(connectPoint1);
 		Vector2 pt2 = g2.GetNamedPoint(connectPoint2);
 
-		float dist = Mathf.Abs(pt1[0] - pt2[0]) + Mathf.Abs(pt1[1] - pt2[1]);
-		return System.Math.Abs(distance - dist) < 0.001f;
+		float dist = Mathf.Abs(pt1[0] - pt2[0]);
+		
+		return System.Math.Abs(distance - dist) <Constants.threshold;
 
 	}
 

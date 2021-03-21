@@ -74,5 +74,10 @@ public class EmptyFact : Fact
         return "EmptyFact "+facts.Length;
     }
 
+    public override bool Matches(GridObject g)
+    {
+        return true;
+    }
+
 }
 

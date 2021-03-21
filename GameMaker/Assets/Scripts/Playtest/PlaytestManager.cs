@@ -39,7 +39,7 @@ public class PlaytestManager : MonoBehaviour
         timerMax = 1 / FPS;
         VariableFact.testing = true;
         gridObjects = new List<GridObject>();
-        Debug.Log(Constants.directory + 0 + ".csv");
+        //Debug.Log(Constants.directory + 0 + ".csv");
         string filePath = Constants.directory + 0 + ".csv";
         if (File.Exists(filePath))
         {
@@ -79,6 +79,7 @@ public class PlaytestManager : MonoBehaviour
             if (g != null)
             {
                 gridObjects.Remove(g);
+                Destroy(g.gameObject);
             }
         }
     }

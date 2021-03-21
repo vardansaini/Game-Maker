@@ -106,6 +106,7 @@ public class LoadJSON
         List<Rule> rules = new List<Rule>();
         if (anyFactFound)
         {
+            //largestRuleID
             for (int i = 0; i < largestRuleID + 1; i++)
             {
                 List<Fact> conditions = new List<Fact>();
