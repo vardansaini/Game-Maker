@@ -646,7 +646,6 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 	return neighbors
 
 def LearnEngine(gameName):
-	print("I am inside LearnEngine ", gameName)
 	#Load training data
 	stateSequence = []
 	gameName = ""
@@ -882,7 +881,6 @@ def LearnEngine(gameName):
 
 	
 def LearnAndConvertEngine(gameName):
-	print("I am inside LearnAndConvertEngine", gameName)
 	#Learn engine
 	learnedEngine = LearnEngine(gameName)
 	
@@ -937,7 +935,7 @@ def LearnAndConvertEngine(gameName):
 	    json.dump(data, outfile)
 
 def main():
-	gameName = ""#todo; get this from port message
+	gameName = "test"#todo; get this from port message
 	maxSleep = 0.5
 	#todo; make this a separate python file
 	start = time.time()

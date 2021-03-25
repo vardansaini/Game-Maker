@@ -52,7 +52,7 @@ public class RelationshipYFact : Fact
         Vector2 pt1 = g.GetNamedPoint(connectPoint1);
         Vector2 pt2 = g.GetNamedPoint(connectPoint2);
 
-        float dist = Mathf.Abs(pt1[0] - pt2[0]) + Mathf.Abs(pt1[1] - pt2[1]);
+        float dist = Mathf.Abs(pt1[1] - pt2[1]);
         return System.Math.Abs(distance - dist) < 0.001f;
 
     }
