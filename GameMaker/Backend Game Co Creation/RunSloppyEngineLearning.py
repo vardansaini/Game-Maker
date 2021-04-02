@@ -648,7 +648,7 @@ def GenerateNeighborEngines(engine, closedEngineList, nextPredictedState,trueNex
 def LearnEngine(gameName):
 	#Load training data
 	stateSequence = []
-	gameName = ""
+	#gameName = ""
 
 	#TODO; get gameName
 	thisDirectory = sys.path[0]
@@ -743,8 +743,10 @@ def LearnEngine(gameName):
 	currState = stateSequence[currStateIndex]
 	currEngine = Engine([])
 	
-	if os.path.exists("./finalLearnedEngine.p"):
-		currEngine = pickle.load(open("finalLearnedEngine.p", "rb"))
+	file_name = "finalLearnedEngine" + gameName + ".p"
+	file_check = "./" + file_name
+	if os.path.exists(file_check):
+		currEngine = pickle.load(open(file_name, "rb"))
 
 
 	closedEngineList = []
@@ -874,7 +876,8 @@ def LearnEngine(gameName):
 				print ("")
 				currStateIndex = startState
 				currState = stateSequence[currStateIndex]
-				pickle.dump(currEngine, open("partialLearnedEngine.p", "wb"))
+				file_name = "partialLearnedEngine" + gameName + ".p"
+				pickle.dump(currEngine, open(file_name, "wb"))
 	
 	return currEngine
 
@@ -885,7 +888,8 @@ def LearnAndConvertEngine(gameName):
 	learnedEngine = LearnEngine(gameName)
 	
 	#Save final engine
-	pickle.dump(learnedEngine, open("finalLearnedEngine.p", "wb"))
+	file_name = "partialLearnedEngine" + gameName + ".p"
+	pickle.dump(learnedEngine, open(file_name, "wb"))
 
 	#TODO; make this smarter
 	engine = learnedEngine
@@ -935,7 +939,7 @@ def LearnAndConvertEngine(gameName):
 	    json.dump(data, outfile)
 
 def main():
-	gameName = "test"#todo; get this from port message
+	#gameName = "test"#todo; get this from port message
 	maxSleep = 0.5
 	#todo; make this a separate python file
 	start = time.time()
@@ -975,11 +979,11 @@ def main():
 				prevNumberOfFrames = currentNumberOfFrames
 				#print(gameName)
 				print("In main and going to enter in LearnAndConvertEngine")
-				LearnAndConvertEngine(gameName)
+				LearnAndConvertEngine(gameDirectory)
 			elif len(prevString)>0 and currString!=prevString:
 				#print(gameName)
 				print("In main and going to enter in LearnAndConvertEngine")
-				LearnAndConvertEngine(gameName)
+				LearnAndConvertEngine(gameDirectory)
 			prevString = currString
 
 if __name__ == '__main__':
