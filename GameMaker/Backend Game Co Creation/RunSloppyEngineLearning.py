@@ -671,9 +671,9 @@ def LearnEngine(gameName):
 	for filename in glob.glob(directory+"*.csv"):#Find max frame and also game name
 		#print(filename)
 		splits = filename.split("/")
-		if len(gameName)==0:
-			splits2 = splits[-2].split("/")
-			gameName = splits2[-1]
+		#if len(gameName)==0:
+			#splits2 = splits[-2].split("/")
+			#gameName = splits2[-1]
 
 		frameNum = int(splits[-1][:-4])
 
