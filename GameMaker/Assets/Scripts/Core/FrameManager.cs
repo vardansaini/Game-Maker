@@ -59,7 +59,7 @@ namespace Assets.Scripts.UI
        
         [SerializeField]
         public InputField eraseField;
-        static int max = 0;
+        int max;
         void Start()
         {
             Instance = this;
@@ -78,7 +78,7 @@ namespace Assets.Scripts.UI
         {
             return frame;
         }
-        public static int GetmaxFrame()
+        public int GetmaxFrame()
         {
             return max;
         }
