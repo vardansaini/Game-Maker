@@ -743,7 +743,7 @@ def LearnEngine(gameName):
 	currState = stateSequence[currStateIndex]
 	currEngine = Engine([])
 	
-	file_name = "finalLearnedEngine" + gameName + ".p"
+	file_name = "finalLearnedEngine_" + gameName + ".p"
 	file_check = "./" + file_name
 	if os.path.exists(file_check):
 		currEngine = pickle.load(open(file_name, "rb"))
@@ -876,7 +876,7 @@ def LearnEngine(gameName):
 				print ("")
 				currStateIndex = startState
 				currState = stateSequence[currStateIndex]
-				file_name = "partialLearnedEngine" + gameName + ".p"
+				file_name = "partialLearnedEngine_" + gameName + ".p"
 				pickle.dump(currEngine, open(file_name, "wb"))
 	
 	return currEngine
@@ -888,7 +888,7 @@ def LearnAndConvertEngine(gameName):
 	learnedEngine = LearnEngine(gameName)
 	
 	#Save final engine
-	file_name = "partialLearnedEngine" + gameName + ".p"
+	file_name = "finalLearnedEngine_" + gameName + ".p"
 	pickle.dump(learnedEngine, open(file_name, "wb"))
 
 	#TODO; make this smarter
