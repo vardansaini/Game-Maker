@@ -27,8 +27,8 @@ public class ColorPicker : MonoBehaviour {
 	}; 
 	ESTATE mState = ESTATE.Hidden;
 	
-	int sizeFull = 200;
-	int sizeHidden = 50;
+	int sizeFull = 125;
+	int sizeHidden =35;
 	float animTime = 0.25f;
 	float dt = 0;
 
@@ -37,7 +37,7 @@ public class ColorPicker : MonoBehaviour {
 
 	GUIStyle titleStyle = null;
 	Color textColor = Color.black;
-	Texture2D txColorDisplay;
+	//Texture2D txColorDisplay;
 
 	string txtR, txtG, txtB, txtA;
 	float valR, valG, valB, valA;
@@ -54,7 +54,7 @@ public class ColorPicker : MonoBehaviour {
 	{
 		sizeCurr = sizeHidden;
 
-		txColorDisplay = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+		//txColorDisplay = new Texture2D(1, 1, TextureFormat.ARGB32, false);
 		if(receiver)
 		{
 			receiver.SendMessage(colorGetFunctionName, this, SendMessageOptions.DontRequireReceiver);
@@ -129,7 +129,7 @@ public class ColorPicker : MonoBehaviour {
 
 		GUI.Label(new Rect(startPos.x + sizeCurr + 60, startPos.y, 200, 30), Title, titleStyle);
 
-		GUI.DrawTexture(new Rect(startPos.x + sizeCurr + 10, startPos.y, 40, 20), txColorDisplay);
+		//GUI.DrawTexture(new Rect(startPos.x + sizeCurr + 10, startPos.y, 40, 20), txColorDisplay);
 
 		if(mState == ESTATE.Showed)
 		{
@@ -272,11 +272,11 @@ public class ColorPicker : MonoBehaviour {
 	public void SetColor(Color color)
 	{
 		TempColor = color;
-		if(txColorDisplay != null)
+		/*if(txColorDisplay != null)
 		{
 			txColorDisplay.SetPixel(0, 0, color);
 			txColorDisplay.Apply();
-		}
+		}*/
 	}
 
 	public Color GetColor()

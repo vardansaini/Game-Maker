@@ -31,6 +31,14 @@ public class PlaytestManager : MonoBehaviour
     public static bool LeftPrev { get { return leftPrev; } }
     public static bool RightPrev { get { return rightPrev; } }
 
+    private static bool space, up, down, left, right;
+
+    public static bool Space { get { return space; } }
+    public static bool Up { get { return up; } }
+    public static bool Down { get { return down; } }
+    public static bool Left { get { return left; } }
+    public static bool Right { get { return right; } }
+
 
     // Start is called before the first frame update
     void Awake()
@@ -45,14 +53,18 @@ public class PlaytestManager : MonoBehaviour
         {
             // - Parse file
             string[] lines = File.ReadAllLines(filePath);
-            //Debug.Log(lines[0]); actions
+            //Debug.Log(lines[0]); //actions
             string[] gridSize = lines[2].Split(',');
-            //Debug.Log(lines[1]); grid size
+            //Debug.Log(lines[2]); //grid size
             for (int i = 3; i < lines.Length; i++)
             {
+                //Debug.Log("I am inside For");
                 string[] line = lines[i].Split(',');
+                //Debug.Log(gridObjectPrefab);
                 GridObject clone = Instantiate(gridObjectPrefab);
+                //Debug.Log(SpriteManager.Instance.GetSprite(line[0]));
                 clone.SetSprite(SpriteManager.Instance.GetSprite(line[0]));
+                //Debug.Log(int.Parse(line[1]) + " " + int.Parse(line[2]));
                 clone.SetPosition(int.Parse(line[1]), int.Parse(line[2]));
                 clone.transform.parent = transform;
                 gridObjects.Add(clone);
@@ -87,6 +99,12 @@ public class PlaytestManager : MonoBehaviour
     void Update()
     {
 
+        space = Input.GetKey(KeyCode.Space);
+        up = Input.GetKey(KeyCode.UpArrow);
+        down = Input.GetKey(KeyCode.DownArrow);
+        left = Input.GetKey(KeyCode.LeftArrow);
+        right = Input.GetKey(KeyCode.RightArrow);
+
 
         if (Input.GetKey(KeyCode.Escape))
         {
@@ -100,6 +118,8 @@ public class PlaytestManager : MonoBehaviour
         }
         else
         {
+            
+
             timer = 0;
             gridObjects = ruleManager.RunRules(gridObjects);
 
@@ -120,14 +140,15 @@ public class PlaytestManager : MonoBehaviour
                 g.SetPosition(x, y);
             }
 
-            spacePrev = Input.GetKey(KeyCode.Space);
-            upPrev = Input.GetKey(KeyCode.UpArrow);
-            downPrev = Input.GetKey(KeyCode.DownArrow);
-            leftPrev = Input.GetKey(KeyCode.LeftArrow);
-            rightPrev = Input.GetKey(KeyCode.RightArrow);
+            
 
         }
 
+        spacePrev = space;
+        upPrev = up;
+        downPrev = down;
+        leftPrev = left;
+        rightPrev = right;
 
 
 

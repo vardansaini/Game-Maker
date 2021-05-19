@@ -357,7 +357,7 @@ class InequalityFact(Fact):
 
 class EmptyFact(Fact):
 	def __init__(self, _replacementFacts):
-		if len(_replacementFacts)>0:
+		if len(_replacementFacts)>0 and (not _replacementFacts[0]==None):
 			super(EmptyFact,self).__init__(_replacementFacts[0].componentID)
 		else:
 			super(EmptyFact,self).__init__(-1)

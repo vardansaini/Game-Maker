@@ -46,6 +46,7 @@ namespace Assets.Scripts.Core
                 tagDictionary[tagData.Tag] = tagData.Sprites;
                 foreach (SpriteData sprite in tagData.Sprites)
                 {
+                    //Debug.Log(sprite.Name + " = " + sprite);
                     spriteDictionary[sprite.Name] = sprite;
                 }
             }

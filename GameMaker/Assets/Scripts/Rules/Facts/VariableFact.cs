@@ -50,23 +50,23 @@ public class VariableFact : Fact
         {
             return variableName.Equals(GridManager.Instance.GetColor());
         }
-        else if ((!testing && variableName.Equals("space") && variableValue[0] == 1 == FrameManager.Space) || (testing && variableName.Equals("space") && variableValue[0] == 1 == Input.GetKey(KeyCode.Space)))
+        else if ((!testing && variableName.Equals("space") && variableValue[0] == 1 == FrameManager.Space) || (testing && variableName.Equals("space") && variableValue[0] == 1 == PlaytestManager.Space))
         {
             return true;
         }
-        else if ( (!testing && variableName.Equals("up") && variableValue[0] == 1 == FrameManager.Up) || (testing && variableName.Equals("up") && variableValue[0] == 1 == Input.GetKey(KeyCode.UpArrow) ))
+        else if ( (!testing && variableName.Equals("up") && variableValue[0] == 1 == FrameManager.Up) || (testing && variableName.Equals("up") && variableValue[0] == 1 == PlaytestManager.Up))
         {
             return true;
         }
-        else if ((!testing && variableName.Equals("down") && variableValue[0] == 1 == FrameManager.Down) || (testing && variableName.Equals("down") && variableValue[0] == 1 == Input.GetKey(KeyCode.DownArrow)))
+        else if ((!testing && variableName.Equals("down") && variableValue[0] == 1 == FrameManager.Down) || (testing && variableName.Equals("down") && variableValue[0] == 1 == PlaytestManager.Down))
         {
             return true;
         }
-        else if ((!testing && variableName.Equals("left") && variableValue[0] == 1 == FrameManager.Left) || (testing && variableName.Equals("left") && variableValue[0] == 1 == Input.GetKey(KeyCode.LeftArrow)))
+        else if ((!testing && variableName.Equals("left") && variableValue[0] == 1 == FrameManager.Left) || (testing && variableName.Equals("left") && variableValue[0] == 1 == PlaytestManager.Left))
         {
             return true;
         }
-        else if ((!testing && variableName.Equals("right") && variableValue[0] == 1 == FrameManager.Right) || (testing && variableName.Equals("right") && variableValue[0] == 1 == Input.GetKey(KeyCode.RightArrow)))
+        else if ((!testing && variableName.Equals("right") && variableValue[0] == 1 == FrameManager.Right) || (testing && variableName.Equals("right") && variableValue[0] == 1 == PlaytestManager.Right))
         {
             return true;
         }
