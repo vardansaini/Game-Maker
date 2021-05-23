@@ -73,14 +73,44 @@ public class PlaytestManager : MonoBehaviour
         }
     }
 
-    public void AddObject(string name, Vector2 position)
+
+    public GridObject AddObject(string name, Vector2 position)
     {
+
         GridObject clone = Instantiate(gridObjectPrefab);
         clone.SetSprite(SpriteManager.Instance.GetSprite(name));
         clone.SetPosition((int)position.x, (int)position.y);
         clone.transform.position = new Vector3(position.x, position.y);
-        clone.transform.parent = transform;
-        gridObjects.Add(clone);
+
+        bool canAdd = true;
+
+        foreach(GridObject g in gridObjects)
+        {
+            //Double check that there's no overlap
+            if (clone.X <=g.X && clone.X+clone.W>g.X && clone.Y<=g.Y && clone.Y+clone.H>g.Y)
+            {
+                canAdd = false;
+                break;
+            }
+            else if (g.X <= clone.X && g.X + g.W > clone.X && g.Y <= clone.Y && g.Y + g.H > clone.Y)
+            {
+                canAdd = false;
+                break;
+            }
+        }
+
+
+        if (canAdd)
+        {
+            clone.transform.parent = transform;
+            gridObjects.Add(clone);
+        }
+        else
+        {
+            Destroy(clone.gameObject);
+        }
+
+        return clone;
     }
 
     public void RemoveObject(int id)
