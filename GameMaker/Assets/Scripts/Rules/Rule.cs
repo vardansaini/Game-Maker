@@ -256,12 +256,22 @@ public class Rule
                 {
                     //Grab the thing that needs to appear
                     AnimationFact thingToAppear = null;
+                    VelocityXFact velocityXToAppear = null;
+                    VelocityYFact velocityYToAppear = null;
 
-                    foreach(Fact f in ((EmptyFact)postEffect).facts)
+                    foreach (Fact f in ((EmptyFact)postEffect).facts)
                     {
                         if (typeof(AnimationFact).IsInstanceOfType(f))
                         {
                             thingToAppear = (AnimationFact)f;
+                        }
+                        else if (typeof(VelocityXFact).IsInstanceOfType(f))
+                        {
+                            velocityXToAppear = (VelocityXFact)f;
+                        }
+                        else if (typeof(VelocityYFact).IsInstanceOfType(f))
+                        {
+                            velocityYToAppear = (VelocityYFact)f;
                         }
                     }
 
@@ -273,10 +283,24 @@ public class Rule
                         int posX = (int)positionToAppearTo.x;
                         int posY = (int)positionToAppearTo.y;
                         SpriteData newobject = SpriteManager.Instance.GetSprite(thingToAppear.name);
-                        GridManager.Instance.AddGridObject(newobject, posX, posY, false);
+                        
+                        
+                        GridObject createdObject = GridManager.Instance.AddGridObject(newobject, posX, posY, false);
+
+                        if (createdObject != null)
+                        {
+                            createdObject.VX = velocityXToAppear.velocityVal;
+                            createdObject.VY = velocityYToAppear.velocityVal;
+                        }
                     }
                     else{
-                        PlaytestManager.Instance.AddObject(thingToAppear.name, positionToAppearTo);
+                        GridObject createdObject = PlaytestManager.Instance.AddObject(thingToAppear.name, positionToAppearTo);
+
+                        if (createdObject != null)
+                        {
+                            createdObject.VX = velocityXToAppear.velocityVal;
+                            createdObject.VY = velocityYToAppear.velocityVal;
+                        }
                     }
                 }
                 else
@@ -284,12 +308,22 @@ public class Rule
                     //Transform 
                     //Grab the thing that needs to appear
                     AnimationFact thingToAppear = null;
+                    VelocityXFact velocityXToAppear = null;
+                    VelocityYFact velocityYToAppear = null;
 
                     foreach (Fact f in ((EmptyFact)postEffect).facts)
                     {
                         if (typeof(AnimationFact).IsInstanceOfType(f))
                         {
                             thingToAppear = (AnimationFact)f;
+                        }
+                        else if (typeof(VelocityXFact).IsInstanceOfType(f))
+                        {
+                            velocityXToAppear = (VelocityXFact)f;
+                        }
+                        else if (typeof(VelocityYFact).IsInstanceOfType(f))
+                        {
+                            velocityYToAppear = (VelocityYFact)f;
                         }
                     }
 
@@ -313,11 +347,22 @@ public class Rule
                         int posX = (int)positionToAppearTo.x;
                         int posY = (int)positionToAppearTo.y;
                         SpriteData newobject = SpriteManager.Instance.GetSprite(thingToAppear.name);
-                        GridManager.Instance.AddGridObject(newobject, posX, posY, false);
+                        GridObject createdObject = GridManager.Instance.AddGridObject(newobject, posX, posY, false);
+
+                        if (createdObject != null)
+                        {
+                            createdObject.VX = velocityXToAppear.velocityVal;
+                            createdObject.VY = velocityYToAppear.velocityVal;
+                        }
                     }
-                    else
-                    {
-                        PlaytestManager.Instance.AddObject(thingToAppear.name, positionToAppearTo);
+                    else{
+                        GridObject createdObject = PlaytestManager.Instance.AddObject(thingToAppear.name, positionToAppearTo);
+
+                        if (createdObject != null)
+                        {
+                            createdObject.VX = velocityXToAppear.velocityVal;
+                            createdObject.VY = velocityYToAppear.velocityVal;
+                        }
                     }
 
                 }
