@@ -112,6 +112,48 @@ namespace Assets.Scripts.UI
             return LastFrame;
         }
 
+        public void UpdateVelocities(List<GridObject> currGridObjects)
+        {
+            if (File.Exists(GetFile(FrameManager.GetPrevFrame())) && !File.Exists(GetFile(FrameManager.GetNextFrame())))
+            {
+                //Load prior objects
+                string[] linesPrev = File.ReadAllLines(GetFile(FrameManager.GetPrevFrame()));
+
+                foreach (GridObject go in currGridObjects)
+                {
+                    int bestMatch = -1;
+                    int bestDist = 1000;
+
+                    for (int i = 3; i < linesPrev.Length; i++)
+                    {
+                        string[] line = linesPrev[i].Split(',');
+                        if (line[0] == go.Name)
+                        {
+                            int dist = Mathf.Abs(go.X - int.Parse(line[1])) + Mathf.Abs(go.Y - int.Parse(line[2]));
+                            if (dist < bestDist)
+                            {
+                                bestDist = dist;
+                                bestMatch = i;
+                            }
+                        }
+                    }
+
+                    if (bestMatch > 0)
+                    {
+                        string[] line = linesPrev[bestMatch].Split(',');
+
+                        if (go.X != int.Parse(line[1]) || go.Y != int.Parse(line[2]))
+                        {
+                            go.VX = go.X - int.Parse(line[1]);
+                            go.VY = go.Y - int.Parse(line[2]);
+                        }
+                    }
+                }
+
+
+            }
+        }
+
         public int GetLastFrame()
         {
             int val;
@@ -277,10 +319,12 @@ namespace Assets.Scripts.UI
             }
             if (File.Exists(GetFile(FrameManager.GetCurrentFrame())))
             {
+                List<GridObject> currGridObjects = new List<GridObject>();
                 GridManager.Instance.ClearPreview();
                 // - Parse file
                 string[] lines = File.ReadAllLines(GetFile(FrameManager.GetCurrentFrame()));
                 FrameManager.Instance.SetKeys(lines[0]);
+                FrameManager.Instance.SetPrevKeys(lines[1]);
                 //Debug.Log(lines[0]); actions
                 string[] gridSize = lines[2].Split(',');
                 //Debug.Log(lines[1]); grid size
@@ -289,8 +333,18 @@ namespace Assets.Scripts.UI
                 for (int i = 3; i < lines.Length; i++)
                 {
                     string[] line = lines[i].Split(',');
-                    GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    GridObject go = GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    //Load velocity
+                    if (go != null && line.Length > 5)
+                    {
+                        go.VX = int.Parse(line[5]);
+                        go.VY = int.Parse(line[6]);
 
+                    }
+                    else if (go != null)
+                    {
+                        currGridObjects.Add(go);
+                    }
                 }
 
             }

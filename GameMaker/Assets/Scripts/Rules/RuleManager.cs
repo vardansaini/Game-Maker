@@ -29,7 +29,7 @@ public class RuleManager : MonoBehaviour
                 //Debug.Log("Trying rule: " + rule);
             }
 
-            rule.RunRuleOnObjects(gridObjects);
+            gridObjects=rule.RunRuleOnObjects(gridObjects);
         }
 
         return gridObjects;

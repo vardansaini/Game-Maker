@@ -129,11 +129,7 @@ public class PlaytestManager : MonoBehaviour
     void Update()
     {
 
-        space = Input.GetKey(KeyCode.Space);
-        up = Input.GetKey(KeyCode.UpArrow);
-        down = Input.GetKey(KeyCode.DownArrow);
-        left = Input.GetKey(KeyCode.LeftArrow);
-        right = Input.GetKey(KeyCode.RightArrow);
+       
 
 
         if (Input.GetKey(KeyCode.Escape))
@@ -148,7 +144,14 @@ public class PlaytestManager : MonoBehaviour
         }
         else
         {
-            
+
+            space = Input.GetKey(KeyCode.Space);
+            up = Input.GetKey(KeyCode.UpArrow);
+            down = Input.GetKey(KeyCode.DownArrow);
+            left = Input.GetKey(KeyCode.LeftArrow);
+            right = Input.GetKey(KeyCode.RightArrow);
+            Debug.Log("Up: " + up);
+
 
             timer = 0;
             gridObjects = ruleManager.RunRules(gridObjects);
@@ -160,25 +163,30 @@ public class PlaytestManager : MonoBehaviour
                 int y = g.Y;
                 if (Mathf.Abs(g.VX) > 0)
                 {
+                    
                     x += g.VX;
                 }
                 else
                 {
-                    y += g.VY;
+                    if (Mathf.Abs(g.VY) > 0)
+                    {
+                        y += g.VY;
+                        Debug.Log("Updated to " + y + " due to " + g.VY);
+                    }
                 }
 
                 g.SetPosition(x, y);
             }
 
-            
+            spacePrev = space;
+            upPrev = up;
+            downPrev = down;
+            leftPrev = left;
+            rightPrev = right;
 
         }
 
-        spacePrev = space;
-        upPrev = up;
-        downPrev = down;
-        leftPrev = left;
-        rightPrev = right;
+        
 
 
 

@@ -283,14 +283,18 @@ public class Rule
                         int posX = (int)positionToAppearTo.x;
                         int posY = (int)positionToAppearTo.y;
                         SpriteData newobject = SpriteManager.Instance.GetSprite(thingToAppear.name);
-                        
-                        
-                        GridObject createdObject = GridManager.Instance.AddGridObject(newobject, posX, posY, false);
+                        GridObject createdObject = GridManager.Instance.CreateNewPreviewObject(newobject, posX, posY);
+                        Debug.Log("Trying to create object of type " + thingToAppear.name);
 
                         if (createdObject != null)
                         {
                             createdObject.VX = velocityXToAppear.velocityVal;
                             createdObject.VY = velocityYToAppear.velocityVal;
+
+                            gridObjects.Add(createdObject);
+                            Debug.Log("Created Object " + createdObject.name);
+                            Debug.Log("Alpha: " + createdObject.GetAlpha());
+
                         }
                     }
                     else{
@@ -347,12 +351,18 @@ public class Rule
                         int posX = (int)positionToAppearTo.x;
                         int posY = (int)positionToAppearTo.y;
                         SpriteData newobject = SpriteManager.Instance.GetSprite(thingToAppear.name);
-                        GridObject createdObject = GridManager.Instance.AddGridObject(newobject, posX, posY, false);
+                        GridObject createdObject = GridManager.Instance.CreateNewPreviewObject(newobject, posX, posY);
+                        Debug.Log("Trying to create object of type " + thingToAppear.name);
 
                         if (createdObject != null)
                         {
                             createdObject.VX = velocityXToAppear.velocityVal;
                             createdObject.VY = velocityYToAppear.velocityVal;
+
+                            gridObjects.Add(createdObject);
+                            Debug.Log("Created Object " + createdObject.name);
+                            Debug.Log("Alpha: " + createdObject.GetAlpha());
+
                         }
                     }
                     else{
@@ -362,7 +372,11 @@ public class Rule
                         {
                             createdObject.VX = velocityXToAppear.velocityVal;
                             createdObject.VY = velocityYToAppear.velocityVal;
+
+                            
                         }
+
+
                     }
 
                 }
