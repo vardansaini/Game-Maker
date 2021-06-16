@@ -209,12 +209,18 @@ currY - the current y position in observation, must be a valid position
 '''
 #Add all possible neighbor engines based on modifying existing rules (1)
 def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedState,trueNextState,trueCurrState, openEngineHeapQ, preUnmatched, postUnmatched, neighbors):
+	print("GenerateNeighborEngineModifyRules")
+	for c in trueNextState.components:
+		print ("	Next State Components: "+str(c))
 	for r in range(0, len(engine.rules)):
+
 
 		#Determine if rule fired
 		fired, effectIds = engine.rules[r].ConditionSatisfiedCheck(nextPredictedState)
-
-		print ("MODIFY CHECKING RULE (fired? "+str(fired)+" for ids: "+str(effectIds)+") "+str(engine.rules[r].preEffect)+"->"+str(engine.rules[r].postEffect))
+		if(isinstance(engine.rules[r].preEffect, EmptyFact)):
+			print ("MODIFY CHECKING RULE (fired? "+str(fired)+" for ids: "+str(effectIds)+") "+str(engine.rules[r].preEffect)+"->"+str(engine.rules[r].postEffect))
+			for cond in engine.rules[r].conditions:
+				print ("	COND: "+str(cond))
 
 		#Would it be helpful if this rule had fired in this instance
 		if not fired:
@@ -277,7 +283,8 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 
 				#At least one match, so we can produce a modification based on this
 				if anyMatch:
-
+					if(isinstance(engine.rules[r].preEffect, EmptyFact)):
+						print ("Ever found any match for an EmptyFact? "+str(len(maxMatchByRuleID.keys())))
 					#First match according to maxMatches
 					ruleIdsMaxMatchingList = maxMatchByRuleID.keys()
 					ruleIDsMaxValues = maxMatchValueByRuleID.values()
@@ -298,8 +305,8 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 								matching+=ruleIDsToStateIDsMappings[sortedRuleIDs[i]][maxMatchByRuleID[sortedRuleIDs[i]][0]]
 								illegalRuleIDs.append(sortedRuleIDs[i])
 								illegalComponentIDs.append(maxMatchByRuleID[sortedRuleIDs[i]][0])
-
-					print ("MODIFY RULE ANY MATCH")
+					if(isinstance(engine.rules[r].preEffect, EmptyFact)):
+						print ("MODIFY RULE ANY MATCH "+str([str(len(matching)), str(illegalRuleIDs), str(illegalComponentIDs)]))
 					possibleFinalSets = []#Sets of conditions
 					usedComponentIDs = []#componentIDs used in the same indexed set
 					usedRuleIDs = []#ruleIDs
@@ -337,7 +344,8 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 											usedComponentIDs.append(newUsedComponentIDs[i])
 											usedRuleIDs.append(newUsedRuleIDs[i])
 					#Find maximum
-					print ("MODIFY RULE FIND MAXIMUM")
+					if(isinstance(engine.rules[r].preEffect, EmptyFact)):
+						print ("MODIFY RULE FIND MAXIMUM "+str(len(possibleFinalSets)))
 					maxSets = []
 					maxVal = 0
 					for i in range(0, len(possibleFinalSets)):
@@ -349,18 +357,43 @@ def GenerateNeighborEngineModifyRules(engine, closedEngineList, nextPredictedSta
 
 					for maxSet in maxSets:
 						clonedEngine = engine.clone()
-						clonedEngine.rules[r] = Rule(maxSet+matching, clonedEngine.rules[r].preEffect, clonedEngine.rules[r].postEffect)
+						preEffectToUse = clonedEngine.rules[r].preEffect
+						newConditions = maxSet+matching
+						if(isinstance(preEffectToUse, EmptyFact)):
+							if len(preEffectToUse.replacementFacts)>0:
+								newReplacementFacts = []
+								for fact in preEffectToUse.replacementFacts:
+									if fact in newConditions:
+										newReplacementFacts.append(fact)
+								preEffectToUse = EmptyFact(newReplacementFacts)
+
+						clonedEngine.rules[r] = Rule(newConditions, preEffectToUse, clonedEngine.rules[r].postEffect)
 						if clonedEngine.rules[r].preEffect in (maxSet+matching):
 							if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
 								neighbors.append(clonedEngine)
-								#for cond in clonedEngine.rules[r].conditions: 
-								#	print ("	MODIFY RULE cond: "+str(cond))
+								if(isinstance(engine.rules[r].preEffect, EmptyFact)):
+									for cond in clonedEngine.rules[r].conditions: 
+										print ("	MODIFY RULE cond: "+str(cond))
 					if len(maxSets)==0 and len(matching)>0:#Just use this matching:
 						clonedEngine = engine.clone()
-						clonedEngine.rules[r] = Rule(matching, clonedEngine.rules[r].preEffect, clonedEngine.rules[r].postEffect)
-						if clonedEngine.rules[r].preEffect in (matching):
+
+						preEffectToUse = clonedEngine.rules[r].preEffect
+						newConditions = matching
+						if(isinstance(preEffectToUse, EmptyFact)):
+							if len(preEffectToUse.replacementFacts)>0:
+								newReplacementFacts = []
+								for fact in preEffectToUse.replacementFacts:
+									if fact in newConditions:
+										newReplacementFacts.append(fact)
+								preEffectToUse = EmptyFact(newReplacementFacts)
+
+						clonedEngine.rules[r] = Rule(newConditions, preEffectToUse, clonedEngine.rules[r].postEffect)
+						if clonedEngine.rules[r].preEffect in (matching) or (isinstance(clonedEngine.rules[r].preEffect, EmptyFact)):
 							if not clonedEngine in closedEngineList and not clonedEngine in neighbors:
 								neighbors.append(clonedEngine)
+								if(isinstance(engine.rules[r].preEffect, EmptyFact)):
+									for cond in clonedEngine.rules[r].conditions: 
+										print ("	MODIFY RULE cond2: "+str(cond))
 
 
 
