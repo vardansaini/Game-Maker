@@ -34,7 +34,7 @@ namespace Assets.Scripts.Core
         private GridObject[,] gridFunctional;
         private GridObject[,] gridDecorative;
 
-        private List<GridObject> gridObjects;
+        public List<GridObject> gridObjects;
         private List<GridObject> previewObjects;
 
         public List<GridObject> PreviewObjects { get { return previewObjects; } }
@@ -124,6 +124,30 @@ namespace Assets.Scripts.Core
             return true;
         }
 
+        //Attempts to create a new preview object of the specified type at the specified position if possible
+        public GridObject CreateNewPreviewObject(SpriteData sprite, int x, int y)
+        {
+            if (!CanAddGridObject(sprite, x, y))
+            {
+                return null;
+            }
+
+            if (ContainsGridObject(sprite.Functional, x, y))
+            {
+                return null;
+            }
+            // Instantiate object
+            GridObject clone = Instantiate(gridObjectPrefab, sprite.Functional ? gridObjectParentFunctional : gridObjectParentDecorative);
+
+            clone.SetSprite(sprite);
+            clone.SetPosition(x, y);
+
+            clone.SetAlpha(0.5f);
+
+            return clone;
+
+        }
+
         public GridObject AddGridObject(SpriteData sprite, int x, int y, bool writeLog)
         {
             if (!CanAddGridObject(sprite, x, y))
@@ -138,6 +162,7 @@ namespace Assets.Scripts.Core
                 return null;
             }
 
+
             if (writeLog)
             {
                 LogHandler.Instance.WriteLine("Added " + sprite.Name + " at " + x + ", " + y + ":  time = " + Time.time);
@@ -148,9 +173,10 @@ namespace Assets.Scripts.Core
             //Check and see if preview object of same type in same location
             GridObject previewObjectToAdd = null;
 
+
             foreach (GridObject go in previewObjects)
             {
-                if (go.name == sprite.Name && x == go.X && go.Y == y)
+                if (go.Name == sprite.Name && x == go.X && go.Y == y)
                 {
                     previewObjectToAdd = go;
                 }
@@ -257,7 +283,7 @@ namespace Assets.Scripts.Core
             StringBuilder builder = new StringBuilder();
             builder.AppendLine(GridWidth + "," + GridHeight);
             foreach (GridObject gridObject in gridObjects)
-                builder.AppendLine(gridObject.Data.Name + "," + gridObject.X + "," + gridObject.Y + "," + gridObject.W + "," + gridObject.H);
+                builder.AppendLine(gridObject.Data.Name + "," + gridObject.X + "," + gridObject.Y + "," + gridObject.W + "," + gridObject.H + "," + gridObject.VX + "," + gridObject.VY);
 
             return builder.ToString();
         }

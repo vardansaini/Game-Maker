@@ -109,6 +109,10 @@ namespace Assets.Scripts.UI
 
         public void Next()
         {
+            //Check to see if we should have any velocity as we leave this frame
+            fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
+            
+
             lastStep = Time.time;
             fileMenu.Check();
             frame++;
@@ -118,6 +122,11 @@ namespace Assets.Scripts.UI
             }
             eraseField.text = "";
             text.text = "" + frame;
+            spacePrev = space;
+            upPrev = up;
+            downPrev = down;
+            leftPrev = left;
+            rightPrev = right;
             fileMenu.ForRealLoad();
         }
         public void Back()
@@ -139,7 +148,7 @@ namespace Assets.Scripts.UI
              if (!loaded)
              {
                  loaded = true;
-                GridManager.Instance.ResetGridSize();
+                 GridManager.Instance.ResetGridSize();
                  fileMenu.ForRealLoad();
              }
 
