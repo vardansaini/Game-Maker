@@ -4,3 +4,4 @@
 *.meta
 GameMaker/Assets/StreamingAssets/Frames/LoadedGame.txt
 GameMaker/Assets/StreamingAssets/Frames/*
+!GameMaker/Assets/StreamingAssets/Frames/KeepFramesFolder.txt
