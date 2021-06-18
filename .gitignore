@@ -1,4 +1,6 @@
 .DS_Store
 *.csv
 *.csv.meta
+*.meta
+GameMaker/Assets/StreamingAssets/Frames/LoadedGame.txt
 GameMaker/Assets/StreamingAssets/Frames/*

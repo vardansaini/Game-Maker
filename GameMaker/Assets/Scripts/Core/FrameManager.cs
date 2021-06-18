@@ -64,6 +64,12 @@ namespace Assets.Scripts.UI
         {
             Instance = this;
         }
+        public static int ResetFrame()
+        {
+
+            return frame = 0;
+
+        }
         public static int GetPrevFrame()
         {
             

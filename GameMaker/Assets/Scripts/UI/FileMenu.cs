@@ -37,6 +37,7 @@ namespace Assets.Scripts.UI
         public void Load()
         {
             Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
+            FrameManager.ResetFrame();
             SceneManager.LoadScene("Menu");
         }
 
@@ -169,7 +170,7 @@ namespace Assets.Scripts.UI
  
                 if (a.EndsWith(".csv"))
                 {
-                   // Debug.Log(a);
+                   
                     b = Path.GetFileName(a).Replace(".csv","");
                     //Debug.Log(b);
 
