@@ -87,11 +87,11 @@ public class Rule
 
     public List<GridObject> RunRuleOnObjects(List<GridObject> gridObjects)
     {
-        
+        Debug.Log("I am inside RunRuleObjects");
 
-        if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+        if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
         {
-            //Debug.Log("Checking Rule: " + preEffect.ToString() + "->" + postEffect.ToString());
+            Debug.Log("Checking Rule: " + preEffect.ToString() + "->" + postEffect.ToString());
         }
         List<int> effectIDs = new List<int>();
         foreach (KeyValuePair < int, List < Fact >> kvp in conditionsByID)
@@ -99,9 +99,9 @@ public class Rule
             List<int> componentIDs = new List<int>();//All the potential matches for this condition
             foreach (Fact ruleFact in kvp.Value)
             {
-                if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+                if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
                 {
-                    //Debug.Log("     Checking Condition: " + ruleFact.ToString());
+                    Debug.Log("     Checking Condition: " + ruleFact.ToString());
                 }
 
 
@@ -109,9 +109,9 @@ public class Rule
                 {
                     if (!ruleFact.Matches(null)){
                         //This rule can't fire, return
-                        if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+                        if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
                         {
-                            //Debug.Log("Rule can't fire due to " + ruleFact.ToString());
+                            Debug.Log("Rule can't fire due to " + ruleFact.ToString());
                         }
                         return gridObjects;
                     }
@@ -123,9 +123,11 @@ public class Rule
                         //Find all matching componentIDs in preview gridObjects
                         for (int g = 0; g < gridObjects.Count; g++)
                         {
+                           
                             if (ruleFact.Matches(gridObjects[g]))
                             {
                                 componentIDs.Add(g);
+                                Debug.Log("Rule Fact Matches");
                             }
                         }
                     }
@@ -138,6 +140,7 @@ public class Rule
                             if (ruleFact.Matches(gridObjects[id]))
                             {
                                 newComponentIDs.Add(id);
+                                Debug.Log("Rule Fact Matches");
                             }
 
 
@@ -146,10 +149,10 @@ public class Rule
                         if (newComponentIDs.Count == 0)
                         {
                             //This rule can't fire, return
-                            if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+                            if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
                             {
 
-                                //Debug.Log("Rule can't fire due to " + ruleFact.ToString());
+                                Debug.Log("Rule can't fire due to " + ruleFact.ToString());
                                 
                             }
                             return gridObjects;
@@ -180,6 +183,7 @@ public class Rule
                                 foreach (Fact vanishFact in ((EmptyFact)preEffect).facts) {
                                     if (!vanishFact.Matches(gridObjects[cid]))
                                     {
+                                        Debug.Log("I am here to break");
                                         totalMatch = false;
                                         break;
                                     }
@@ -220,19 +224,21 @@ public class Rule
             }
         }
 
-        if (typeof(EmptyFact).IsInstanceOfType(preEffect))
+        if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
         {
 
             if (effectIDs.Count > 0)
             {
-                //Debug.Log("     Running Rule: " + preEffect.ToString() + "->" + postEffect.ToString());
+                Debug.Log("     Running Rule: " + preEffect.ToString() + "->" + postEffect.ToString());
             }
         }
 
         //Run rule on all effectIDs
         Scene scene = SceneManager.GetActiveScene();
+        Debug.Log("Above foreach");
         foreach (int effectID in effectIDs)
         {
+            Debug.Log("Inside foreach");
             if (typeof(EmptyFact).IsInstanceOfType(preEffect))
             {
                 if (((EmptyFact)preEffect).facts.Length > 0 && ((EmptyFact)postEffect).facts.Length == 0)
@@ -248,7 +254,7 @@ public class Rule
                     }
                     else
                     {
-                        //Debug.Log("Object should disappear");
+                        Debug.Log("Object should disappear");
                         PlaytestManager.Instance.RemoveObject(effectID);
                     }
                 }
@@ -264,19 +270,22 @@ public class Rule
                         if (typeof(AnimationFact).IsInstanceOfType(f))
                         {
                             thingToAppear = (AnimationFact)f;
+                            Debug.Log("ThingtoAppear" + thingToAppear.name);
                         }
                         else if (typeof(VelocityXFact).IsInstanceOfType(f))
                         {
                             velocityXToAppear = (VelocityXFact)f;
+                            Debug.Log("velocityXToAppear" + velocityXToAppear.velocityVal);
                         }
                         else if (typeof(VelocityYFact).IsInstanceOfType(f))
                         {
                             velocityYToAppear = (VelocityYFact)f;
+                            Debug.Log("velocityYToAppear" + velocityYToAppear.velocityVal);
                         }
                     }
 
                     Vector2 positionToAppearTo = GetTopLeftCorner(gridObjects[effectID], (RelationshipXFact)((EmptyFact)postEffect).facts[0], (RelationshipYFact)((EmptyFact)postEffect).facts[1], thingToAppear);
-
+                    Debug.Log("Checking Main");
                     if (scene.name == "Main")
                     {
 
@@ -384,16 +393,18 @@ public class Rule
 
             else if (typeof(VelocityXFact).IsInstanceOfType(postEffect))
             {
+                Debug.Log(((VelocityXFact)postEffect).velocityVal.ToString());
                 gridObjects[effectID].VX = ((VelocityXFact)postEffect).velocityVal;
             }
             else if (typeof(VelocityYFact).IsInstanceOfType(postEffect))
             {
+                Debug.Log(((VelocityYFact)postEffect).velocityVal.ToString());
                 gridObjects[effectID].VY = ((VelocityYFact)postEffect).velocityVal;
             }
-}
+        }
 
-return gridObjects;
-}
+    return gridObjects;
+    }
 
 }
  

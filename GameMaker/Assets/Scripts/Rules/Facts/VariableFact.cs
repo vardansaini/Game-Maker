@@ -46,6 +46,10 @@ public class VariableFact : Fact
 
     public bool Matches()
     {
+        if (variableName.Equals("rightPrev"))
+        {
+            Debug.Log(FrameManager.RightPrev);
+        }
         if (variableName.Equals("bgColor"))
         {
             return variableName.Equals(GridManager.Instance.GetColor());

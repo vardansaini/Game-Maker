@@ -17,6 +17,8 @@ namespace Assets.Scripts.Core
         public event Action<int, int> GridSizeChanged;
 
         [SerializeField]
+        private FileMenu fileMenu;
+        [SerializeField]
         private GridObject gridObjectPrefab;
         [SerializeField]
         private Transform gridObjectParentFunctional;
@@ -42,6 +44,12 @@ namespace Assets.Scripts.Core
         public static GridManager Instance;
 
         public bool gridSizeSet = false;
+        public bool RulesActivated = false;
+
+        public static bool RulesActive(bool value)
+        {
+            return value;
+        }
 
         void Awake()
         {
@@ -92,10 +100,11 @@ namespace Assets.Scripts.Core
 
         public void ClearGrid()
         {
-            if (LogHandler.Instance != null)
+            /*if (LogHandler.Instance != null)
             {
                 LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
-            }
+            }*/
+            LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
             if (gridObjects == null)
                 return;
             foreach (GridObject gridObject in gridObjects)
@@ -127,6 +136,7 @@ namespace Assets.Scripts.Core
         //Attempts to create a new preview object of the specified type at the specified position if possible
         public GridObject CreateNewPreviewObject(SpriteData sprite, int x, int y)
         {
+            //Debug.Log("I am inside CREATE NEW PREVIEW OBJECT");
             if (!CanAddGridObject(sprite, x, y))
             {
                 return null;
@@ -138,7 +148,9 @@ namespace Assets.Scripts.Core
             }
             // Instantiate object
             GridObject clone = Instantiate(gridObjectPrefab, sprite.Functional ? gridObjectParentFunctional : gridObjectParentDecorative);
-
+            Debug.Log("sprite = "+ sprite.ToString());
+            Debug.Log("x = " + x);
+            Debug.Log("y = " + y);
             clone.SetSprite(sprite);
             clone.SetPosition(x, y);
 
@@ -316,15 +328,17 @@ namespace Assets.Scripts.Core
 
         }
 
-        public void UpdatePreviewGridObjectsFromLearnedRules()
+        public List<bool> UpdatePreviewGridObjectsFromLearnedRules()
         {
+            var RuleActivationCheck = new List<bool>();
             previewObjects = ruleManager.RunRules(previewObjects);
 
-
             //Update positions based on velocity
-            foreach(GridObject g in previewObjects) {
+            foreach (GridObject g in previewObjects) {
                 int x = g.X;
                 int y = g.Y;
+                int prevX = g.X;
+                int prevY = g.Y;
                 if (Mathf.Abs(g.VX) > 0)
                 {
                     x += g.VX;
@@ -333,9 +347,24 @@ namespace Assets.Scripts.Core
                 {
                     y+= g.VY;
                 }
-
+                Debug.Log(" x = " + x + " and " + " prevx = " + prevX);
+                Debug.Log(" y = " + y + " and " + " prevy = " + prevY);
                 g.SetPosition(x, y);
+                if (prevX != x || prevY != y)
+                {
+                    RuleActivationCheck.Add(true);
+                }
+                else
+                {
+                    RuleActivationCheck.Add(false);
+                }
             }
+            foreach(bool b in RuleActivationCheck)
+            {
+                Debug.Log(b);
+            }
+            Debug.Log("##########END OF GRID MANAGER CHECK> NOW RETURNING TO FILEMENU.");
+            return RuleActivationCheck;
         }
 
         public void ClearPreview()

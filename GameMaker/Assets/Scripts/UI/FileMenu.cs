@@ -33,18 +33,14 @@ namespace Assets.Scripts.UI
 
         public Text gameFiles;
         public Text error;
+        public List<bool> PreviewUpdated;
 
         public void Load()
         {
             Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
             FrameManager.ResetFrame();
             SceneManager.LoadScene("Menu");
-        }
-
-        public static string Clipboard
-        {
-            get { return GUIUtility.systemCopyBuffer; }
-            set { GUIUtility.systemCopyBuffer = value; }
+            LogHandler.Instance.WriteLine("Home was clicked:  time = " + Time.time);
         }
 
         public void StartClick()
@@ -55,9 +51,9 @@ namespace Assets.Scripts.UI
             {
                 Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
                 if (Directory.Exists(Constants.directory + gameNamefield.text))
-                {                    
+                {
                     File.WriteAllText(Constants.directory + fileName, gameNamefield.text);
-                    Constants.directory = Application.dataPath + "/StreamingAssets/Frames/" + gameNamefield.text + "/";            
+                    Constants.directory = Application.dataPath + "/StreamingAssets/Frames/" + gameNamefield.text + "/";
                 }
                 else
                 {
@@ -67,10 +63,11 @@ namespace Assets.Scripts.UI
                 }
                 SceneManager.LoadScene("Main");
             }
-                else
-                {
-                    error.text = "INVALID INPUT!";
-                }
+            else
+            {
+                error.text = "INVALID INPUT!";
+            }
+            LogHandler.Instance.WriteLine("Start was clicked:  time = " + Time.time);
         }
 
         private void Start()
@@ -81,9 +78,7 @@ namespace Assets.Scripts.UI
         {
             int val;
             var dir = new DirectoryInfo(Constants.directory);
-            //Debug.Log(Constants.directory);
             FileInfo[] info = dir.GetFiles("*.*");
-
 
             foreach (FileInfo f in info)
             {
@@ -92,13 +87,8 @@ namespace Assets.Scripts.UI
 
                 if (a.EndsWith(".csv"))
                 {
-                    //Debug.Log(a);
                     b = Path.GetFileName(a).Replace(".csv", "");
-                    //Debug.Log(b);
-
-
                     val = int.Parse(b);
-                    //Debug.Log(val);
                     if (val < LastFrame)
                     {
                         if (File.Exists(GetFile(val)) == true)
@@ -109,52 +99,123 @@ namespace Assets.Scripts.UI
 
                 }
             }
-            //Debug.Log(LastFrame);
+            LogHandler.Instance.WriteLine("First Frame button was pressed:  time = " + Time.time);
             return LastFrame;
         }
 
         public void UpdateVelocities(List<GridObject> currGridObjects)
         {
+            // If object does not exist in previous frame then no prediction
+            int prevCount = 0;
+            int CurrCount = 0;
+
             if (File.Exists(GetFile(FrameManager.GetPrevFrame())) && !File.Exists(GetFile(FrameManager.GetNextFrame())))
             {
                 //Load prior objects
                 string[] linesPrev = File.ReadAllLines(GetFile(FrameManager.GetPrevFrame()));
-
+                for (int i = 3; i < linesPrev.Length; i++)
+                {
+                    prevCount += 1;
+                }
                 foreach (GridObject go in currGridObjects)
                 {
-                    int bestMatch = -1;
-                    int bestDist = 1000;
+                    CurrCount += 1;
+                }
+                //Debug.Log("counter1 = " + prevCount);
+                //Debug.Log("counter2 = " + CurrCount);
 
+                if (prevCount < CurrCount)
+                {
                     for (int i = 3; i < linesPrev.Length; i++)
                     {
-                        string[] line = linesPrev[i].Split(',');
-                        if (line[0] == go.Name)
+                        string[] lines = linesPrev[i].Split(',');
+
+                        //Debug.Log("Data check: " + lines[0]);
+                        int bestMatch = -1;
+                        int bestDist = 1000;
+                        foreach (GridObject go in currGridObjects)
                         {
-                            int dist = Mathf.Abs(go.X - int.Parse(line[1])) + Mathf.Abs(go.Y - int.Parse(line[2]));
-                            if (dist < bestDist)
+                            //Debug.Log("Prev Frame check line[0], it should be name: " + lines[0]);
+                            if (go.Name == lines[0])
                             {
-                                bestDist = dist;
-                                bestMatch = i;
+                                //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + lines[1] + "||||" + lines[2]);
+                                int dist = Mathf.Abs(go.X - int.Parse(lines[1])) + Mathf.Abs(go.Y - int.Parse(lines[2]));
+                                if (dist < bestDist)
+                                {
+                                    bestDist = dist;
+                                    //Debug.Log("bestDist " + bestDist);
+                                    bestMatch = i;
+                                    //Debug.Log("bestMatch" + bestMatch);
+                                }
+
+
+                                if (bestMatch > 0)
+                                {
+                                    //Debug.Log("I am predicting new Frame.");
+                                    string[] line = linesPrev[bestMatch].Split(',');
+
+                                    if (int.Parse(line[1]) != go.X || int.Parse(line[2]) != go.Y)
+                                    {
+                                        go.VX = go.X - int.Parse(line[1]);
+                                        go.VY = go.Y - int.Parse(line[2]);
+                                    }
+                                }
+                                //Debug.Log("Print the number of main for loop: " + i + "Expected to stop at: " + linesPrev.Length);
+                                if (i == linesPrev.Length - 1) break;
                             }
                         }
                     }
-
-                    if (bestMatch > 0)
-                    {
-                        string[] line = linesPrev[bestMatch].Split(',');
-
-                        if (go.X != int.Parse(line[1]) || go.Y != int.Parse(line[2]))
-                        {
-                            go.VX = go.X - int.Parse(line[1]);
-                            go.VY = go.Y - int.Parse(line[2]);
-                        }
-                    }
                 }
+                if (prevCount >= CurrCount) {
+
+                    //foreach (GridObject obj in)
+                    foreach (GridObject go in currGridObjects)
+                    {
+                        //Debug.Log("This is currGridObjects "+currGridObjects);
+                        //Debug.Log("go " + go);
+
+                        int bestMatch = -1;
+                        int bestDist = 1000;
+
+                        for (int i = 3; i < linesPrev.Length; i++)
+                        {
+                            string[] line = linesPrev[i].Split(',');
+                            //Debug.Log("Prev Frame check line[0], it should be name: " + line[0]);
+                            if (line[0] == go.Name)
+                            {
+
+                                //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + line[1] + line[2]);
+                                int dist = Mathf.Abs(go.X - int.Parse(line[1])) + Mathf.Abs(go.Y - int.Parse(line[2]));
+                                if (dist < bestDist)
+                                {
+                                    bestDist = dist;
+                                    //Debug.Log("bestDist " + bestDist);
+                                    bestMatch = i;
+                                    //Debug.Log("bestMatch" + bestMatch);
+                                }
+                            }
+                        }
 
 
+                        if (bestMatch > 0)
+                        {
+                            //Debug.Log("I am predicting new Frame.");
+                            string[] line = linesPrev[bestMatch].Split(',');
+
+                            if (int.Parse(line[1]) != go.X || int.Parse(line[2]) != go.Y)
+                            {
+                                go.VX = go.X - int.Parse(line[1]);
+                                go.VY = go.Y - int.Parse(line[2]);
+                            }
+                        }
+                        //Debug.Log("Print the number of main for loop: " + "Expected to stop at: " + linesPrev.Length);
+
+                    }
+
+                }
             }
         }
-
+    
         public int GetLastFrame()
         {
             int val;
@@ -188,7 +249,9 @@ namespace Assets.Scripts.UI
                 }
             }
             //Debug.Log(LastFrame);
+            LogHandler.Instance.WriteLine("Last Frame button was pressed:  time = " + Time.time);
             return LastFrame;
+
         }
         public void GamesList()
         {
@@ -218,7 +281,7 @@ namespace Assets.Scripts.UI
         }
 
 
-        public void OnRun()
+        /*public void OnRun()
         {
 
             ExternalSave();
@@ -227,7 +290,7 @@ namespace Assets.Scripts.UI
             //TODO; handle running
             //SceneManager.LoadScene("LevelTest");
 
-        }
+        }*/
 
         public void OnSave()
         {
@@ -245,13 +308,15 @@ namespace Assets.Scripts.UI
             //}
         }
 
+        // Only EndTurn calls this function
+        // TODO: Check if we really need this function.
         public bool ExternalSave()
         {
             OnSave();
             return GameName != null;
         }
 
-        public void OnLoad()
+        /*public void OnLoad()
         {
             // Validate input
             string newLevelName = FormatGameName(loadLevelInput.text);
@@ -263,7 +328,7 @@ namespace Assets.Scripts.UI
             ForRealLoad();
 
             dialogueMenu.CloseDialogue();
-        }
+        }*/
         public string GetFile(int inputFile)
         {
             int fileToGet = inputFile;
@@ -353,7 +418,12 @@ namespace Assets.Scripts.UI
             {
 
                 GridManager.Instance.SetPriorGridObjectsToPreviewOnly(0.5f);
-                GridManager.Instance.UpdatePreviewGridObjectsFromLearnedRules();
+                PreviewUpdated = GridManager.Instance.UpdatePreviewGridObjectsFromLearnedRules();
+               /* foreach (bool b in PreviewUpdated)
+                {
+                    Debug.Log(b);
+                }
+                Debug.Log("##########END OF FILE MENU CHECK> NOW RETURNING TO FRAME MANAGER.");*/
 
                 FrameManager.Instance.ResetKeys();
                 // - Load an empty level instead
@@ -371,12 +441,14 @@ namespace Assets.Scripts.UI
             }
 
             GridManager.Instance.ClearGrid();
+            LogHandler.Instance.WriteLine("Screen was cleared:  time = " + Time.time);
         }
 
         public void OnTest()
         {
             FrameManager.SetCurrentFrame(0);
             SceneManager.LoadScene("Playtest");
+            LogHandler.Instance.WriteLine("Play was pressed:  time = " + Time.time);
         }
 
         public void OnExit()

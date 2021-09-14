@@ -134,6 +134,7 @@ public class PlaytestManager : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Escape))
         {
+            LogHandler.Instance.WriteLine("Escape was pressed to go to main scene :  time = " + Time.time);
             SceneManager.LoadScene("Main");
         }
 

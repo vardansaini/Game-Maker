@@ -115,8 +115,7 @@ namespace Assets.Scripts.UI
 
         public void Next()
         {
-            //Check to see if we should have any velocity as we leave this frame
-            fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
+            
             
 
             lastStep = Time.time;
@@ -128,12 +127,31 @@ namespace Assets.Scripts.UI
             }
             eraseField.text = "";
             text.text = "" + frame;
+            fileMenu.ForRealLoad();
+
             spacePrev = space;
             upPrev = up;
             downPrev = down;
             leftPrev = left;
             rightPrev = right;
-            fileMenu.ForRealLoad();
+
+            foreach (bool b in fileMenu.PreviewUpdated)
+            {
+                //Debug.Log(b);
+                if (b == false)
+                {
+                    fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
+                }
+            }
+            //Debug.Log("##########END OF FRAME MANAGER CHECK. END OF TEST");
+            //Check to see if we should have any velocity as we leave this frame
+            //fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
+            // FIX THE BUG ONLY CHECKING FOR 1 OBJECT TO BE TRUE. MAKE SURE WHERE IT IS TRUE OR FALSE.
+            /*if (fileMenu.PreviewUpdated == false)
+            {
+                fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
+            }*/
+            LogHandler.Instance.WriteLine("Next Frame button was pressed " + frame + " :  time = " + Time.time);
         }
         public void Back()
         {
@@ -147,6 +165,7 @@ namespace Assets.Scripts.UI
             eraseField.text = "";
             text.text = "" + frame;
             fileMenu.ForRealLoad();
+            LogHandler.Instance.WriteLine("Previous Frame button was pressed:  time = " + Time.time);
         }
         public void Update()
         {
@@ -194,16 +213,18 @@ namespace Assets.Scripts.UI
                     frame = temp;
                     //Debug.Log(frame);
                     text.text = "" + frame;
+                    LogHandler.Instance.WriteLine("Frame Text was changed to" + frame + " :  time = " + Time.time);
                     fileMenu.ForRealLoad();
                     
                 }
             }
+            
         }
 
         public void OnSpace()
         {
             space = !space;
-
+            LogHandler.Instance.WriteLine("Space was pressed to " + space + " :  time = " + Time.time);
             UpdateButtonState(space, spaceButton);
         }
         
@@ -211,27 +232,27 @@ namespace Assets.Scripts.UI
         {
             
             up = !up;
-
+            LogHandler.Instance.WriteLine("Up was pressed to " + Up + " :  time = " + Time.time);
             UpdateButtonState(up, upButton);
         }
         public void OnDown()
         {
             down = !down;
-
+            LogHandler.Instance.WriteLine("Down was pressed to " + down + " :  time = " + Time.time);
             UpdateButtonState(down, downButton);
         }
        
         public void OnLeft()
         {
             left = !left;
-
+            LogHandler.Instance.WriteLine("Left was pressed to " + left + " :  time = " + Time.time);
             UpdateButtonState(left, leftButton);
         }
         
         public void OnRight()
         {
             right = !right;
-
+            LogHandler.Instance.WriteLine("Right was pressed to " + right + " :  time = " + Time.time);
             UpdateButtonState(right, rightButton);
         }
       
