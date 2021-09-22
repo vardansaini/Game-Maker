@@ -22,7 +22,7 @@ public class LogHandler : MonoBehaviour {
 				Directory.CreateDirectory(Application.dataPath + "/StreamingAssets/Frames/" + GameName[0] + "/Study_Data");
 			}
 		}
-		sw = new StreamWriter (Application.dataPath + "/StreamingAssets/Frames/" + GameName[0] + "/Study_Data/" + "Log.txt");
+		sw = new StreamWriter (Application.dataPath + "/StreamingAssets/Frames/" + GameName[0] + "/Study_Data/" + "Log.txt", true);
 		Instance = this;
 		LogHandler.Instance.WriteLine("Study Start in LOGHANDLER:  time = " + Time.time);
 		LogHandler.Instance.WriteLine ("Study Start:  time = " + Time.time);
