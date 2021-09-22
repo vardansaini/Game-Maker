@@ -39,8 +39,9 @@ namespace Assets.Scripts.UI
         {
             Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
             FrameManager.ResetFrame();
-            SceneManager.LoadScene("Menu");
             LogHandler.Instance.WriteLine("Home was clicked:  time = " + Time.time);
+            SceneManager.LoadScene("Menu");
+            
         }
 
         public void StartClick()
@@ -61,13 +62,18 @@ namespace Assets.Scripts.UI
                     File.WriteAllText(Constants.directory + fileName, gameNamefield.text);
                     Constants.directory = Application.dataPath + "/StreamingAssets/Frames/" + gameNamefield.text + "/";
                 }
+                // why is LogHandler not getting called in Menu Scene?
+                if (LogHandler.Instance != null)
+                {
+                    LogHandler.Instance.WriteLine("Start was clicked:  time = " + Time.time);
+                }
                 SceneManager.LoadScene("Main");
             }
             else
             {
                 error.text = "INVALID INPUT!";
             }
-            LogHandler.Instance.WriteLine("Start was clicked:  time = " + Time.time);
+            
         }
 
         private void Start()

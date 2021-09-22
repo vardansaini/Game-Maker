@@ -100,11 +100,11 @@ namespace Assets.Scripts.Core
 
         public void ClearGrid()
         {
-            /*if (LogHandler.Instance != null)
+            if (LogHandler.Instance != null)
             {
                 LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
-            }*/
-            LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
+            }
+            //LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
             if (gridObjects == null)
                 return;
             foreach (GridObject gridObject in gridObjects)
@@ -347,8 +347,8 @@ namespace Assets.Scripts.Core
                 {
                     y+= g.VY;
                 }
-                Debug.Log(" x = " + x + " and " + " prevx = " + prevX);
-                Debug.Log(" y = " + y + " and " + " prevy = " + prevY);
+                //Debug.Log(" x = " + x + " and " + " prevx = " + prevX);
+                //Debug.Log(" y = " + y + " and " + " prevy = " + prevY);
                 g.SetPosition(x, y);
                 if (prevX != x || prevY != y)
                 {
@@ -361,9 +361,9 @@ namespace Assets.Scripts.Core
             }
             foreach(bool b in RuleActivationCheck)
             {
-                Debug.Log(b);
+                //Debug.Log(b);
             }
-            Debug.Log("##########END OF GRID MANAGER CHECK> NOW RETURNING TO FILEMENU.");
+            //Debug.Log("##########END OF GRID MANAGER CHECK> NOW RETURNING TO FILEMENU.");
             return RuleActivationCheck;
         }
 

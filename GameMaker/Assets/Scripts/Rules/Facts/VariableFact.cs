@@ -48,7 +48,7 @@ public class VariableFact : Fact
     {
         if (variableName.Equals("rightPrev"))
         {
-            Debug.Log(FrameManager.RightPrev);
+            //Debug.Log(FrameManager.RightPrev);
         }
         if (variableName.Equals("bgColor"))
         {

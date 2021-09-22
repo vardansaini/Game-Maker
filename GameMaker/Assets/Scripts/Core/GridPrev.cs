@@ -90,11 +90,11 @@ namespace Assets.Scripts.Core
 
         public void ClearGrid()
         {
-            /*if (LogHandler.Instance != null)
+            if (LogHandler.Instance != null)
             {
                 LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
-            }*/
-            LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
+            }
+            
             if (gridObjects == null)
                 return;
             foreach (GridObjectPrev gridObject in gridObjects)

@@ -151,8 +151,27 @@ public class PlaytestManager : MonoBehaviour
             down = Input.GetKey(KeyCode.DownArrow);
             left = Input.GetKey(KeyCode.LeftArrow);
             right = Input.GetKey(KeyCode.RightArrow);
-            Debug.Log("Up: " + up);
-
+            //Debug.Log("Up: " + up);
+            if (space == true)
+            {
+                LogHandler.Instance.WriteLine("Space was pressed to test :  time = " + Time.time);
+            }
+            if (up == true)
+            {
+                LogHandler.Instance.WriteLine("Up was pressed to test :  time = " + Time.time);
+            }
+            if (down == true)
+            {
+                LogHandler.Instance.WriteLine("Down was pressed to test :  time = " + Time.time);
+            }
+            if (left == true)
+            {
+                LogHandler.Instance.WriteLine("Left was pressed to test :  time = " + Time.time);
+            }
+            if (right == true)
+            {
+                LogHandler.Instance.WriteLine("Right was pressed to test :  time = " + Time.time);
+            }
 
             timer = 0;
             gridObjects = ruleManager.RunRules(gridObjects);
