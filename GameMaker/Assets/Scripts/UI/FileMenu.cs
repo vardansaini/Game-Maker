@@ -40,6 +40,7 @@ namespace Assets.Scripts.UI
             Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
             FrameManager.ResetFrame();
             LogHandler.Instance.WriteLine("Home was clicked:  time = " + Time.time);
+            LogHandler.Instance.WriteLine("");
             SceneManager.LoadScene("Menu");
             
         }
@@ -50,6 +51,8 @@ namespace Assets.Scripts.UI
 
             if (gameNamefield.text != "")
             {
+                //TODO: Fix path variable here, check if we need constants.directory
+                // 
                 Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
                 if (Directory.Exists(Constants.directory + gameNamefield.text))
                 {
@@ -65,7 +68,9 @@ namespace Assets.Scripts.UI
                 // why is LogHandler not getting called in Menu Scene?
                 if (LogHandler.Instance != null)
                 {
+                    LogHandler.Instance.StartLog();
                     LogHandler.Instance.WriteLine("Start was clicked:  time = " + Time.time);
+                    //LogHandler.Instance.CloseWriter();
                 }
                 SceneManager.LoadScene("Main");
             }
@@ -117,56 +122,61 @@ namespace Assets.Scripts.UI
 
             if (File.Exists(GetFile(FrameManager.GetPrevFrame())) && !File.Exists(GetFile(FrameManager.GetNextFrame())))
             {
+                Debug.Log("I am Inside if of updateVelocities");
                 //Load prior objects
                 string[] linesPrev = File.ReadAllLines(GetFile(FrameManager.GetPrevFrame()));
                 for (int i = 3; i < linesPrev.Length; i++)
                 {
                     prevCount += 1;
+                    
                 }
                 foreach (GridObject go in currGridObjects)
                 {
                     CurrCount += 1;
                 }
-                //Debug.Log("counter1 = " + prevCount);
-                //Debug.Log("counter2 = " + CurrCount);
+                Debug.Log("prevCount = " + prevCount);
+                Debug.Log("CurrCount = " + CurrCount);
 
                 if (prevCount < CurrCount)
                 {
+                    Debug.Log("I AM INSIDE PREVCOUNT < CURRCOUNT");
                     for (int i = 3; i < linesPrev.Length; i++)
                     {
                         string[] lines = linesPrev[i].Split(',');
 
-                        //Debug.Log("Data check: " + lines[0]);
+                        Debug.Log("Data check: " + lines[0]);
                         int bestMatch = -1;
                         int bestDist = 1000;
                         foreach (GridObject go in currGridObjects)
                         {
-                            //Debug.Log("Prev Frame check line[0], it should be name: " + lines[0]);
+                            Debug.Log("Prev Frame check line[0], it should be name: " + lines[0]);
                             if (go.Name == lines[0])
                             {
-                                //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + lines[1] + "||||" + lines[2]);
+                                Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + lines[1] + " |||| " + lines[2]);
                                 int dist = Mathf.Abs(go.X - int.Parse(lines[1])) + Mathf.Abs(go.Y - int.Parse(lines[2]));
                                 if (dist < bestDist)
                                 {
                                     bestDist = dist;
-                                    //Debug.Log("bestDist " + bestDist);
+                                    Debug.Log("bestDist " + bestDist);
                                     bestMatch = i;
-                                    //Debug.Log("bestMatch" + bestMatch);
+                                    Debug.Log("bestMatch" + bestMatch);
                                 }
 
 
                                 if (bestMatch > 0)
                                 {
-                                    //Debug.Log("I am predicting new Frame.");
+                                    Debug.Log("I am predicting new Frame.");
                                     string[] line = linesPrev[bestMatch].Split(',');
 
                                     if (int.Parse(line[1]) != go.X || int.Parse(line[2]) != go.Y)
                                     {
                                         go.VX = go.X - int.Parse(line[1]);
+                                        Debug.Log(go.VX);
                                         go.VY = go.Y - int.Parse(line[2]);
+                                        Debug.Log(go.VY);
                                     }
                                 }
-                                //Debug.Log("Print the number of main for loop: " + i + "Expected to stop at: " + linesPrev.Length);
+                                Debug.Log("Print the number of main for loop: " + i + "Expected to stop at: " + linesPrev.Length);
                                 if (i == linesPrev.Length - 1) break;
                             }
                         }
@@ -174,11 +184,11 @@ namespace Assets.Scripts.UI
                 }
                 if (prevCount >= CurrCount) {
 
-                    //foreach (GridObject obj in)
+                    Debug.Log("I AM INSIDE PrevCount >= CurrCount");
                     foreach (GridObject go in currGridObjects)
                     {
-                        //Debug.Log("This is currGridObjects "+currGridObjects);
-                        //Debug.Log("go " + go);
+                        Debug.Log("This is currGridObjects "+currGridObjects);
+                        Debug.Log("go " + go);
 
                         int bestMatch = -1;
                         int bestDist = 1000;
@@ -186,18 +196,18 @@ namespace Assets.Scripts.UI
                         for (int i = 3; i < linesPrev.Length; i++)
                         {
                             string[] line = linesPrev[i].Split(',');
-                            //Debug.Log("Prev Frame check line[0], it should be name: " + line[0]);
+                            Debug.Log("Prev Frame check line[0], it should be name: " + line[0]);
                             if (line[0] == go.Name)
                             {
 
-                                //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + line[1] + line[2]);
+                                Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + line[1] + " |||| " + line[2]);
                                 int dist = Mathf.Abs(go.X - int.Parse(line[1])) + Mathf.Abs(go.Y - int.Parse(line[2]));
                                 if (dist < bestDist)
                                 {
                                     bestDist = dist;
-                                    //Debug.Log("bestDist " + bestDist);
+                                    Debug.Log("bestDist " + bestDist);
                                     bestMatch = i;
-                                    //Debug.Log("bestMatch" + bestMatch);
+                                    Debug.Log("bestMatch" + bestMatch);
                                 }
                             }
                         }
@@ -211,6 +221,7 @@ namespace Assets.Scripts.UI
                             if (int.Parse(line[1]) != go.X || int.Parse(line[2]) != go.Y)
                             {
                                 go.VX = go.X - int.Parse(line[1]);
+
                                 go.VY = go.Y - int.Parse(line[2]);
                             }
                         }
@@ -274,6 +285,8 @@ namespace Assets.Scripts.UI
 
         void Awake()
         {
+            Debug.Log("I am in Awake of FileMenu");
+            File.WriteAllText(Application.dataPath + "/StreamingAssets/Frames/" + "LoadedGame.txt", "");
             GameName = "";
         }
         void Update()
@@ -425,6 +438,7 @@ namespace Assets.Scripts.UI
 
                 GridManager.Instance.SetPriorGridObjectsToPreviewOnly(0.5f);
                 PreviewUpdated = GridManager.Instance.UpdatePreviewGridObjectsFromLearnedRules();
+
                /* foreach (bool b in PreviewUpdated)
                 {
                     Debug.Log(b);
@@ -453,8 +467,9 @@ namespace Assets.Scripts.UI
         public void OnTest()
         {
             FrameManager.SetCurrentFrame(0);
-            SceneManager.LoadScene("Playtest");
             LogHandler.Instance.WriteLine("Play was pressed:  time = " + Time.time);
+            //LogHandler.Instance.CloseWriter();
+            SceneManager.LoadScene("Playtest");
         }
 
         public void OnExit()

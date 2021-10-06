@@ -339,14 +339,8 @@ namespace Assets.Scripts.Core
                 int y = g.Y;
                 int prevX = g.X;
                 int prevY = g.Y;
-                if (Mathf.Abs(g.VX) > 0)
-                {
-                    x += g.VX;
-                }
-                else
-                {
-                    y+= g.VY;
-                }
+                x += g.VX;
+                y+= g.VY;
                 //Debug.Log(" x = " + x + " and " + " prevx = " + prevX);
                 //Debug.Log(" y = " + y + " and " + " prevy = " + prevY);
                 g.SetPosition(x, y);
