@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Specialized;
 
 namespace Assets.Scripts.Core
 {
@@ -328,35 +329,50 @@ namespace Assets.Scripts.Core
 
         }
 
-        public List<bool> UpdatePreviewGridObjectsFromLearnedRules()
+        public OrderedDictionary UpdatePreviewGridObjectsFromLearnedRules()
         {
-            var RuleActivationCheck = new List<bool>();
+            //Dictionary<int, bool> RuleActivationCheck = new Dictionary<int, bool>();
+            OrderedDictionary RuleActivationCheck = new OrderedDictionary();
             previewObjects = ruleManager.RunRules(previewObjects);
 
             //Update positions based on velocity
-            foreach (GridObject g in previewObjects) {
-                int x = g.X;
-                int y = g.Y;
-                int prevX = g.X;
-                int prevY = g.Y;
-                x += g.VX;
-                y+= g.VY;
+            for (int i = 0; i < previewObjects.Count; i++) {
+                int x = previewObjects[i].X;
+                int y = previewObjects[i].Y;
+                int prevX = previewObjects[i].X;
+                int prevY = previewObjects[i].Y;
+                x += previewObjects[i].VX;
+                y += previewObjects[i].VY;
                 //Debug.Log(" x = " + x + " and " + " prevx = " + prevX);
                 //Debug.Log(" y = " + y + " and " + " prevy = " + prevY);
-                g.SetPosition(x, y);
+                previewObjects[i].SetPosition(x, y);
                 if (prevX != x || prevY != y)
                 {
-                    RuleActivationCheck.Add(true);
+                    RuleActivationCheck.Add(i, true);
+                    
                 }
                 else
                 {
-                    RuleActivationCheck.Add(false);
+                    RuleActivationCheck.Add(i, false);
+                    
                 }
             }
-            foreach(bool b in RuleActivationCheck)
+            /*ICollection keyCollection = RuleActivationCheck.Keys;
+            ICollection valueCollection = RuleActivationCheck.Values;
+            int dictionarySize = RuleActivationCheck.Count;
+            int[] myKeys = new int[RuleActivationCheck.Count];
+            bool[] myValues = new bool[RuleActivationCheck.Count];
+            keyCollection.CopyTo(myKeys, 0);
+            valueCollection.CopyTo(myValues, 0);
+
+            // Displays the contents of the OrderedDictionary
+            Debug.Log("   INDEX KEY                       VALUE");
+            for (int i = 0; i < dictionarySize; i++)
             {
-                //Debug.Log(b);
-            }
+                Debug.LogFormat("   {0,-5} {1,-25} {2}",
+                    i, myKeys[i], myValues[i]);
+            }*/
+          
             //Debug.Log("##########END OF GRID MANAGER CHECK> NOW RETURNING TO FILEMENU.");
             return RuleActivationCheck;
         }

@@ -76,6 +76,10 @@ namespace Assets.Scripts.UI
           return frame - 1;
             
         }
+        public static int GetPrevPrevFrame()
+        {
+            return frame - 2;
+        }
         public static int GetNextFrame()
         {
             return frame + 1;
@@ -135,14 +139,6 @@ namespace Assets.Scripts.UI
             leftPrev = left;
             rightPrev = right;
 
-            foreach (bool b in fileMenu.PreviewUpdated)
-            {
-                //Debug.Log(b);
-                if (b == false)
-                {
-                    fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
-                }
-            }
             //Debug.Log("##########END OF FRAME MANAGER CHECK. END OF TEST");
             //Check to see if we should have any velocity as we leave this frame
             //fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
