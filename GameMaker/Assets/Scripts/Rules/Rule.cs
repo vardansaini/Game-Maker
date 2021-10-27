@@ -9,6 +9,7 @@ public class Rule
     public List<Fact> conditions;
     public Fact preEffect, postEffect;
     public Dictionary<int, List<Fact>> conditionsByID;
+    public List<bool> RuleActivationCheck;
 
     public Rule(List<Fact> _conditions, Fact _preEffect, Fact _postEffect)
     {
@@ -87,6 +88,15 @@ public class Rule
 
     public List<GridObject> RunRuleOnObjects(List<GridObject> gridObjects)
     {
+        if (gridObjects.Count > 0)
+        {
+            for (int i = 0; i < gridObjects.Count; i++)
+            {
+                RuleActivationCheck[i] = false;
+            }
+            Debug.Log(RuleActivationCheck);
+        }
+        
         //Debug.Log("I am inside RunRuleObjects");
 
         if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
@@ -111,7 +121,7 @@ public class Rule
                         //This rule can't fire, return
                         if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
                         {
-                            //Debug.Log("Rule can't fire due to " + ruleFact.ToString());
+                            Debug.Log("Rule can't fire due to " + ruleFact.ToString());
                         }
                         return gridObjects;
                     }
@@ -126,6 +136,7 @@ public class Rule
                            
                             if (ruleFact.Matches(gridObjects[g]))
                             {
+                                //Debug.Log()
                                 componentIDs.Add(g);
                                 //Debug.Log("Rule Fact Matches");
                             }
@@ -140,7 +151,7 @@ public class Rule
                             if (ruleFact.Matches(gridObjects[id]))
                             {
                                 newComponentIDs.Add(id);
-                                //Debug.Log("Rule Fact Matches");
+                                Debug.Log("Rule Fact Matches");
                             }
 
 
@@ -381,8 +392,6 @@ public class Rule
                         {
                             createdObject.VX = velocityXToAppear.velocityVal;
                             createdObject.VY = velocityYToAppear.velocityVal;
-
-                            
                         }
 
 

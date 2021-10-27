@@ -43,6 +43,7 @@ namespace Assets.Scripts.UI
             FrameManager.ResetFrame();
             LogHandler.Instance.WriteLine("Home was clicked:  time = " + Time.time);
             LogHandler.Instance.WriteLine("");
+            LogHandler.Instance.CloseWriter();
             SceneManager.LoadScene("Menu");
             
         }
@@ -130,11 +131,11 @@ namespace Assets.Scripts.UI
             int dictionarySize = RuleActivationCheck.Count;
 
             // Displays the contents of the OrderedDictionary
-            Debug.Log("   INDEX KEY                       VALUE");
+            //Debug.Log("   INDEX KEY                       VALUE");
             for (int i = 0; i < dictionarySize; i++)
             {
-                Debug.LogFormat("   {0,-5} {1,-25} {2}",
-                    i, myKeys[i], myValues[i]);
+                //Debug.LogFormat("   {0,-5} {1,-25} {2}",
+                  //  i, myKeys[i], myValues[i]);
             }
             // If object does not exist in previous frame then no prediction
             int prevCount = 0;
@@ -171,8 +172,8 @@ namespace Assets.Scripts.UI
                                 //Debug.Log("Prev Frame check line[0], it should be name: " + lines[0]);
                                 if (PreviewObjects[myKeys[i]].Name == lines[0])
                                 {
-                                    Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + lines[1] + "||||" + lines[2]);
-                                    Debug.Log("curr velocity X = " + PreviewObjects[myKeys[j]].X + " curr velocity Y =" + PreviewObjects[myKeys[j]].Y);
+                                    //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + lines[1] + "||||" + lines[2]);
+                                    //Debug.Log("curr velocity X = " + PreviewObjects[myKeys[j]].X + " curr velocity Y =" + PreviewObjects[myKeys[j]].Y);
                                     int dist = Mathf.Abs(PreviewObjects[myKeys[j]].X - int.Parse(lines[1])) + Mathf.Abs(PreviewObjects[myKeys[j]].Y - int.Parse(lines[2]));
                                     if (dist < bestDist)
                                     {
@@ -188,9 +189,9 @@ namespace Assets.Scripts.UI
                                 {
                                     //Debug.Log("I am predicting new Frame.");
                                     string[] line = linesPrev[bestMatch2].Split(',');
-                                    Debug.Log(bestDist + " and " + bestMatch1);
-                                    Debug.Log(int.Parse(line[1]));
-                                    Debug.Log(PreviewObjects[bestMatch1].X);
+                                    //Debug.Log(bestDist + " and " + bestMatch1);
+                                    //Debug.Log(int.Parse(line[1]));
+                                    //Debug.Log(PreviewObjects[bestMatch1].X);
                                     if (int.Parse(line[1]) != PreviewObjects[bestMatch1].X || int.Parse(line[2]) != PreviewObjects[bestMatch1].Y)
                                     {
                                         PreviewObjects[bestMatch1].VX = PreviewObjects[bestMatch1].X - int.Parse(line[1]);
@@ -227,8 +228,8 @@ namespace Assets.Scripts.UI
                                 if (line[0] == PreviewObjects[myKeys[j]].Name)
                                 {
 
-                                    Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + line[1] + "||||" + line[2]);
-                                    Debug.Log("curr velocity X = " + PreviewObjects[myKeys[j]].X + " curr velocity Y =" + PreviewObjects[myKeys[j]].Y);
+                                    //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + line[1] + "||||" + line[2]);
+                                    //Debug.Log("curr velocity X = " + PreviewObjects[myKeys[j]].X + " curr velocity Y =" + PreviewObjects[myKeys[j]].Y);
                                     int dist = Mathf.Abs(PreviewObjects[myKeys[j]].X - int.Parse(line[1])) + Mathf.Abs(PreviewObjects[myKeys[j]].Y - int.Parse(line[2]));
                                     if (dist < bestDist)
                                     {
@@ -247,9 +248,9 @@ namespace Assets.Scripts.UI
                         {
                             //Debug.Log("I am predicting new Frame.");
                             string[] line = linesPrev[bestMatch2].Split(',');
-                            Debug.Log(bestDist + " and " + bestMatch1);
-                            Debug.Log(int.Parse(line[1]));
-                            Debug.Log(PreviewObjects[bestMatch1].X);
+                            //Debug.Log(bestDist + " and " + bestMatch1);
+                            //Debug.Log(int.Parse(line[1]));
+                            //Debug.Log(PreviewObjects[bestMatch1].X);
                             if (int.Parse(line[1]) != PreviewObjects[bestMatch1].X || int.Parse(line[2]) != PreviewObjects[myKeys[bestMatch1]].Y)
                             {
                                 PreviewObjects[bestMatch1].VX = PreviewObjects[bestMatch1].X - int.Parse(line[1]);
@@ -453,7 +454,7 @@ namespace Assets.Scripts.UI
 
         void Awake()
         {
-            Debug.Log("I am in Awake of FileMenu");
+            //Debug.Log("I am in Awake of FileMenu");
             File.WriteAllText(Application.dataPath + "/StreamingAssets/Frames/" + "LoadedGame.txt", "");
             GameName = "";
         }
