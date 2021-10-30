@@ -119,9 +119,6 @@ namespace Assets.Scripts.UI
 
         public void Next()
         {
-            
-            
-
             lastStep = Time.time;
             fileMenu.Check();
             frame++;

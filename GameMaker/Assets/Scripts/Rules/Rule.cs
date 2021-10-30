@@ -9,7 +9,25 @@ public class Rule
     public List<Fact> conditions;
     public Fact preEffect, postEffect;
     public Dictionary<int, List<Fact>> conditionsByID;
-    public List<bool> RuleActivationCheck;
+    public static List<bool> RuleActivationCheck = new List<bool>();
+        
+    public static List<bool> RuleActiveCheck { get { return RuleActivationCheck; } }
+
+    // need to strart with false
+    // check how can we go about this process.
+    public static void InitialiseRuleActivationCheck(int Count)
+    {
+        RuleActivationCheck.Clear();
+        if (Count > 0)
+        {
+            for (int i = 0; i < Count; i++)
+            {
+                RuleActivationCheck.Add(false);
+                //Debug.Log(RuleActivationCheck[i]);
+            }
+            Debug.Log("RuleActivation count = " + RuleActivationCheck.Count);
+        }
+    }
 
     public Rule(List<Fact> _conditions, Fact _preEffect, Fact _postEffect)
     {
@@ -88,14 +106,8 @@ public class Rule
 
     public List<GridObject> RunRuleOnObjects(List<GridObject> gridObjects)
     {
-        if (gridObjects.Count > 0)
-        {
-            for (int i = 0; i < gridObjects.Count; i++)
-            {
-                RuleActivationCheck[i] = false;
-            }
-            Debug.Log(RuleActivationCheck);
-        }
+        Debug.Log("GridObject count = " + gridObjects.Count);
+        Debug.Log("Entering RunRuleOnObjects");
         
         //Debug.Log("I am inside RunRuleObjects");
 
@@ -121,7 +133,7 @@ public class Rule
                         //This rule can't fire, return
                         if (typeof(VelocityXFact).IsInstanceOfType(preEffect))
                         {
-                            Debug.Log("Rule can't fire due to " + ruleFact.ToString());
+                            //Debug.Log("Rule can't fire due to " + ruleFact.ToString());
                         }
                         return gridObjects;
                     }
@@ -136,11 +148,13 @@ public class Rule
                            
                             if (ruleFact.Matches(gridObjects[g]))
                             {
-                                //Debug.Log()
+                                //RuleActivationCheck[g] = true;
+                                //Debug.Log("Number that is updated " + g + " = " + RuleActivationCheck[g]);
                                 componentIDs.Add(g);
-                                //Debug.Log("Rule Fact Matches");
+                               
                             }
                         }
+                        //Debug.Log("Rule Activation Update to check what was set to true = " + RuleActivationCheck.Count);
                     }
                     else
                     {
@@ -151,7 +165,7 @@ public class Rule
                             if (ruleFact.Matches(gridObjects[id]))
                             {
                                 newComponentIDs.Add(id);
-                                Debug.Log("Rule Fact Matches");
+                                //Debug.Log("Rule Fact Matches");
                             }
 
 
@@ -246,9 +260,10 @@ public class Rule
 
         //Run rule on all effectIDs
         Scene scene = SceneManager.GetActiveScene();
-        //Debug.Log("Above foreach");
+        Debug.Log("Above for loop for effectID");
         foreach (int effectID in effectIDs)
         {
+            Debug.Log(effectID);
             //Debug.Log("Inside foreach");
             if (typeof(EmptyFact).IsInstanceOfType(preEffect))
             {
@@ -402,13 +417,17 @@ public class Rule
 
             else if (typeof(VelocityXFact).IsInstanceOfType(postEffect))
             {
-               // Debug.Log(((VelocityXFact)postEffect).velocityVal.ToString());
+                // Debug.Log(((VelocityXFact)postEffect).velocityVal.ToString());
                 gridObjects[effectID].VX = ((VelocityXFact)postEffect).velocityVal;
+                RuleActivationCheck[effectID] = true;
+                Debug.Log(effectID + " gridObject = " + RuleActivationCheck[effectID]);
             }
             else if (typeof(VelocityYFact).IsInstanceOfType(postEffect))
             {
                 //Debug.Log(((VelocityYFact)postEffect).velocityVal.ToString());
                 gridObjects[effectID].VY = ((VelocityYFact)postEffect).velocityVal;
+                RuleActivationCheck[effectID] = true;
+                Debug.Log(effectID + " gridObject = " + RuleActivationCheck[effectID]);
             }
         }
 

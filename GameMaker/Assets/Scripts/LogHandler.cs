@@ -37,7 +37,7 @@ public class LogHandler : MonoBehaviour {
 			//Debug.Log("Trying to create Log File.");
 			//Debug.Log(path);
 			sw = new StreamWriter(path, true);
-			LogHandler.Instance.WriteLine("Study Start in LOGHANDLER:  time = " + Time.time);
+			//LogHandler.Instance.WriteLine("Study Start in LOGHANDLER:  time = " + Time.time);
 			LogHandler.Instance.WriteLine("Study Start:  time = " + Time.time);
 		}
 		else

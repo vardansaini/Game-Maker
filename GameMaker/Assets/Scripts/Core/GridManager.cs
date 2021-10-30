@@ -321,6 +321,7 @@ namespace Assets.Scripts.Core
                 {
                     previewObjects.Add(gridObject);
                 }
+                Rule.InitialiseRuleActivationCheck(gridObjects.Count);
             }
 
             gridObjects.Clear();
@@ -329,34 +330,48 @@ namespace Assets.Scripts.Core
 
         }
 
-        public OrderedDictionary UpdatePreviewGridObjectsFromLearnedRules()
+        public void UpdatePreviewGridObjectsFromLearnedRules()
         {
             //Dictionary<int, bool> RuleActivationCheck = new Dictionary<int, bool>();
-            OrderedDictionary RuleActivationCheck = new OrderedDictionary();
+            //OrderedDictionary RuleActivationCheck = new OrderedDictionary();
             previewObjects = ruleManager.RunRules(previewObjects);
 
             //Update positions based on velocity
-            for (int i = 0; i < previewObjects.Count; i++) {
+            for (int i = 0; i < previewObjects.Count; i++)
+            {
                 int x = previewObjects[i].X;
                 int y = previewObjects[i].Y;
                 int prevX = previewObjects[i].X;
                 int prevY = previewObjects[i].Y;
-                x += previewObjects[i].VX;
-                y += previewObjects[i].VY;
-                //Debug.Log(" x = " + x + " and " + " prevx = " + prevX);
-                //Debug.Log(" y = " + y + " and " + " prevy = " + prevY);
-                previewObjects[i].SetPosition(x, y);
-                if (prevX != x || prevY != y)
+                Debug.Log("VX after running rules = " + previewObjects[i].VX);
+                Debug.Log("VY after running rules = " + previewObjects[i].VY);
+                List<bool> RuleActivation = Rule.RuleActiveCheck;
+
+                foreach (bool b in RuleActivation)
                 {
-                    RuleActivationCheck.Add(i, true);
-                    
-                }
-                else
-                {
-                    RuleActivationCheck.Add(i, false);
-                    
+
+                    if (b == true)
+                    {
+                        x += previewObjects[i].VX;
+                        y += previewObjects[i].VY;
+                        previewObjects[i].SetPosition(x, y);
+                    }
                 }
             }
+                //Debug.Log(" x = " + x + " and " + " prevx = " + prevX);
+                //Debug.Log(" y = " + y + " and " + " prevy = " + prevY);
+                
+                //if (prevX != x || prevY != y)
+                //{
+                    //RuleActivationCheck.Add(i, true);
+                    
+                //}
+                //else
+                //{
+                    //RuleActivationCheck.Add(i, false);
+                    
+                //}
+            
             /*ICollection keyCollection = RuleActivationCheck.Keys;
             ICollection valueCollection = RuleActivationCheck.Values;
             int dictionarySize = RuleActivationCheck.Count;
@@ -374,7 +389,7 @@ namespace Assets.Scripts.Core
             }*/
           
             //Debug.Log("##########END OF GRID MANAGER CHECK> NOW RETURNING TO FILEMENU.");
-            return RuleActivationCheck;
+            //return RuleActivationCheck;
         }
 
         public void ClearPreview()

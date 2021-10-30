@@ -32,6 +32,7 @@ public class RuleManager : MonoBehaviour
                 //Debug.Log("Trying rule: " + rule);
             }
 
+            Debug.Log("I am here to run rules on objects");
             gridObjects=rule.RunRuleOnObjects(gridObjects);
         }
 

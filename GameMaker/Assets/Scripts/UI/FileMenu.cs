@@ -35,7 +35,7 @@ namespace Assets.Scripts.UI
 
         public Text gameFiles;
         public Text error;
-        public OrderedDictionary RuleActivationCheck;
+        //public OrderedDictionary RuleActivationCheck;
 
         public void Load()
         {
@@ -53,9 +53,7 @@ namespace Assets.Scripts.UI
             string fileName = "LoadedGame.txt";
 
             if (gameNamefield.text != "")
-            {
-                //TODO: Fix path variable here, check if we need constants.directory
-                // 
+            { 
                 Constants.directory = Application.dataPath + "/StreamingAssets/Frames/";
                 if (Directory.Exists(Constants.directory + gameNamefield.text))
                 {
@@ -68,7 +66,7 @@ namespace Assets.Scripts.UI
                     File.WriteAllText(Constants.directory + fileName, gameNamefield.text);
                     Constants.directory = Application.dataPath + "/StreamingAssets/Frames/" + gameNamefield.text + "/";
                 }
-                // why is LogHandler not getting called in Menu Scene?
+    
                 if (LogHandler.Instance != null)
                 {
                     LogHandler.Instance.StartLog();
@@ -117,26 +115,26 @@ namespace Assets.Scripts.UI
             return LastFrame;
         }
 
-        public void UpdateVelocities(List<GridObject> PreviewObjects, OrderedDictionary RuleActivationCheck)
+        public void UpdateVelocities(List<GridObject> PreviewObjects, List<bool> RuleCheck)
         {
-            ICollection keyCollection = RuleActivationCheck.Keys;
-            ICollection valueCollection = RuleActivationCheck.Values;
+            //ICollection keyCollection = RuleActivationCheck.Keys;
+            //ICollection valueCollection = RuleActivationCheck.Values;
 
             
-            int[] myKeys = new int[RuleActivationCheck.Count];
-            bool[] myValues = new bool[RuleActivationCheck.Count];
+            //int[] myKeys = new int[RuleCheck.Count];
+            //bool[] myValues = new bool[RuleCheck.Count];
 
-            keyCollection.CopyTo(myKeys, 0);
-            valueCollection.CopyTo(myValues, 0);
-            int dictionarySize = RuleActivationCheck.Count;
+            //keyCollection.CopyTo(myKeys, 0);
+            //valueCollection.CopyTo(myValues, 0);
+            //int dictionarySize = RuleCheck.Count;
 
             // Displays the contents of the OrderedDictionary
             //Debug.Log("   INDEX KEY                       VALUE");
-            for (int i = 0; i < dictionarySize; i++)
-            {
+            //for (int i = 0; i < dictionarySize; i++)
+            //{
                 //Debug.LogFormat("   {0,-5} {1,-25} {2}",
                   //  i, myKeys[i], myValues[i]);
-            }
+            //}
             // If object does not exist in previous frame then no prediction
             int prevCount = 0;
             int CurrCount = 0;
@@ -166,20 +164,20 @@ namespace Assets.Scripts.UI
                         int bestMatch1 = -1;
                         int bestMatch2 = -1;
                         int bestDist = 1000;
-                        for (int j = 0; j < dictionarySize; j++)
+                        for (int j = 0; j < RuleCheck.Count; j++)
                         {
-                            if(myValues[j] == false) {
+                            if(RuleCheck[j] == false) {
                                 //Debug.Log("Prev Frame check line[0], it should be name: " + lines[0]);
-                                if (PreviewObjects[myKeys[i]].Name == lines[0])
+                                if (PreviewObjects[j].Name == lines[0])
                                 {
                                     //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + lines[1] + "||||" + lines[2]);
                                     //Debug.Log("curr velocity X = " + PreviewObjects[myKeys[j]].X + " curr velocity Y =" + PreviewObjects[myKeys[j]].Y);
-                                    int dist = Mathf.Abs(PreviewObjects[myKeys[j]].X - int.Parse(lines[1])) + Mathf.Abs(PreviewObjects[myKeys[j]].Y - int.Parse(lines[2]));
+                                    int dist = Mathf.Abs(PreviewObjects[j].X - int.Parse(lines[1])) + Mathf.Abs(PreviewObjects[j].Y - int.Parse(lines[2]));
                                     if (dist < bestDist)
                                     {
                                         bestDist = dist;
                                         //Debug.Log("bestDist " + bestDist);
-                                        bestMatch1 = myKeys[j];
+                                        bestMatch1 = j;
                                         bestMatch2 = i;
                                         //Debug.Log("bestMatch" + bestMatch);
                                     }
@@ -195,7 +193,9 @@ namespace Assets.Scripts.UI
                                     if (int.Parse(line[1]) != PreviewObjects[bestMatch1].X || int.Parse(line[2]) != PreviewObjects[bestMatch1].Y)
                                     {
                                         PreviewObjects[bestMatch1].VX = PreviewObjects[bestMatch1].X - int.Parse(line[1]);
+                                        Debug.Log("Updated VX in velocity function = " + PreviewObjects[bestMatch1].VX);
                                         PreviewObjects[bestMatch1].VY = PreviewObjects[bestMatch1].Y - int.Parse(line[2]);
+                                        Debug.Log("Updated VY in velocity function = " + PreviewObjects[bestMatch1].VY);
                                         int x = PreviewObjects[bestMatch1].X;
                                         int y = PreviewObjects[bestMatch1].Y;
                                         x += PreviewObjects[bestMatch1].VX;
@@ -215,27 +215,27 @@ namespace Assets.Scripts.UI
                     int bestMatch2 = -1;
                     int bestDist = 1000;
                     //foreach (GridObject obj in)
-                    for (int j = 0; j < dictionarySize; j++)
+                    for (int j = 0; j < RuleCheck.Count; j++)
                     {
                         //Debug.Log("This is currGridObjects "+currGridObjects);
                         //Debug.Log("go " + go);
-                        if (myValues[j] == false)
+                        if (RuleCheck[j] == false)
                         {
                             for (int i = 3; i < linesPrev.Length; i++)
                             {
                                 string[] line = linesPrev[i].Split(',');
                                 //Debug.Log("Prev Frame check line[0], it should be name: " + line[0]);
-                                if (line[0] == PreviewObjects[myKeys[j]].Name)
+                                if (line[0] == PreviewObjects[j].Name)
                                 {
 
                                     //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + line[1] + "||||" + line[2]);
                                     //Debug.Log("curr velocity X = " + PreviewObjects[myKeys[j]].X + " curr velocity Y =" + PreviewObjects[myKeys[j]].Y);
-                                    int dist = Mathf.Abs(PreviewObjects[myKeys[j]].X - int.Parse(line[1])) + Mathf.Abs(PreviewObjects[myKeys[j]].Y - int.Parse(line[2]));
+                                    int dist = Mathf.Abs(PreviewObjects[j].X - int.Parse(line[1])) + Mathf.Abs(PreviewObjects[j].Y - int.Parse(line[2]));
                                     if (dist < bestDist)
                                     {
                                         bestDist = dist;
                                         //Debug.Log("bestDist " + bestDist);
-                                        bestMatch1 = myKeys[j];
+                                        bestMatch1 = j;
                                         bestMatch2 = i;
                                         //Debug.Log("bestMatch" + bestMatch);
                                     }
@@ -251,10 +251,12 @@ namespace Assets.Scripts.UI
                             //Debug.Log(bestDist + " and " + bestMatch1);
                             //Debug.Log(int.Parse(line[1]));
                             //Debug.Log(PreviewObjects[bestMatch1].X);
-                            if (int.Parse(line[1]) != PreviewObjects[bestMatch1].X || int.Parse(line[2]) != PreviewObjects[myKeys[bestMatch1]].Y)
+                            if (int.Parse(line[1]) != PreviewObjects[bestMatch1].X || int.Parse(line[2]) != PreviewObjects[bestMatch1].Y)
                             {
                                 PreviewObjects[bestMatch1].VX = PreviewObjects[bestMatch1].X - int.Parse(line[1]);
+                                Debug.Log("Updated VX in velocity function = " + PreviewObjects[bestMatch1].VX);
                                 PreviewObjects[bestMatch1].VY = PreviewObjects[bestMatch1].Y - int.Parse(line[2]);
+                                Debug.Log("Updated VY in velocity function = " + PreviewObjects[bestMatch1].VY);
                                 int x = PreviewObjects[bestMatch1].X;
                                 int y = PreviewObjects[bestMatch1].Y;
                                 x += PreviewObjects[bestMatch1].VX;
@@ -398,10 +400,10 @@ namespace Assets.Scripts.UI
                 }*/
 
             }
-        
 
-   
-    
+
+
+
         public int GetLastFrame()
         {
             int val;
@@ -606,8 +608,8 @@ namespace Assets.Scripts.UI
             {
 
                 GridManager.Instance.SetPriorGridObjectsToPreviewOnly(0.5f);
-                RuleActivationCheck = GridManager.Instance.UpdatePreviewGridObjectsFromLearnedRules();
-                UpdateVelocities(GridManager.Instance.PreviewObjects, RuleActivationCheck); 
+                GridManager.Instance.UpdatePreviewGridObjectsFromLearnedRules();
+                UpdateVelocities(GridManager.Instance.PreviewObjects, Rule.RuleActiveCheck); 
                 FrameManager.Instance.ResetKeys();
                 // - Load an empty level instead
                 //GridManager.Instance.ClearGrid();
