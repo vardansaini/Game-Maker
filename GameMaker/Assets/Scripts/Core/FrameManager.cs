@@ -136,14 +136,6 @@ namespace Assets.Scripts.UI
             leftPrev = left;
             rightPrev = right;
 
-            //Debug.Log("##########END OF FRAME MANAGER CHECK. END OF TEST");
-            //Check to see if we should have any velocity as we leave this frame
-            //fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
-            // FIX THE BUG ONLY CHECKING FOR 1 OBJECT TO BE TRUE. MAKE SURE WHERE IT IS TRUE OR FALSE.
-            /*if (fileMenu.PreviewUpdated == false)
-            {
-                fileMenu.UpdateVelocities(GridManager.Instance.gridObjects);
-            }*/
             LogHandler.Instance.WriteLine("Next Frame button was pressed " + frame + " :  time = " + Time.time);
         }
         public void Back()

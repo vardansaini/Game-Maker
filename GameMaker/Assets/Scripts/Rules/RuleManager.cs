@@ -10,16 +10,11 @@ public class RuleManager : MonoBehaviour
 
     public void Start()
     {
-        //If we have rules
-        //Debug.Log(Constants.directory + "data.json");
         rules = LoadJSON.LoadJson(Constants.directory + "data.json");
     }
 
     public List<GridObject> RunRules(List<GridObject> gridObjects)
     {
-
-        //Before running, recheck that we have up to date rules:
-        //Debug.Log(Constants.directory + "data.json");
         rules = LoadJSON.LoadJson(Constants.directory+"data.json");
 
         for (int i = 0; i<rules.Count; i++)
@@ -31,8 +26,6 @@ public class RuleManager : MonoBehaviour
             {
                 //Debug.Log("Trying rule: " + rule);
             }
-
-            Debug.Log("I am here to run rules on objects");
             gridObjects=rule.RunRuleOnObjects(gridObjects);
         }
 

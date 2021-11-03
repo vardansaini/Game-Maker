@@ -117,25 +117,7 @@ namespace Assets.Scripts.UI
 
         public void UpdateVelocities(List<GridObject> PreviewObjects, List<bool> RuleCheck)
         {
-            //ICollection keyCollection = RuleActivationCheck.Keys;
-            //ICollection valueCollection = RuleActivationCheck.Values;
-
             
-            //int[] myKeys = new int[RuleCheck.Count];
-            //bool[] myValues = new bool[RuleCheck.Count];
-
-            //keyCollection.CopyTo(myKeys, 0);
-            //valueCollection.CopyTo(myValues, 0);
-            //int dictionarySize = RuleCheck.Count;
-
-            // Displays the contents of the OrderedDictionary
-            //Debug.Log("   INDEX KEY                       VALUE");
-            //for (int i = 0; i < dictionarySize; i++)
-            //{
-                //Debug.LogFormat("   {0,-5} {1,-25} {2}",
-                  //  i, myKeys[i], myValues[i]);
-            //}
-            // If object does not exist in previous frame then no prediction
             int prevCount = 0;
             int CurrCount = 0;
             
@@ -193,9 +175,9 @@ namespace Assets.Scripts.UI
                                     if (int.Parse(line[1]) != PreviewObjects[bestMatch1].X || int.Parse(line[2]) != PreviewObjects[bestMatch1].Y)
                                     {
                                         PreviewObjects[bestMatch1].VX = PreviewObjects[bestMatch1].X - int.Parse(line[1]);
-                                        Debug.Log("Updated VX in velocity function = " + PreviewObjects[bestMatch1].VX);
+                                        //Debug.Log("Updated VX in velocity function = " + PreviewObjects[bestMatch1].VX);
                                         PreviewObjects[bestMatch1].VY = PreviewObjects[bestMatch1].Y - int.Parse(line[2]);
-                                        Debug.Log("Updated VY in velocity function = " + PreviewObjects[bestMatch1].VY);
+                                        //Debug.Log("Updated VY in velocity function = " + PreviewObjects[bestMatch1].VY);
                                         int x = PreviewObjects[bestMatch1].X;
                                         int y = PreviewObjects[bestMatch1].Y;
                                         x += PreviewObjects[bestMatch1].VX;
@@ -254,9 +236,9 @@ namespace Assets.Scripts.UI
                             if (int.Parse(line[1]) != PreviewObjects[bestMatch1].X || int.Parse(line[2]) != PreviewObjects[bestMatch1].Y)
                             {
                                 PreviewObjects[bestMatch1].VX = PreviewObjects[bestMatch1].X - int.Parse(line[1]);
-                                Debug.Log("Updated VX in velocity function = " + PreviewObjects[bestMatch1].VX);
+                                //Debug.Log("Updated VX in velocity function = " + PreviewObjects[bestMatch1].VX);
                                 PreviewObjects[bestMatch1].VY = PreviewObjects[bestMatch1].Y - int.Parse(line[2]);
-                                Debug.Log("Updated VY in velocity function = " + PreviewObjects[bestMatch1].VY);
+                                //Debug.Log("Updated VY in velocity function = " + PreviewObjects[bestMatch1].VY);
                                 int x = PreviewObjects[bestMatch1].X;
                                 int y = PreviewObjects[bestMatch1].Y;
                                 x += PreviewObjects[bestMatch1].VX;
@@ -270,135 +252,6 @@ namespace Assets.Scripts.UI
 
                 }
             }
-            /*if (File.Exists(GetFile(FrameManager.GetPrevFrame())) && !File.Exists(GetFile(FrameManager.GetNextFrame())))
-            {
-                Debug.Log("I am Inside if of updateVelocities");
-                //Load prior objects
-                string[] PrevObj = File.ReadAllLines(GetFile(FrameManager.GetPrevFrame()));
-                
-                for (int i = 3; i < PrevObj.Length; i++)
-                {
-                    prevCount += 1;
-                }
-                CurrCount = RuleActivationCheck.Count;
-
-                Debug.Log("prevCount = " + prevCount);
-                Debug.Log("CurrCount = " + CurrCount);
-
-                for (int i = 0; i < dictionarySize; i++)
-                {
-                    if (myValues[i] == false)
-                    {
-                            if (CurrCount >= prevCount)
-                            {
-                            //if (myKeys[i] <= prevCount) { 
-                            //int bestMatch;
-                            int bestDist = 1000;
-                            Debug.Log("I AM INSIDE PREVCOUNT <= CURRCOUNT");
-                                foreach (GridObject go in CurrGridObjects)
-                                {
-                                    //string[] lines = PrevObj[j].Split(',');
-
-                                    //Debug.Log("Data check: " + lines[0]);
-                                    //Debug.Log("Data check: " + lines[1]);
-                                    //Debug.Log("Data check: " + lines[2]);
-                                    //Debug.Log("Data check: " + lines[3]);
-                                    Debug.Log("Prev Frame check line[0], it should be name: " + go.Name);
-                                    if (PreviewObjects[myKeys[i]].Name == go.Name)
-                                    {
-                                        //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + go.X + " |||| " + go.Y);
-                                        Debug.Log("curr velocity X = " + go.X + " curr velocity Y =" + go.Y);
-                                        int dist = Mathf.Abs(go.X - PreviewObjects[myKeys[i]].X + Mathf.Abs(go.Y - PreviewObjects[myKeys[i]].Y));
-                                        if (dist < bestDist)
-                                        {
-                                            bestDist = dist;
-                                            Debug.Log("bestDist " + bestDist);
-                                            //bestMatch = go;
-                                            //Debug.Log("bestMatch" + bestMatch);
-                                            if (go.X != PreviewObjects[myKeys[i]].X || go.Y != PreviewObjects[myKeys[i]].Y)
-                                            {
-                                                PreviewObjects[myKeys[i]].VX = go.X - PreviewObjects[myKeys[i]].X;
-                                                Debug.Log(PreviewObjects[myKeys[i]].VX);
-                                                PreviewObjects[myKeys[i]].VY = go.Y - PreviewObjects[myKeys[i]].Y;
-
-                                            }
-                                        }
-                                    }
-
-
-                                /*if (bestMatch.X != CurrGridObjects[myKeys[i]].X || int.Parse(line[2]) != CurrGridObjects[myKeys[i]].Y)
-                                {
-                                    PreviewObjects[myKeys[i]].VX = CurrGridObjects[myKeys[i]].X - int.Parse(line[1]);
-                                    Debug.Log(PreviewObjects[myKeys[i]].VX);
-                                    PreviewObjects[myKeys[i]].VY = CurrGridObjects[myKeys[i]].Y - int.Parse(line[2]);
-                                    Debug.Log(PreviewObjects[myKeys[i]].VY);
-                                }    
-                            //}
-                            }
-                            //Debug.Log("Print the number of main for loop: " + i + "Expected to stop at: " + PrevObj.Length);
-                            //if (i == PrevObj.Length - 1) break;
-                        }
-                            if (prevCount > CurrCount)
-                            {
-                                Debug.Log("I AM INSIDE PrevCount > CurrCount");
-                            //int bestMatch;
-                            int bestDist = 1000;
-                            int counter = 0;
-                            Debug.Log("I AM INSIDE PREVCOUNT <= CURRCOUNT");
-                            foreach (GridObject go in CurrGridObjects)
-                            {
-                                counter += 1;
-                                //string[] lines = PrevObj[j].Split(',');
-
-                                //Debug.Log("Data check: " + lines[0]);
-                                //Debug.Log("Data check: " + lines[1]);
-                                //Debug.Log("Data check: " + lines[2]);
-                                //Debug.Log("Data check: " + lines[3]);
-                                Debug.Log("Prev Frame check line[0], it should be name: " + go.Name);
-                                if (PreviewObjects[myKeys[i]].Name == go.Name)
-                                {
-                                    //Debug.Log("Prev Frame check line[1] and line[2], it should be velocity: " + go.X + " |||| " + go.Y);
-                                    Debug.Log("curr velocity X = " + go.X + " curr velocity Y =" + go.Y);
-                                    int dist = Mathf.Abs(go.X - PreviewObjects[myKeys[i]].X + Mathf.Abs(go.Y - PreviewObjects[myKeys[i]].Y));
-                                    if (dist < bestDist)
-                                    {
-                                        bestDist = dist;
-                                        Debug.Log("bestDist " + bestDist);
-                                        //bestMatch = go;
-                                        //Debug.Log("bestMatch" + bestMatch);
-                                        if (go.X != PreviewObjects[myKeys[i]].X || go.Y != PreviewObjects[myKeys[i]].Y)
-                                        {
-                                            PreviewObjects[myKeys[i]].VX = go.X - PreviewObjects[myKeys[i]].X;
-                                            Debug.Log(PreviewObjects[myKeys[i]].VX);
-                                            PreviewObjects[myKeys[i]].VY = go.Y - PreviewObjects[myKeys[i]].Y;
-
-                                        }
-                                    }
-                                }
-                                if (counter == dictionarySize) break;
-                                }
-                                    }
-
-
-                                    /*if (bestMatch > 0)
-                                    {
-                                        //Debug.Log("I am predicting new Frame.");
-                                        string[] line = PrevObj[bestMatch].Split(',');
-
-                                        if (int.Parse(line[1]) != PreviewObjects[myKeys[i]].X || int.Parse(line[2]) != PreviewObjects[myKeys[i]].Y)
-                                        {
-                                        PreviewObjects[myKeys[i]].VX = CurrGridObjects[myKeys[i]].X - int.Parse(line[1]);
-
-                                        PreviewObjects[myKeys[i]].VY = CurrGridObjects[myKeys[i]].Y - int.Parse(line[2]);
-                                        }
-                                    }
-            //Debug.Log("Print the number of main for loop: " + "Expected to stop at: " + linesPrev.Length);
-
-        }
-
-                    }
-                }*/
-
             }
 
 
@@ -470,18 +323,6 @@ namespace Assets.Scripts.UI
             }
         }
 
-
-        /*public void OnRun()
-        {
-
-            ExternalSave();
-
-            LogHandler.Instance.WriteLine("Starting Run:  time = " + Time.time);
-            //TODO; handle running
-            //SceneManager.LoadScene("LevelTest");
-
-        }*/
-
         public void OnSave()
         {
             //if (GameName == null)
@@ -506,19 +347,7 @@ namespace Assets.Scripts.UI
             return GameName != null;
         }
 
-        /*public void OnLoad()
-        {
-            // Validate input
-            string newLevelName = FormatGameName(loadLevelInput.text);
-            if (newLevelName == null)
-                return;
-            else
-                GameName = newLevelName;
-
-            ForRealLoad();
-
-            dialogueMenu.CloseDialogue();
-        }*/
+        
         public string GetFile(int inputFile)
         {
             int fileToGet = inputFile;
@@ -633,7 +462,6 @@ namespace Assets.Scripts.UI
         {
             FrameManager.SetCurrentFrame(0);
             LogHandler.Instance.WriteLine("Play was pressed:  time = " + Time.time);
-            //LogHandler.Instance.CloseWriter();
             SceneManager.LoadScene("Playtest");
         }
 
