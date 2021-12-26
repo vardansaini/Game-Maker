@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Core;
-using System.Diagnostics;
 using UnityEngine.SceneManagement;
 using System.IO;
 using UnityEngine;
@@ -50,16 +49,16 @@ namespace Assets.Scripts.UI
             {
                 framenumber.text = FrameManager.GetCurrentFrame().ToString();
                 string prevNumber = FrameManager.GetPrevFrame().ToString();
-                if (File.Exists(Constants.directory + FileMenu.gameName + " " + prevNumber + ".csv"))
+                if (File.Exists(Constants.directory + FileMenu.gameName + prevNumber + ".csv"))
                 {
-                  framenumberprev.text = prevNumber;
+                    framenumberprev.text = prevNumber;
                 }
                 else
                 {
                     framenumberprev.text = "";
                 }
                 string nextNumber = FrameManager.GetNextFrame().ToString();
-                if (File.Exists(Constants.directory + FileMenu.gameName + " " + nextNumber + ".csv"))
+                if (File.Exists(Constants.directory + FileMenu.gameName + nextNumber + ".csv"))
                 {
                     framenumbernext.text = nextNumber;
                 }
