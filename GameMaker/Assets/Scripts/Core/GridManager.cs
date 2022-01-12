@@ -134,6 +134,16 @@ namespace Assets.Scripts.Core
             return true;
         }
 
+        public bool GridBounds (SpriteData sprite, int x, int y)
+        {
+            if (x < 0 || x > GridWidth)
+                return false;
+            else if (y < 0 || y > GridHeight)
+                return false;
+
+            return true;
+        }
+
         //Attempts to create a new preview object of the specified type at the specified position if possible
         public GridObject CreateNewPreviewObject(SpriteData sprite, int x, int y)
         {
@@ -149,9 +159,9 @@ namespace Assets.Scripts.Core
             }
             // Instantiate object
             GridObject clone = Instantiate(gridObjectPrefab, sprite.Functional ? gridObjectParentFunctional : gridObjectParentDecorative);
-            Debug.Log("sprite = "+ sprite.ToString());
-            Debug.Log("x = " + x);
-            Debug.Log("y = " + y);
+            //Debug.Log("sprite = "+ sprite.ToString());
+            //Debug.Log("x = " + x);
+            //Debug.Log("y = " + y);
             clone.SetSprite(sprite);
             clone.SetPosition(x, y);
 
