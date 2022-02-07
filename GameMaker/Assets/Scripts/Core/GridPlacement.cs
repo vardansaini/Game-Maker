@@ -46,7 +46,6 @@ namespace Assets.Scripts.Core
 
 			// Calculate sprite coordinates for the current mouse position
 			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			//Debug.Log(mousePosition);
 			if (previousMousePosition == null)
 				previousMousePosition = mousePosition;
 
@@ -57,17 +56,16 @@ namespace Assets.Scripts.Core
 				int spriteX = 0, spriteY = 0;
 				for (float i = 0.25f; i <= 1; i += 0.25f)
 				{
-
 					
 					spriteX = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.x, mousePosition.x, i) - (float)CurrentSprite.Width / 2);
 					spriteY = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.y, mousePosition.y, i) - (float)CurrentSprite.Height / 2);
-					//Debug.Log("MouseX = " + spriteX + " MouseY = " + spriteY);
+					
 					posX.text = "X:" + spriteX.ToString();
 					posY.text = "Y:" + spriteY.ToString();
-					Debug.Log(GridManager.Instance.GridWidth);
-					Debug.Log(spriteX);
+
+					// Text Position along mouse
 					if (spriteX >= (GridManager.Instance.GridWidth-3)) {
-						// Text Position along mouse
+					
 						if (spriteY <= 0)
 						{
 							textPosX = new Vector2(Input.mousePosition.x - 100, Input.mousePosition.y + 50);
@@ -87,13 +85,11 @@ namespace Assets.Scripts.Core
 					}
                     else
                     {
-						// Text Position along mouse
 						textPosX = new Vector2(Input.mousePosition.x + 60, Input.mousePosition.y - 50);
 						textPosY = new Vector2(Input.mousePosition.x + 100, Input.mousePosition.y - 50);
 					}
 					posX.transform.position = textPosX;
 					posY.transform.position = textPosY;
-					//Debug.Log("I am here to check");
 
 					if (mode == PlacementMode.Level)
 					{
@@ -138,24 +134,18 @@ namespace Assets.Scripts.Core
 				// Update preview object
 				if (CurrentSprite.Sprite != previewObject.Data.Sprite)
 				{
-					//Debug.Log("I am in update preview object.");
 					previewObject.SetSprite(CurrentSprite);
 				}
 				previewObject.SetPosition(spriteX, spriteY);
-				//textPos = previewObject.GetPosition();
-				//Debug.Log(textPos);
+				
 				previewObject.gameObject.SetActive(GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY));
 				bool activeStatus = GridManager.Instance.GridBounds(CurrentSprite, spriteX, spriteY);
 				posX.gameObject.SetActive(activeStatus);
 				posY.gameObject.SetActive(activeStatus);
-
-				
-
 			}
 
 			// Store mouse position
 			previousMousePosition = mousePosition;
-
 		}
 
 		private void OnApplicationFocus(bool hasFocus)
