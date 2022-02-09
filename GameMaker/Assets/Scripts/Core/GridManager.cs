@@ -159,9 +159,6 @@ namespace Assets.Scripts.Core
             }
             // Instantiate object
             GridObject clone = Instantiate(gridObjectPrefab, sprite.Functional ? gridObjectParentFunctional : gridObjectParentDecorative);
-            //Debug.Log("sprite = "+ sprite.ToString());
-            //Debug.Log("x = " + x);
-            //Debug.Log("y = " + y);
             clone.SetSprite(sprite);
             clone.SetPosition(x, y);
 

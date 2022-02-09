@@ -261,9 +261,7 @@ namespace Assets.Scripts.UI
         {
             int val;
             var dir = new DirectoryInfo(Constants.directory);
-            //Debug.Log(Constants.directory);
             FileInfo[] info = dir.GetFiles("*.*");
-
 
             foreach (FileInfo f in info)
             {
@@ -274,11 +272,8 @@ namespace Assets.Scripts.UI
                 {
                    
                     b = Path.GetFileName(a).Replace(".csv","");
-                    //Debug.Log(b);
-
                
                         val = int.Parse(b);
-                        //Debug.Log(val);
                         if (val > LastFrame)
                         {
                         if (File.Exists(GetFile(val)) == true)
@@ -289,7 +284,6 @@ namespace Assets.Scripts.UI
 
                 }
             }
-            //Debug.Log(LastFrame);
             LogHandler.Instance.WriteLine("Last Frame button was pressed:  time = " + Time.time);
             return LastFrame;
 
@@ -387,13 +381,10 @@ namespace Assets.Scripts.UI
                 string[] gridSize = lines[2].Split(',');
 
                 GridPrev.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
-                //GridNext.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
                 for (int i = 3; i < lines.Length; i++)
                 {
                     string[] line = lines[i].Split(',');
-                    //GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
                     GridPrev.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
-                    //GridNext.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
                 }
 
             }
