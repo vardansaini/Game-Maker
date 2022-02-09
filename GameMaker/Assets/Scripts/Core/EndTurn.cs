@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.UI;
+﻿/*using Assets.Scripts.UI;
 using Assets.Scripts.Util;
 using System;
 using System.Collections;
@@ -134,7 +134,7 @@ namespace Assets.Scripts.Core
                 yield return new WaitForSeconds(0.5f);
 
             }
-            */
+            
             //process.Close();
             string receivedFromServer = "";
             try {           
@@ -227,4 +227,4 @@ namespace Assets.Scripts.Core
             
         }
     }
-}
+}*/

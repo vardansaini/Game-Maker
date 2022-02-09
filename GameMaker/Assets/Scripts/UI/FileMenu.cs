@@ -98,6 +98,7 @@ namespace Assets.Scripts.UI
                 {
                     b = Path.GetFileName(a).Replace(".csv", "");
                     val = int.Parse(b);
+
                     if (val < LastFrame)
                     {
                         if (File.Exists(GetFile(val)))
@@ -125,10 +126,9 @@ namespace Assets.Scripts.UI
 
                 if (a.EndsWith(".csv"))
                 {
-
                     b = Path.GetFileName(a).Replace(".csv", "");
-
                     val = int.Parse(b);
+
                     if (val > LastFrame)
                     {
                         if (File.Exists(GetFile(val)))
@@ -383,7 +383,7 @@ namespace Assets.Scripts.UI
                 {
                     string[] line = lines[i].Split(',');
 
-                    GridObject go = GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), false);
+                    GridObject go = GridManager.Instance.AddGridObject(SpriteManager.Instance.GetSprite(line[0]), int.Parse(line[1]), int.Parse(line[2]), true);
 
                     //Load velocity
                     if (go != null && line.Length > 5)

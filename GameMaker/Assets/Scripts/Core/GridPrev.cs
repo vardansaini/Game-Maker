@@ -90,10 +90,10 @@ namespace Assets.Scripts.Core
 
         public void ClearGrid()
         {
-            if (LogHandler.Instance != null)
+            /*if (LogHandler.Instance != null)
             {
                 LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
-            }
+            }*/
             
             if (gridObjects == null)
                 return;
@@ -139,9 +139,8 @@ namespace Assets.Scripts.Core
 
             if (writeLog)
             {
-               // LogHandler.Instance.WriteLine("Added " + sprite.Name + " at " + x + ", " + y + ":  time = " + Time.time);
+                LogHandler.Instance.WriteLine("Added " + sprite.Name + " at " + x + ", " + y + ":  time = " + Time.time);
             }
-            LogHandler.Instance.WriteLine("grid previous added" + sprite.Name + " at " + x + ", " + y + ":  time = " + Time.time);
 
             // Instantiate object
             GridObjectPrev clone = Instantiate(gridObjectPrefab, sprite.Functional ? gridObjectParentFunctional : gridObjectParentDecorative);
