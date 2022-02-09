@@ -11,8 +11,6 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
-using Debug = UnityEngine.Debug;
-
 namespace Assets.Scripts.UI
 {
     public class FileMenu : MonoBehaviour
