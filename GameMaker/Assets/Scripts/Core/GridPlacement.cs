@@ -59,11 +59,12 @@ namespace Assets.Scripts.Core
                     pos.text = "X:" + spriteX.ToString() + "		Y:" + spriteY.ToString(); // Two Tab spaces given between X and Y for cleaner GUI 
 
                     // Text Position along mouse
+                    Debug.Log(Input.mousePosition.x + " Y: " + Input.mousePosition.y);
                     if (spriteX >= (GridManager.Instance.GridWidth - 3))
                     {
 
                         if (spriteY <= 0)
-                        {
+                        {                        
                             textPos = new Vector2(Input.mousePosition.x - 100, Input.mousePosition.y + 50);
 
                         }
@@ -131,8 +132,14 @@ namespace Assets.Scripts.Core
 
                 previewObject.gameObject.SetActive(GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY));
                 bool activeStatus = GridManager.Instance.GridBounds(CurrentSprite, spriteX, spriteY);
-                pos.gameObject.SetActive(activeStatus);
-
+                if (Input.GetKey(KeyCode.LeftControl))
+                {
+                    pos.gameObject.SetActive(activeStatus);
+                }
+                else
+                {
+                    pos.gameObject.SetActive(false);
+                }
             }
 
             // Store mouse position
