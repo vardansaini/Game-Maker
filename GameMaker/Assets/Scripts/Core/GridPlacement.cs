@@ -52,11 +52,23 @@ namespace Assets.Scripts.Core
                 int spriteX = 0, spriteY = 0;
                 for (float i = 0.25f; i <= 1; i += 0.25f)
                 {
-
                     spriteX = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.x, mousePosition.x, i) - (float)CurrentSprite.Width / 2);
-                    spriteY = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.y, mousePosition.y, i) - (float)CurrentSprite.Height / 2);
+                    spriteY = Mathf.RoundToInt(Mathf.Lerp(previousMousePosition.Value.y, mousePosition.y, i) - (float)CurrentSprite.Height / 2);                    
 
-                    pos.text = "X:" + spriteX.ToString() + "		Y:" + spriteY.ToString(); // Two Tab spaces given between X and Y for cleaner GUI 
+                    if (spriteX <= -4)
+                    {
+                        int x = spriteX + 24;
+                        pos.text = "X:" + x.ToString() + "		Y:" + spriteY.ToString(); // Two Tab spaces given between X and Y for cleaner GUI
+                    }
+                    else if (spriteX >= 24)
+                    {
+                        int x = spriteX - 24;
+                        pos.text = "X:" + x.ToString() + "		Y:" + spriteY.ToString(); // Two Tab spaces given between X and Y for cleaner GUI
+                    }
+                    else
+                    {
+                        pos.text = "X:" + spriteX.ToString() + "		Y:" + spriteY.ToString(); // Two Tab spaces given between X and Y for cleaner GUI
+                    }
 
                     // Text Position along mouse
                     Debug.Log(Input.mousePosition.x + " Y: " + Input.mousePosition.y);
@@ -132,9 +144,9 @@ namespace Assets.Scripts.Core
 
                 previewObject.gameObject.SetActive(GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY));
                 bool activeStatus = GridManager.Instance.GridBounds(CurrentSprite, spriteX, spriteY);
-                if (Input.GetKey(KeyCode.LeftControl))
+                if (Input.GetKey(KeyCode.LeftControl) && (spriteX >= -24 || spriteX <= -4 || spriteX >= 0 || spriteX <= 20 || spriteX >= 24 || spriteX <= 44))
                 {
-                    pos.gameObject.SetActive(activeStatus);
+                    pos.gameObject.SetActive(true);
                 }
                 else
                 {
