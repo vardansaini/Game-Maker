@@ -265,10 +265,7 @@ namespace Assets.Scripts.Core
         }
 
         public void UpdatePreviewGridObjectsFromLearnedRules()
-        {
-            //previewObjects = ruleManager.RunRules(previewObjects);
-
-
+        {            
             //Update positions based on velocity
             foreach (GridObjectPrev g in previewObjects)
             {
