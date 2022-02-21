@@ -144,7 +144,7 @@ namespace Assets.Scripts.Core
 
                 previewObject.gameObject.SetActive(GridManager.Instance.CanAddGridObject(CurrentSprite, spriteX, spriteY));
                 bool activeStatus = GridManager.Instance.GridBounds(CurrentSprite, spriteX, spriteY);
-                if (Input.GetKey(KeyCode.LeftControl) && (spriteX >= -24 || spriteX <= -4 || spriteX >= 0 || spriteX <= 20 || spriteX >= 24 || spriteX <= 44))
+                if (Input.GetKey(KeyCode.LeftControl) && (spriteX >= -24 && spriteX <= -4 || spriteX >= 0 && spriteX <= 20 || spriteX >= 24 && spriteX <= 44) && (spriteY >= 0 && spriteY <= 8))
                 {
                     pos.gameObject.SetActive(true);
                 }
