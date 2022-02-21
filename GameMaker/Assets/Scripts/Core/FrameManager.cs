@@ -56,42 +56,46 @@ namespace Assets.Scripts.UI
         public static bool RightPrev { get { return rightPrev; } }
 
         float lastStep, timeBetweenSteps = 0.5f;
-       
+
         [SerializeField]
         public InputField eraseField;
         int max;
+
         void Start()
         {
             Instance = this;
         }
+
         public static int ResetFrame()
         {
-
             return frame = 0;
-
         }
+
         public static int GetPrevFrame()
         {
-            
-          return frame - 1;
-            
+            return frame - 1;
         }
+
         public static int GetPrevPrevFrame()
         {
             return frame - 2;
         }
+
         public static int GetNextFrame()
         {
             return frame + 1;
         }
+
         public static int GetCurrentFrame()
         {
             return frame;
         }
+
         public int GetmaxFrame()
         {
             return max;
         }
+
         public static void SetCurrentFrame(int current)
         {
             frame = current;
@@ -120,14 +124,18 @@ namespace Assets.Scripts.UI
         public void Next()
         {
             lastStep = Time.time;
+
             fileMenu.Check();
             frame++;
+
             if (frame > max)
             {
                 max = frame;
             }
+
             eraseField.text = "";
             text.text = "" + frame;
+
             fileMenu.ForRealLoad();
 
             spacePrev = space;
@@ -147,26 +155,28 @@ namespace Assets.Scripts.UI
             {
                 frame = 0;
             }
+
             eraseField.text = "";
             text.text = "" + frame;
+
             fileMenu.ForRealLoad();
+
             LogHandler.Instance.WriteLine("Previous Frame button was pressed:  time = " + Time.time);
         }
         public void Update()
         {
-            
-             if (!loaded)
-             {
-                 loaded = true;
-                 GridManager.Instance.ResetGridSize();
-                 fileMenu.ForRealLoad();
-             }
+
+            if (!loaded)
+            {
+                loaded = true;
+                GridManager.Instance.ResetGridSize();
+                fileMenu.ForRealLoad();
+            }
 
 
 
             if (Input.GetKey(KeyCode.RightArrow))
-            { //|| Input.GetMouseButton(0)){
-                
+            {
                 if (Time.time - lastStep >= timeBetweenSteps)
                 {
                     lastStep = Time.time;
@@ -174,36 +184,35 @@ namespace Assets.Scripts.UI
                 }
             }
             if (Input.GetKey(KeyCode.LeftArrow))
-             {
-                 if (Time.time - lastStep >= timeBetweenSteps)
-                 {
-                 lastStep = Time.time;
-                 Back();
-                 }
+            {
+                if (Time.time - lastStep >= timeBetweenSteps)
+                {
+                    lastStep = Time.time;
+                    Back();
+                }
 
-             }
+            }
 
         }
 
         public void FrameTextManager(String value)
         {
-            //Debug.Log(value);
             int temp;
-            bool success = int.TryParse(value,out temp);
-            //Debug.Log(success);
+            bool success = int.TryParse(value, out temp);
+
             if (success)
-            {                
-                if (temp >= 0)                
+            {
+                if (temp >= 0)
                 {
                     frame = temp;
-                    //Debug.Log(frame);
+
                     text.text = "" + frame;
                     LogHandler.Instance.WriteLine("Frame Text was changed to" + frame + " :  time = " + Time.time);
                     fileMenu.ForRealLoad();
-                    
+
                 }
             }
-            
+
         }
 
         public void OnSpace()
@@ -212,10 +221,10 @@ namespace Assets.Scripts.UI
             LogHandler.Instance.WriteLine("Space was pressed to " + space + " :  time = " + Time.time);
             UpdateButtonState(space, spaceButton);
         }
-        
+
         public void OnUp()
         {
-            
+
             up = !up;
             LogHandler.Instance.WriteLine("Up was pressed to " + Up + " :  time = " + Time.time);
             UpdateButtonState(up, upButton);
@@ -226,22 +235,22 @@ namespace Assets.Scripts.UI
             LogHandler.Instance.WriteLine("Down was pressed to " + down + " :  time = " + Time.time);
             UpdateButtonState(down, downButton);
         }
-       
+
         public void OnLeft()
         {
             left = !left;
             LogHandler.Instance.WriteLine("Left was pressed to " + left + " :  time = " + Time.time);
             UpdateButtonState(left, leftButton);
         }
-        
+
         public void OnRight()
         {
             right = !right;
             LogHandler.Instance.WriteLine("Right was pressed to " + right + " :  time = " + Time.time);
             UpdateButtonState(right, rightButton);
         }
-      
-        
+
+
         public static string GetKeys()
         {
             return space + "," + up + "," + down + "," + left + "," + right + "\n";
@@ -297,7 +306,7 @@ namespace Assets.Scripts.UI
             UpdateButtonState(up, upButton);
             UpdateButtonState(down, downButton);
             UpdateButtonState(left, leftButton);
-            UpdateButtonState(right, rightButton);        
+            UpdateButtonState(right, rightButton);
         }
 
         private void UpdateButtonState(bool off, Button button)
@@ -310,11 +319,11 @@ namespace Assets.Scripts.UI
             }
             else
             {
-                colors.normalColor = Color.green ;
+                colors.normalColor = Color.green;
                 colors.highlightedColor = Color.green;
             }
             button.colors = colors;
-            
+
         }
     }
 }

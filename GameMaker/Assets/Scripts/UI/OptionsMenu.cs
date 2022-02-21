@@ -58,16 +58,16 @@ namespace Assets.Scripts.UI
             // Apply new grid size
             int levelWidth = int.Parse(levelWidthInput.text);
             int levelHeight = int.Parse(levelHeightInput.text);
-            if(levelWidth != GridManager.Instance.GridWidth || levelHeight != GridManager.Instance.GridHeight)
+            if (levelWidth != GridManager.Instance.GridWidth || levelHeight != GridManager.Instance.GridHeight)
                 GridManager.Instance.SetGridSize(levelWidth, levelHeight, true);
 
             // Apply grid view
             gridLines.SetActive(placeholderGridView);
 
             // Apply hover scroll
-            if(HoverScroll && !placeholderHoverScroll)
+            if (HoverScroll && !placeholderHoverScroll)
                 Camera.main.GetComponent<CameraScroll>().AddLock(this);
-            else if(!HoverScroll && placeholderHoverScroll)
+            else if (!HoverScroll && placeholderHoverScroll)
                 Camera.main.GetComponent<CameraScroll>().RemoveLock(this);
 
             // Save the options

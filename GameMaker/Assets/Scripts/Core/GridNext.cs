@@ -94,7 +94,7 @@ namespace Assets.Scripts.Core
             {
                 LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
             }
-            
+
             if (gridObjects == null)
                 return;
             foreach (GridObjectNext gridObject in gridObjects)
@@ -268,9 +268,6 @@ namespace Assets.Scripts.Core
 
         public void UpdatePreviewGridObjectsFromLearnedRules()
         {
-            //previewObjects = ruleManager.RunRules(previewObjects);
-
-
             //Update positions based on velocity
             foreach (GridObjectNext g in previewObjects)
             {
@@ -300,43 +297,6 @@ namespace Assets.Scripts.Core
 
 
         }
-        /*public void AddPreviousFrameToCurrentFrame()
-        {
-
-            foreach (GridObjectNext gridObject in previewObjects)
-            {
-                gridObject.SetAlpha(1);
-                AddGridObject(GridObjectNext);
-                Destroy(gridObject.gameObject);
-                //gridObjects.Add(gridObject);
-            }
-
-            previewObjects.Clear();
-
-        }*/
-
-        /**
-        public void AddKeptObjectsToGrid()
-        { 
-            foreach (GridObject gridObject in addobjects)
-            {
-                gridObjects.Add(gridObject);
-            }
-        }
-    */
-
-        /*void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.P))//Changed to P so it would connect to preview
-            {
-                Load();
-            }
-
-        }
-        public void Load()
-        {
-            AddPreviousFrameToCurrentFrame();
-        }*/
         public bool Checklist()
         {
             return gridObjects.Count > 0;
@@ -361,7 +321,8 @@ namespace Assets.Scripts.Core
         {
             return gridObjects.ToArray();
         }
-        public void DestroyThisGrid() {
+        public void DestroyThisGrid()
+        {
             Destroy(gameObject);
         }
     }

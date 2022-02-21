@@ -57,7 +57,6 @@ namespace Assets.Scripts.Core
             VariableFact.testing = false;
             Instance = this;
             gridObjects = new List<GridObject>();
-            //addobjects = new List<GridObject>();
             previewObjects = new List<GridObject>();
             SetGridSize(Mathf.RoundToInt(initialGridSize.x), Mathf.RoundToInt(initialGridSize.y), false);
 
@@ -134,7 +133,7 @@ namespace Assets.Scripts.Core
             return true;
         }
 
-        public bool GridBounds (SpriteData sprite, int x, int y)
+        public bool GridBounds(SpriteData sprite, int x, int y)
         {
             if (x < 0 || x > GridWidth)
                 return false;
@@ -147,7 +146,6 @@ namespace Assets.Scripts.Core
         //Attempts to create a new preview object of the specified type at the specified position if possible
         public GridObject CreateNewPreviewObject(SpriteData sprite, int x, int y)
         {
-            //Debug.Log("I am inside CREATE NEW PREVIEW OBJECT");
             if (!CanAddGridObject(sprite, x, y))
             {
                 return null;
@@ -165,7 +163,6 @@ namespace Assets.Scripts.Core
             clone.SetAlpha(0.5f);
 
             return clone;
-
         }
 
         public GridObject AddGridObject(SpriteData sprite, int x, int y, bool writeLog)
@@ -192,7 +189,6 @@ namespace Assets.Scripts.Core
 
             //Check and see if preview object of same type in same location
             GridObject previewObjectToAdd = null;
-
 
             foreach (GridObject go in previewObjects)
             {
@@ -246,7 +242,7 @@ namespace Assets.Scripts.Core
 
         public void RemoveGridObject(GridObject g)
         {
-            if (gridFunctional[g.X, g.Y]!=null && gridFunctional[g.X, g.Y].Equals(g))
+            if (gridFunctional[g.X, g.Y] != null && gridFunctional[g.X, g.Y].Equals(g))
             {
                 RemoveGridObject(true, g.X, g.Y);
             }
@@ -346,7 +342,7 @@ namespace Assets.Scripts.Core
             {
                 int x = previewObjects[i].X;
                 int y = previewObjects[i].Y;
-                
+
                 List<bool> RuleActivation = Rule.RuleActiveCheck;
 
                 foreach (bool b in RuleActivation)
@@ -354,15 +350,13 @@ namespace Assets.Scripts.Core
 
                     if (b)
                     {
-                        //Debug.Log("VX after running rules = " + previewObjects[i].VX);
-                        //Debug.Log("VY after running rules = " + previewObjects[i].VY);
                         x += previewObjects[i].VX;
                         y += previewObjects[i].VY;
                         previewObjects[i].SetPosition(x, y);
                     }
                 }
             }
-                
+
         }
 
         public void ClearPreview()
@@ -384,32 +378,22 @@ namespace Assets.Scripts.Core
                 gridObject.SetAlpha(1);
                 AddGridObject(gridObject);
                 Destroy(gridObject.gameObject);
-                //gridObjects.Add(gridObject);
             }
 
             previewObjects.Clear();
 
         }
 
-        /**
-        public void AddKeptObjectsToGrid()
-        { 
-            foreach (GridObject gridObject in addobjects)
-            {
-                gridObjects.Add(gridObject);
-            }
-        }
-    */
-
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.P))//Changed to P so it would connect to preview
+            if (Input.GetKeyDown(KeyCode.P))
             {
                 Load();
             }
 
         }
-        public void Load() {
+        public void Load()
+        {
             AddPreviousFrameToCurrentFrame();
         }
         public bool Checklist()
@@ -429,10 +413,11 @@ namespace Assets.Scripts.Core
 
         public void SetColor(int[] color)
         {
-            gridBackground.color = new Color(color[0]/255f, color[1] / 255f, color[2] / 255f);
+            gridBackground.color = new Color(color[0] / 255f, color[1] / 255f, color[2] / 255f);
         }
 
-        public GridObject[] GetObjects() {
+        public GridObject[] GetObjects()
+        {
             return gridObjects.ToArray();
         }
     }

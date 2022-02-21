@@ -46,11 +46,9 @@ namespace Assets.Scripts.Core
 			H = Data.Height;
 
             transform.position = new Vector2(x + (float)Data.Width / 2, y + (float)Data.Height / 2);
-            //Debug.Log(transform.position);
         }
         public Vector2 GetPosition()
         {
-            //Debug.Log(transform.position);
             return transform.position;
         }
 

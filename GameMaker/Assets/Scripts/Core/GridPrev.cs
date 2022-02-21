@@ -46,7 +46,6 @@ namespace Assets.Scripts.Core
             VariableFact.testing = false;
             Instance = this;
             gridObjects = new List<GridObjectPrev>();
-            //addobjects = new List<GridObject>();
             previewObjects = new List<GridObjectPrev>();
             SetGridSize(Mathf.RoundToInt(initialGridSize.x), Mathf.RoundToInt(initialGridSize.y), false);
 
@@ -94,7 +93,7 @@ namespace Assets.Scripts.Core
             {
                 LogHandler.Instance.WriteLine("Grid Cleared:  time = " + Time.time);
             }*/
-            
+
             if (gridObjects == null)
                 return;
             foreach (GridObjectPrev gridObject in gridObjects)
@@ -299,43 +298,7 @@ namespace Assets.Scripts.Core
 
 
         }
-        /*public void AddPreviousFrameToCurrentFrame()
-        {
 
-            foreach (GridObjectPrev gridObject in previewObjects)
-            {
-                gridObject.SetAlpha(1);
-                AddGridObject(GridObjectPrev);
-                Destroy(gridObject.gameObject);
-                //gridObjects.Add(gridObject);
-            }
-
-            previewObjects.Clear();
-
-        }*/
-
-        /**
-        public void AddKeptObjectsToGrid()
-        { 
-            foreach (GridObject gridObject in addobjects)
-            {
-                gridObjects.Add(gridObject);
-            }
-        }
-    */
-
-        /*void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.P))//Changed to P so it would connect to preview
-            {
-                Load();
-            }
-
-        }
-        public void Load()
-        {
-            AddPreviousFrameToCurrentFrame();
-        }*/
         public bool Checklist()
         {
             return gridObjects.Count > 0;

@@ -317,7 +317,7 @@ namespace Assets.Scripts.UI
         public void ForRealLoad()
         {
             LogHandler.Instance.WriteLine("Load Grid Start:  time = " + Time.time);
-           
+
             if (File.Exists(GetFile(FrameManager.GetNextFrame())))
             {
 
@@ -374,9 +374,9 @@ namespace Assets.Scripts.UI
 
                 FrameManager.Instance.SetKeys(lines[0]);
                 FrameManager.Instance.SetPrevKeys(lines[1]);
-                
+
                 string[] gridSize = lines[2].Split(',');
-                
+
                 GridManager.Instance.SetGridSize(int.Parse(gridSize[0]), int.Parse(gridSize[1]), false);
 
                 for (int i = 3; i < lines.Length; i++)
